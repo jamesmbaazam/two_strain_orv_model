@@ -24,16 +24,17 @@ conflict_prefer('week', 'lubridate')
 covid_world_data <- openxlsx::read.xlsx('./data/owid-covid-data.xlsx')
 
 
-#subset of African countries
-
+#' Subset of African countries to analyse. #The choices represent African countries 
+#' with high enough population sizes that have vaccinated less than <1%, 1-10%, 
+#' and 50-100% respectively
 covid_africa_data <- covid_world_data %>% 
-    filter(location == 'South Africa' | location == 'Morocco' | location == 'Chad') %>% 
+    filter(location == 'Chad' | location == 'South Africa' | location == 'Morocco' ) %>% 
     remove_empty(which = 'cols') %>% 
     as_tibble() %>% 
     mutate(month = month(date, label = TRUE, abbr = TRUE))
 
 
-ggplot(data = covid_africa_data) + 
+stringency_index_and_vax_per_hundred_plot <- ggplot(data = covid_africa_data) + 
     geom_line(aes(x = date, 
                    y = stringency_index,
                    group = location,
@@ -50,8 +51,18 @@ ggplot(data = covid_africa_data) +
               size = 2,
               alpha = 0.35
               ) +
-    scale_x_discrete(breaks = seq(min(ymd(covid_africa_data$date)), max(ymd(covid_africa_data$date)), by = '2 weeks'),
-                       labels = seq(min(ymd(covid_africa_data$date)), max(ymd(covid_africa_data$date)), by = '2 weeks')
+    scale_x_discrete(breaks = seq(min(ymd(covid_africa_data$date)), 
+                                  max(ymd(covid_africa_data$date)), 
+                                  by = '2 weeks'
+                                  ),
+                       labels = seq(min(ymd(covid_africa_data$date)), 
+                                    max(ymd(covid_africa_data$date)), 
+                                    by = '2 weeks'
+                                    )
                        ) +
-    labs(y = 'Per hundred') +
+    labs(title = 'Stringency index and population vaccinated per hundred', 
+         y = 'Per hundred'
+         ) +
     theme_minimal()
+
+plot(stringency_index_and_vax_per_hundred_plot)
