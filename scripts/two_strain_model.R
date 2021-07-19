@@ -12,16 +12,21 @@ two_strain_model <- function(t, y, parms){
     
     with(c(as.list(y),parms),{
         
-        beta_w <- R0_w*gamma_w
-        beta_m <- ifelse(t < variant_emergence_time, 0, R0_m*gamma_m)
+        #Set the beta for the variant at the time point it emerges
+        beta_m <- ifelse(t < variant_emergence_time, 0, beta_m)
         
+        #implement an NPI between a time period
+        npi_intensity <- ifelse(t < npi_implementation_time | t > npi_implementation_time + npi_duration, 
+                                0, 
+                                npi_intensity
+                                )
         
-        dSdt <- - beta_w*S - beta_m*S - epsilon*S + alpha_w*R_w + alpha_m*R_m
-        dIwdt <- beta_w*S - gamma_w * I_w
-        dImdt <- beta_m*S - gamma_m * I_m
-        dRwdt <- gamma_w * I_w - alpha_w*R_w
-        dRmdt <- gamma_m * I_m - alpha_m*R_m
-        dVdt <- epsilon*S
+        dSdt <- - (1-npi_intensity)*beta_w*S*I_w - (1-npi_intensity)*beta_m*S*I_w - epsilon*S 
+        dIwdt <- (1-npi_intensity)*beta_w*S*I_w - gamma_w * I_w
+        dImdt <- (1-npi_intensity)*beta_m*S*I_w - gamma_m * I_m
+        dRwdt <- gamma_w * I_w - epsilon*R_w
+        dRmdt <- gamma_m * I_m - epsilon*R_m
+        dVdt <- epsilon*S + epsilon*R_w + epsilon*R_m 
         
         mod_result <- list(c(dSdt, dIwdt, dImdt, dRwdt, dRmdt, dVdt))
         return(mod_result)
