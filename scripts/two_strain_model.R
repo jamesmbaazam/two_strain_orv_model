@@ -117,6 +117,14 @@ sirv_plot <- ggplot(data = no_vax_dynamics) +
                   ), 
     size = 1.2
     ) +
+    geom_rect(data = npi_annotation_df, 
+               aes(xmin = npi_start,
+                   xmax = npi_end,
+                   ymin = 0,
+                   ymax = y_coord
+                   ),
+             fill = 'turquoise2'
+               ) +
     scale_color_manual(values = c('S' = 'blue', 
                                   'I_w' = 'red',
                                   'I_m' = 'yellow',
