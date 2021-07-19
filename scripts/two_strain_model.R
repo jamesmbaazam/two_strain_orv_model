@@ -42,25 +42,27 @@ library(tidyverse)
 
 ### INITIALIZE PARAMETER SETTINGS
 
-parms_no_vax_model <- c(R0_w = 1, 
-           R0_m = 2,
-           gamma_w = 1/8,
-           gamma_m = 1/8,
+parms_no_vax_model <- c(beta_w = 0.00002, 
+           beta_m = 0.00004,
+           npi_intensity = 0.00005,
+           gamma_w = 0.00125,
+           gamma_m = 0.00125,
            epsilon = 0, 
-           alpha_w = 0,
-           alpha_m = 0,
-           variant_emergence_time = 50
+           variant_emergence_time = 50,
+           npi_implementation_time = 30,
+           npi_duration = 75
            ) 
 
-parms_vax_model <- c(R0_w = 1, 
-                  R0_m = 2,
-                  gamma_w = 1/8,
-                  gamma_m = 1/8,
-                  epsilon = 1/14, 
-                  alpha_w = 0,
-                  alpha_m = 0,
-                  variant_emergence_time = 50
-)    
+parms_vax_model <- c(beta_w = 0.00002, 
+                     beta_m = 0.00004,
+                     npi_intensity = 0.00005,
+                  gamma_w = 0.00125,
+                  gamma_m = 0.00125,
+                  epsilon = 0.00025, 
+                  variant_emergence_time = 50, 
+                  npi_implementation_time = 30,
+                  npi_duration = 75
+                  )    
 
 dt <- seq(0, 365, 1)      # set the time points for evaluation
 
@@ -69,22 +71,22 @@ dt <- seq(0, 365, 1)      # set the time points for evaluation
 
 inits <- c(S = 999, 
            I_w = 1, 
-           I_m = 0, 
+           I_m = 1, 
            R_w = 0, 
            R_m = 0, 
            V = 0
            )     
 
-# Calculation of the total number of individuals in each sub-population
 
-N <- sum(inits)
-N
-### SIMULATION OF THE MODEL
-
-## Use lsoda to solve the differential equations numerically. 
-
+### Simulation
 no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_no_vax_model)) 
 vax_dynamics <- no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_vax_model)) 
+
+
+npi_annotation_df <- data.frame(npi_start = rep(parms_vax_model['npi_implementation_time'], 1000),
+                                npi_end = rep(parms_vax_model['npi_implementation_time'], 1000) + parms_vax_model['npi_duration'],
+                                y_coord = 0:inits['S']
+                                )
 
 #complete dynamics
 sirv_plot <- ggplot(data = no_vax_dynamics) + 
