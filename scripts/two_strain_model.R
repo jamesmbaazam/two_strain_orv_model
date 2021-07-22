@@ -21,9 +21,9 @@ two_strain_model <- function(t, y, parms){
                                 npi_intensity
                                 )
         
-        dSdt <- - (1-npi_intensity)*beta_w*S*I_w - (1-npi_intensity)*beta_m*S*I_w - epsilon*S 
+        dSdt <- - (1-npi_intensity)*beta_w*S*I_w - (1-npi_intensity)*beta_m*S*I_m - epsilon*S 
         dIwdt <- (1-npi_intensity)*beta_w*S*I_w - gamma_w * I_w
-        dImdt <- (1-npi_intensity)*beta_m*S*I_w - gamma_m * I_m
+        dImdt <- (1-npi_intensity)*beta_m*S*I_m - gamma_m * I_m
         dRwdt <- gamma_w * I_w - epsilon*R_w
         dRmdt <- gamma_m * I_m - epsilon*R_m
         dVdt <- epsilon*S + epsilon*R_w + epsilon*R_m 
