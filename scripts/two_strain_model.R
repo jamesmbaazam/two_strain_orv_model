@@ -27,8 +27,9 @@ two_strain_model <- function(t, y, parms){
         dRwdt <- gamma_w * I_w - epsilon*R_w
         dRmdt <- gamma_m * I_m - epsilon*R_m
         dVdt <- epsilon*S + epsilon*R_w + epsilon*R_m 
+        dIcum <- (1-npi_intensity)*beta_w*S*I_w + (1-npi_intensity)*beta_m*S*I_m
         
-        mod_result <- list(c(dSdt, dIwdt, dImdt, dRwdt, dRmdt, dVdt))
+        mod_result <- list(c(dSdt, dIwdt, dImdt, dRwdt, dRmdt, dVdt, dIcum))
         return(mod_result)
     })
 }
@@ -49,8 +50,8 @@ parms_no_vax_model <- c(beta_w = 0.00002,
            gamma_m = 0.00125,
            epsilon = 0, 
            variant_emergence_time = 50,
-           npi_implementation_time = 30,
-           npi_duration = 75
+           npi_implementation_time = 90,
+           npi_duration = 90
            ) 
 
 parms_vax_model <- c(beta_w = 0.00002, 
@@ -58,10 +59,10 @@ parms_vax_model <- c(beta_w = 0.00002,
                      npi_intensity = 0.00005,
                   gamma_w = 0.00125,
                   gamma_m = 0.00125,
-                  epsilon = 0.00025, 
+                  epsilon = 0.000025, 
                   variant_emergence_time = 50, 
-                  npi_implementation_time = 30,
-                  npi_duration = 75
+                  npi_implementation_time = 90,
+                  npi_duration = 90
                   )    
 
 dt <- seq(0, 365, 1)      # set the time points for evaluation
@@ -74,7 +75,8 @@ inits <- c(S = 999,
            I_m = 1, 
            R_w = 0, 
            R_m = 0, 
-           V = 0
+           V = 0,
+           Icum = 0
            )     
 
 
@@ -136,26 +138,19 @@ print(sirv_plot)
 
 
 #' cumulative incidence
-no_vax_dynamics_with_cum_incidence <- no_vax_dynamics %>% mutate(I = I_w + I_m, 
-                                   I_cum_no_vax = cumsum(I)
-                                   ) 
 
-vax_dynamics_with_cum_incidence <- vax_dynamics %>% mutate(I = I_w + I_m, 
-                                                           I_cum_vax = cumsum(I)
-                                                           ) 
-    
-
-cum_inc_plot <- ggplot(data = no_vax_dynamics_with_cum_incidence) + 
+cum_inc_plot <- ggplot(data = no_vax_dynamics) +
     geom_line(aes(x = time,
-                  y = I_cum_no_vax
+                  y = Icum
                   ),
-              color = 'red', 
+              color = 'red',
+              linetype = 'dashed',
               size = 1.2
               ) +
-    geom_line(data = vax_dynamics_with_cum_incidence, 
-              aes(x = time, 
-                  y = I_cum_vax
+    geom_line(data = vax_dynamics,
+              aes(x = time,
+                  y = Icum
                   )
               )
-    
+
 print(cum_inc_plot)
