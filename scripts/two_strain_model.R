@@ -13,13 +13,15 @@ two_strain_model <- function(t, y, parms){
     with(c(as.list(y),parms),{
         
         #Set the beta for the variant at the time point it emerges
-        beta_m <- ifelse(t < variant_emergence_time, 0, beta_m)
+        beta_m <- ifelse(t < variant_emergence_day, 0, beta_m)
         
         #implement an NPI between a time period
-        npi_intensity <- ifelse(t < npi_implementation_time | t > npi_implementation_time + npi_duration, 
+        npi_intensity <- ifelse(t < npi_implementation_day | t > npi_implementation_day + npi_duration, 
                                 0, 
                                 npi_intensity
                                 )
+        
+        epsilon <- ifelse(t < vax_day | t > vax_day + campaign_duration, 0, epsilon)
         
         dSdt <- - (1-npi_intensity)*beta_w*S*I_w - (1-npi_intensity)*beta_m*S*I_m - epsilon*S 
         dIwdt <- (1-npi_intensity)*beta_w*S*I_w - gamma_w * I_w
@@ -49,9 +51,11 @@ parms_no_vax_model <- c(beta_w = 0.00002,
            gamma_w = 0.00125,
            gamma_m = 0.00125,
            epsilon = 0, 
-           variant_emergence_time = 50,
-           npi_implementation_time = 90,
-           npi_duration = 90
+           variant_emergence_day = 200,
+           npi_implementation_day = 90,
+           npi_duration = 90,
+           vax_day = 0,
+           campaign_duration = 0
            ) 
 
 parms_vax_model <- c(beta_w = 0.00002, 
@@ -59,13 +63,15 @@ parms_vax_model <- c(beta_w = 0.00002,
                      npi_intensity = 0.00005,
                   gamma_w = 0.00125,
                   gamma_m = 0.00125,
-                  epsilon = 0.000025, 
-                  variant_emergence_time = 50, 
-                  npi_implementation_time = 90,
-                  npi_duration = 90
+                  epsilon = 0.001, 
+                  variant_emergence_day = 50, 
+                  npi_implementation_day = 90,
+                  npi_duration = 90,
+                  vax_day = 365,
+                  campaign_duration = 365
                   )    
 
-dt <- seq(0, 365, 1)      # set the time points for evaluation
+dt <- seq(0, 1825, 1)      # set the time points for evaluation
 
 
 # Initial conditions
@@ -85,8 +91,8 @@ no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parm
 vax_dynamics <- no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_vax_model)) 
 
 
-npi_annotation_df <- data.frame(npi_start = rep(parms_vax_model['npi_implementation_time'], 1000),
-                                npi_end = rep(parms_vax_model['npi_implementation_time'], 1000) + parms_vax_model['npi_duration'],
+npi_annotation_df <- data.frame(npi_start = rep(parms_vax_model['npi_implementation_day'], 1000),
+                                npi_end = rep(parms_vax_model['npi_implementation_day'], 1000) + parms_vax_model['npi_duration'],
                                 y_coord = 0:inits['S']
                                 )
 
@@ -133,7 +139,7 @@ sirv_plot <- ggplot(data = no_vax_dynamics) +
                                   'V' = 'purple'
                                   ))
     
-print(sirv_plot)
+plot(sirv_plot)
 
 
 
@@ -153,4 +159,4 @@ cum_inc_plot <- ggplot(data = no_vax_dynamics) +
                   )
               )
 
-print(cum_inc_plot)
+plot(cum_inc_plot)
