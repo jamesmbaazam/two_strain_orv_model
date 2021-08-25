@@ -10,15 +10,15 @@ source('./scripts/two_strain_model.R')
 
 ### INITIALIZE PARAMETER SETTINGS
 
-parms_no_vax_model <- c(beta_w = 5E-1, 
-                        beta_m = 10E-1,
+parms_no_vax_model <- c(beta_w = 1.5/7, 
+                        beta_m = 2/7,
                         phi = 0,
                         gamma_w = 1/14,
-                        gamma_m = 1/14,
+                        gamma_m = 1/36,
                         epsilon = 0, 
-                        sigma_w = 0.025,
-                        sigma_m = 0.0222,
-                        variant_emergence_day = 20,
+                        sigma_w = 0,
+                        sigma_m = 0,
+                        variant_emergence_day = 5,
                         npi_implementation_day = 0,
                         npi_duration = 0,
                         vax_day = 0,
@@ -42,7 +42,7 @@ dt <- seq(0, 365, 1)      # set the time points for evaluation
 
 # Initial conditions
 
-inits <- c(S = 0.99, 
+inits <- c(S = 0.98, 
            Iw = 0.01, 
            Im = 0.01, 
            Iwm = 0,
@@ -54,17 +54,19 @@ inits <- c(S = 0.99,
            )
 
 ### Simulation
-no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_no_vax_model)) 
+no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_no_vax_model)) %>% 
+    dplyr::filter(time < 150)
 
 plot(no_vax_dynamics$time, no_vax_dynamics$S,type = 'b', col = 'blue')
 lines(no_vax_dynamics$time, no_vax_dynamics$Iw,type = 'b', col = 'red')
 lines(no_vax_dynamics$time, no_vax_dynamics$Im,type = 'b', col = 'purple')
+lines(no_vax_dynamics$time, no_vax_dynamics$R,type = 'b', col = 'green')
 
 
 #Check the infection dynamics
-infection_dynamics <- no_vax_dynamics %>% filter(time < 101)
-plot(infection_dynamics$time, infection_dynamics$Iw,type = 'b', col = 'red')
-lines(infection_dynamics$time, infection_dynamics$Im,type = 'b', col = 'purple')
+# infection_dynamics <- no_vax_dynamics %>% filter(time < 101)
+# plot(infection_dynamics$time, infection_dynamics$Iw,type = 'b', col = 'red')
+# lines(infection_dynamics$time, infection_dynamics$Im,type = 'b', col = 'purple')
 
 #vax_dynamics <- no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_vax_model)) 
 
