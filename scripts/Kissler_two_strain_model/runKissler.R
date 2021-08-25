@@ -1,7 +1,7 @@
 library(deSolve)
 library(ggplot2)
 
-source('Kissler.R')
+source('./scripts/Kissler_two_strain_model/Kissler_two_strain_model.R')
 start_date <- as.Date('2020-01-01')
 end_date <- as.Date('2030-01-01')
 plot_dates <- seq.Date(start_date, end_date, by = 'year')
