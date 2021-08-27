@@ -18,7 +18,7 @@ parms_no_vax_model <- c(beta_w = 1.5/7,
                         epsilon = 0, 
                         sigma_w = 0,
                         sigma_m = 0,
-                        variant_emergence_day = 30,
+                        variant_emergence_day = 5,
                         npi_implementation_day = 0,
                         npi_duration = 0,
                         vax_day = 0,
@@ -51,7 +51,7 @@ dt <- seq(0, 365, 1)      # set the time points for evaluation
 
 inits <- c(S = 0.99, 
            Iw = 0.01, 
-           Im = 0.01, 
+           Im = 0, 
            Iwm = 0,
            Imw = 0,
            RwSm = 0, 
@@ -61,23 +61,35 @@ inits <- c(S = 0.99,
            )
 
 ### Simulation
-no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_no_vax_model)) 
+no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_no_vax_model,
+                                       events = list(data = event_df)
+                                       )
+                                 ) 
 
 no_vax_dynamics %>% View()
 
-vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_vax_model))
+no_vax_dynamics_long <- no_vax_dynamics %>% 
+    pivot_longer(cols = S:V, 
+                 names_to = 'state', 
+                 values_to = 'number'
+                 ) 
 
-plot(no_vax_dynamics$time, no_vax_dynamics$S,type = 'b', col = 'green4')
-lines(no_vax_dynamics$time, no_vax_dynamics$Iw,type = 'b', col = 'red')
-lines(no_vax_dynamics$time, no_vax_dynamics$Im,type = 'b', col = 'purple')
-lines(no_vax_dynamics$time, no_vax_dynamics$R,type = 'b', col = 'green4')
-lines(no_vax_dynamics$time, no_vax_dynamics$V,type = 'b', col = 'green')
-# 
-# #Cumulative incidence
-# no_vax_dynamics <- no_vax_dynamics %>% 
-#     mutate(I = Iw + Im + Iwm + Imw)
-# 
-# plot(no_vax_dynamics$time, cumsum(no_vax_dynamics$I), type = 'b', col = 'tomato3')
+two_strain_dynamics_plot <- ggplot(no_vax_dynamics_long, 
+       aes(x = time, y = number)
+       ) + 
+    geom_line(aes(color = state), 
+              size = 1.2
+              ) +
+    theme_minimal()
+
+print(two_strain_dynamics_plot)
+
+
+#vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_vax_model))
+
+
+#Cumulative incidence
+
 
 
 #function to calculate vaccinate rates (epsilon) from vaccination coverage and campaign duration
