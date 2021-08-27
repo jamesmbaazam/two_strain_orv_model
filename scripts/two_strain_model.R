@@ -8,6 +8,16 @@
 #' @export
 #'
 #' @examples
+#' 
+#' 
+
+#' Event for introducing mutant strain into model dynamics (check ?deSolve::event for the explanation fo the df below)
+event_df <- data.frame(var = c('S', 'Im'), 
+                       time = c(30, 30), #time of mutant introduction
+                       value = c(-0.01, 0.01), #index number of mutant cases
+                       method = c('add', 'replace') #operation on state variables
+                       )
+
 two_strain_model <- function(t, y, parms, browse = F) {
   
     if(browse) browser()
