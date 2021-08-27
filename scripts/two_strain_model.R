@@ -32,11 +32,8 @@ two_strain_model <- function(t, y, parms, browse = F) {
     # ======================================== 
     # Introduce transmission variant transmission after t >= variant_emergence_day
     # ======================================== 
-    beta_m <- ifelse(t < variant_emergence_day, 0, beta_m)
-    
     FOI_Im <- beta_m * (Im + Iwm)
     
-    gamma_m <- ifelse(t < variant_emergence_day, 0, gamma_m)
     
     # ======================================== 
     # Implement NPIs with intensity phi between a time period
