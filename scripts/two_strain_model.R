@@ -11,12 +11,35 @@
 #' 
 #' 
 
-#' Event for introducing mutant strain into model dynamics (check ?deSolve::event for the explanation fo the df below)
+# ==============================================================================
+#' Event data frame for introducing mutant strain into model dynamics 
+#' (check ?deSolve::event for the explanation fo the df below)
+# ==============================================================================
 event_df <- data.frame(var = c('S', 'Im'), 
-                       time = c(30, 30), #time of mutant introduction
+                       time = c(200, 200), #time of mutant introduction
                        value = c(-0.01, 0.01), #index number of mutant cases
                        method = c('add', 'replace') #operation on state variables
                        )
+
+# ==============================================================================
+#' Event function for introducing mutant strain into model dynamics 
+#' (check ?deSolve::event for the explanation fo the df below)
+# ==============================================================================
+
+event_function <- function(t, y, parms){
+  with(c(as.list(y)), {
+    S <- S - 0.01
+    Im <- Im + 0.01
+    
+  return(list(c(S, Iw, Im, Iwm, Imw, RwSm, RmSw, R, V, K)))
+    })
+}
+
+
+
+# ==============================================================================
+#' The two strain model
+# ==============================================================================
 
 two_strain_model <- function(t, y, parms, browse = F) {
   
@@ -69,7 +92,9 @@ two_strain_model <- function(t, y, parms, browse = F) {
   })
 }
 
-
+# ==============================================================================
+#' The simulation function
+# ==============================================================================
 
 simulate_ts_model <- function(pop_inits, parms, max_time, dt){
   
