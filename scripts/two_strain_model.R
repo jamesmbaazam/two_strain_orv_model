@@ -71,6 +71,52 @@ two_strain_model <- function(t, y, parms, browse = F) {
 
 
 
-simulate_ts_model <- function(){
-  return()
+simulate_ts_model <- function(pop_inits, parms, max_time, dt){
+  
+  # =============================================
+  # Initial conditions
+  # =============================================
+  inits <- pop_inits
+  
+  # =============================================
+  # Simulation parameters
+  # =============================================
+  parms <- c(beta_w = 1.5/7, 
+                          beta_m = 2/7,
+                          phi = 0,
+                          gamma_w = 1/14,
+                          gamma_m = 1/36,
+                          epsilon = 0, 
+                          sigma_w = 0,
+                          sigma_m = 0,
+                          variant_emergence_day = 5,
+                          npi_implementation_day = 0,
+                          npi_duration = 0,
+                          vax_day = 0,
+                          campaign_duration = 0,
+                          vax_coverage = 0, 
+                          coverage_correction = 0.99999
+                          )
+  # =============================================
+  # Simulation time
+  # =============================================
+  model_time <- 1:max_time
+  
+  # =============================================
+  # Model run
+  # =============================================  
+  
+  sim_results <- as.data.frame(lsoda(inits, dt, two_strain_model, 
+                                    parms = parms,
+                                    events = list(data = event_df)
+                                    )
+                              ) 
+  
+  # =============================================
+  # Final results time
+  # =============================================   
+  results_df <- cbind(results_df, sim_results)
+  
+  
+  return(sim_results)
 }
