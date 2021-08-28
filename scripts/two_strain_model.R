@@ -62,8 +62,15 @@ two_strain_model <- function(t, y, parms, browse = F) {
     dRmSwdt <- gamma_m * Im - epsilon * RmSw - (1 - phi) * (1 - sigma_m) * FOI_Iw * RmSw
     dRdt <- gamma_m * Iwm + gamma_w * Imw
     dVdt <- epsilon * (S + RwSm + RmSw)
+    dKdt <- (1 - phi) * FOI_Iw * S + (1 - phi) * FOI_Im * S + (1 - phi) * (1 - sigma_w) * FOI_Im * RwSm + (1 - phi) * (1 - sigma_m) * FOI_Iw * RmSw #Cumulative incidence
 
-    mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, dRwSmdt, dRmSwdt, dRdt, dVdt))
+    mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, dRwSmdt, dRmSwdt, dRdt, dVdt, dKdt))
     return(mod_result)
   })
+}
+
+
+
+simulate_ts_model <- function(){
+  return()
 }
