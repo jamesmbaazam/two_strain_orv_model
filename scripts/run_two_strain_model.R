@@ -57,7 +57,8 @@ inits <- c(S = 0.99,
            RwSm = 0, 
            RmSw = 0,
            R = 0,
-           V = 0
+           V = 0,
+           K = 0
            )
 
 ### Simulation
@@ -90,6 +91,17 @@ print(two_strain_dynamics_plot)
 
 #Cumulative incidence
 
+ggplot(data = no_vax_dynamics %>% filter(time < 150), 
+       aes(x = time, 
+           y = K
+           )
+       ) + 
+    geom_line(color = 'red', size = 1.2) +
+    scale_y_continuous(breaks = seq(0, ceiling(max(no_vax_dynamics$K)), 0.2),
+                       labels = seq(0, ceiling(max(no_vax_dynamics$K)), 0.2)
+                       ) +
+    labs(y = 'Cumulative incidence') +
+    theme_minimal()
 
 
 #function to calculate vaccinate rates (epsilon) from vaccination coverage and campaign duration
