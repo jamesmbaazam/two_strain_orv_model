@@ -2,52 +2,16 @@
 #Running the model
 library(deSolve)
 library(tidyverse)
+library(patchwork)
 
-
-#source the scripts
+# Source the helper scripts
 source('./scripts/two_strain_model.R')
 
 
-### INITIALIZE PARAMETER SETTINGS
+# General inputs
+eval_times <- seq(0, 365*2, 1) # Simulate a 2-year epidemic
 
-parms_no_vax_model <- c(beta_w = 1.5/7, 
-                        beta_m = 2/7,
-                        phi = 0,
-                        gamma_w = 1/14,
-                        gamma_m = 1/36,
-                        epsilon = 0, 
-                        sigma_w = 0,
-                        sigma_m = 0,
-                        variant_emergence_day = 5,
-                        npi_implementation_day = 0,
-                        npi_duration = 0,
-                        vax_day = 0,
-                        campaign_duration = 0,
-                        vax_coverage = 0, 
-                        coverage_correction = 0.99999
-                        ) 
-
-parms_vax_model <- c(beta_w = 1.5/7, 
-                        beta_m = 2/7,
-                        phi = 0,
-                        gamma_w = 1/14,
-                        gamma_m = 1/36,
-                        epsilon = 0, 
-                        sigma_w = 0,
-                        sigma_m = 0,
-                        variant_emergence_day = 30,
-                        npi_implementation_day = 0,
-                        npi_duration = 0,
-                        vax_day = 35,
-                        campaign_duration = 30,
-                        vax_coverage = 80, 
-                        coverage_correction = 0.99999
-                        ) 
-
-dt <- seq(0, 365, 1)      # set the time points for evaluation
-
-
-# Initial conditions
+# Population initial conditions
 
 inits <- c(S = 0.99, 
            Iw = 0.01, 
@@ -61,64 +25,204 @@ inits <- c(S = 0.99,
            K = 0
            )
 
-### Simulation
-no_vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_no_vax_model,
+# Disease parameters
+
+# ===========================================================
+# Simulations
+# ===========================================================
+
+# ========================
+# No vaccination, no NPIs (uncontrolled epidemic)
+# ========================
+# ===============================
+# Parameters for model run
+# ===============================
+parms_no_vax_model <- c(beta_w = 1.5/7, 
+                        beta_m = 2/7,
+                        phi = 0,
+                        gamma_w = 1/14,
+                        gamma_m = 1/36,
+                        sigma_w = 0,
+                        sigma_m = 0,
+                        #variant_emergence_day = 300,
+                        npi_implementation_day = 0,
+                        npi_duration = 0,
+                        vax_day = 0,
+                        campaign_duration = 0,
+                        vax_coverage = 0, 
+                        coverage_correction = 0.99999
+                        )
+
+# Run the model
+no_vax_dynamics <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_no_vax_model,
                                        events = list(data = event_df)
                                        )
                                  ) 
 
-no_vax_dynamics %>% View()
-
-no_vax_dynamics_long <- no_vax_dynamics %>% 
-    pivot_longer(cols = S:V, 
-                 names_to = 'state', 
-                 values_to = 'number'
-                 ) 
-
-two_strain_dynamics_plot <- ggplot(no_vax_dynamics_long, 
-       aes(x = time, y = number)
-       ) + 
-    geom_line(aes(color = state), 
-              size = 1.2
-              ) +
-    theme_minimal()
-
-print(two_strain_dynamics_plot)
+# no_vax_dynamics_with_event_func <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_no_vax_model,
+#                                        events = list(func = event_function, time = 200)
+#                                        )
+#                                        ) 
 
 
-#vax_dynamics <- as.data.frame(lsoda(inits, dt, two_strain_model, parms = parms_vax_model))
+
+# ========================
+# Controlled epidemic (Vaccination and NPIs)
+# ========================
+parms_vax_model <- c(beta_w = 1.5/7, 
+                     beta_m = 2/7,
+                     phi = 0.6,
+                     gamma_w = 1/14,
+                     gamma_m = 1/36,
+                     sigma_w = 0,
+                     sigma_m = 0,
+                     #variant_emergence_day = 150,
+                     npi_implementation_day = 21,
+                     npi_duration = 180,
+                     vax_day = 180,
+                     campaign_duration = 180,
+                     vax_coverage = 0.5, #Specify as a number between 0 and 1
+                     coverage_correction = 0.99999
+                     ) 
+
+# Run model
+vax_dynamics <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_vax_model,
+                                    events = list(data = event_df)))
+
+# vax_dynamics %>% View()
+
+#Plot the uncontrolled and controlled epidemic on the same frames
+epidemic_complete <- left_join(no_vax_dynamics %>% select(time, K),
+                               vax_dynamics %>% select(time, K), 
+                               by = 'time', 
+                               suffix = c('_uncontrolled','_controlled'))
 
 
-#Cumulative incidence
+epidemic_complete_long <- epidemic_complete %>% 
+    pivot_longer(cols = starts_with('K'), 
+                 names_to = 'epi_type', 
+                 values_to = 'Icum'
+    )
 
-ggplot(data = no_vax_dynamics %>% filter(time < 150), 
-       aes(x = time, 
-           y = K
-           )
-       ) + 
-    geom_line(color = 'red', size = 1.2) +
-    scale_y_continuous(breaks = seq(0, ceiling(max(no_vax_dynamics$K)), 0.2),
-                       labels = seq(0, ceiling(max(no_vax_dynamics$K)), 0.2)
-                       ) +
-    labs(y = 'Cumulative incidence') +
-    theme_minimal()
+controlled_vrs_uncontrolled_epi_plot <- ggplot(data = epidemic_complete_long, 
+                                               aes(x = time, y = Icum)
+) + geom_line(aes(color = epi_type), 
+              size = 1.2) +
+    labs(title = paste('NPIs implemented on day', 
+                       as.numeric(parms_vax_model["npi_implementation_day"]), 
+                       'for', as.numeric(parms_vax_model['npi_duration']), 
+                       'days AND\n vaccination implemented on day', 
+                       as.numeric(parms_vax_model['vax_day']),
+                       'for', 
+                       as.numeric(parms_vax_model['campaign_duration']),
+                       'days'
+    ))
+
+print(controlled_vrs_uncontrolled_epi_plot)
+
+
+# # ===========================================================
+# # Reshape model results
+# # ===========================================================
+# 
+# vax_dynamics_long <- vax_dynamics %>% 
+#     pivot_longer(cols = S:V, 
+#                  names_to = 'state', 
+#                  values_to = 'number'
+#     ) 
+
+# ===========================================================
+# Plot model dynamics
+# ===========================================================
+
+# Full dynamics
+# two_strain_dynamics_controlled_plot <- ggplot(vax_dynamics_long, 
+#                                    aes(x = time, y = number)
+# ) + 
+#     geom_line(aes(color = state), 
+#               size = 1.2
+#     ) +
+#     theme_minimal()
+# 
+# print(two_strain_dynamics_controlled_plot)
+# 
+# # Cumulative incidence (controlled epidemic)
+# 
+# Icum_controlled_epidemic_plot <- ggplot(data = vax_dynamics, 
+#        aes(x = time, 
+#            y = K
+#        )
+#        ) + 
+#     geom_line(color = 'red', size = 1.2) +
+#     scale_y_continuous(breaks = seq(0, ceiling(max(vax_dynamics$K)), 0.2),
+#                        labels = seq(0, ceiling(max(vax_dynamics$K)), 0.2)
+#     ) +
+#     labs(y = 'Cumulative incidence (with intervention)') +
+#     theme_minimal()
+# 
+# print(Icum_controlled_epidemic_plot)
+
+
+# no_vax_dynamics %>% View()
+
+# ===========================================================
+# Reshape model results
+# ===========================================================
+
+# no_vax_dynamics_long <- no_vax_dynamics %>% 
+#     pivot_longer(cols = S:V, 
+#                  names_to = 'state', 
+#                  values_to = 'number'
+#                  ) 
+
+# ===========================================================
+# Plot model dynamics
+# ===========================================================
+
+# Full dynamics
+# two_strain_dynamics_uncontrolled_plot <- ggplot(no_vax_dynamics_long, 
+#        aes(x = time, y = number)
+#        ) + 
+#     geom_line(aes(color = state), 
+#               size = 1.2
+#               ) +
+#     theme_minimal()
+# 
+# print(two_strain_dynamics_uncontrolled_plot)
+# 
+# 
+# 
+# # Cumulative incidence (no vaccination, no NPI)
+# Icum_uncontrolled_epidemic_plot <- ggplot(data = no_vax_dynamics, 
+#        aes(x = time, 
+#            y = K
+#        )
+# ) + 
+#     geom_line(color = 'red', size = 1.2) +
+#     scale_y_continuous(breaks = seq(0, ceiling(max(no_vax_dynamics$K)), 0.2),
+#                        labels = seq(0, ceiling(max(no_vax_dynamics$K)), 0.2)
+#     ) +
+#     labs(y = 'Cumulative incidence') +
+#     theme_minimal()
+# 
+# print(Icum_uncontrolled_epidemic_plot)
 
 
 #function to calculate vaccinate rates (epsilon) from vaccination coverage and campaign duration
-# epsilon <- function(vax_coverage, 
-#                     campaign_duration, 
+# epsilon <- function(vax_coverage,
+#                     campaign_duration,
 #                     coverage_correction = 0.99999
 #                     ){
 #     sim_epsilon <- -log(1 - vax_coverage*coverage_correction) / campaign_duration
-#     
-#     results <- data.frame(vax_cov = vax_coverage, 
-#                       campaign_duration = campaign_duration, 
+# 
+#     results <- data.frame(vax_cov = vax_coverage,
+#                       campaign_duration = campaign_duration,
 #                       vax_rate = sim_epsilon
 #                       )
 #     return(results)
 #     }
-
-
+# 
+# epsilon(vax_coverage = 0.5, campaign_duration = 180)
 
 # campaign_objectives_df <- tibble(campaign_duration = (170 + seq(10, 180, 30)), 
 #                                      vax_cov = rep(0.75, times = length(campaign_duration))
