@@ -5,7 +5,7 @@ library(tidyverse)
 library(patchwork)
 
 # Source the helper scripts
-source('./scripts/two_strain_model.R')
+source('./scripts/two_strain_model/two_strain_model.R')
 
 # ==============================================================================
 #' Event data frame for introducing mutant strain into model dynamics 
@@ -18,7 +18,11 @@ event_df <- data.frame(var = c('S', 'Im'),
 )
 
 # Evaluate the model at these time points
-eval_times <- seq(0, 365*2, 1) # Simulate a 2-year epidemic
+max_time <- 365*2
+
+eval_times <- seq(0, max_time, 1) # Simulate a 2-year epidemic
+
+
 
 # Population initial conditions
 pop_inits <- c(S = 0.99, 
@@ -34,9 +38,6 @@ pop_inits <- c(S = 0.99,
            )
 
 
-
-
-
 # ===============================
 # Parameters for dynamics
 # ===============================
@@ -46,27 +47,24 @@ parms_table <- data.frame(beta_w = 1.5/7,
                         gamma_m = 1/36,
                         sigma_w = 0,
                         sigma_m = 0
-                        ) %>% 
-    pivot_longer(everything(), 
-                 names_to = 'parm', 
-                 values_to = 'value'
-                 )
+                        ) 
 
 
 # ===============================
 # Parameters for control dynamics
 # ===============================
 npi_implementation_day = unique(event_df$time) + 20 #Implement NPIs 20 days after a new variant emerges
-npi_duration = 30
-campaign_start = 180
-campaign_duration = 180
-coverage_correction = 0.999099
+#npi_implementation_day <- 60 
+npi_duration <- 60
+campaign_start <- unique(event_df$time) - 30 #vaccination campaign starts 30 days before more infectious variant emerges
+campaign_duration <- 365
+coverage_correction <- 0.999099
 
 
 
 #NPI and vaccination
-npi_intensity <- seq(0, 100, 10)
-vax_cov <- seq(0, 100, 10)
+npi_intensity <- seq(0, 1, 0.1)
+vax_cov <- seq(0, 1, 0.1)
 
 
 # Combine the params (Fixed campaign )
@@ -91,26 +89,54 @@ simulation_params <- scenario_table %>%
 # Simulations
 # ===========================================================
 
+sim_results <- simulation_params %>% 
+    rowwise() %>% 
+    do({with(., 
+             simulate_model(pop_inits = pop_inits, 
+                            parms = bind_cols(parms_table, .), 
+                            max_time = max_time, 
+                            dt = eval_times
+                            )
+             )
+    }) %>% 
+    ungroup() %>% 
+    as_tibble()
 
 
 
+heatmap_df <- sim_results %>% select(phi, vax_coverage, total_cases)
+
+heatmap_plot <- ggplot(data = heatmap_df) + 
+    geom_tile(aes(x = vax_coverage, 
+                  y = phi, 
+                  fill = total_cases
+                  ), 
+            #  color = 'black',
+            #  size = 0.01,
+              stat = 'identity'
+              ) +
+    scale_x_continuous(labels = scales::percent_format(), 
+                       expand = c(0,0)
+                       ) +
+    scale_y_continuous(labels = scales::percent_format(), 
+                       expand = c(0,0)
+                       ) +
+    scale_fill_distiller(palette = "Blues", direction = 1) +
+    labs(x = 'Vaccination coverage', 
+         y = 'NPI intensity', 
+         fill = 'Cumulative incidence'
+         ) +
+    theme_minimal()
 
 
-
-
-
-
-
-
-
-
+print(heatmap_plot)
 
 
 # Run the model
-no_vax_dynamics <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_no_vax_model,
-                                       events = list(data = event_df)
-                                       )
-                                 ) 
+# no_vax_dynamics <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_no_vax_model,
+#                                        events = list(data = event_df)
+#                                        )
+#                                  ) 
 
 # no_vax_dynamics_with_event_func <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_no_vax_model,
 #                                        events = list(func = event_function, time = 200)
@@ -122,56 +148,56 @@ no_vax_dynamics <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parm
 # ========================
 # Controlled epidemic (Vaccination and NPIs)
 # ========================
-parms_vax_model <- c(beta_w = 1.5/7, 
-                     beta_m = 2/7,
-                     phi = 0.6,
-                     gamma_w = 1/14,
-                     gamma_m = 1/36,
-                     sigma_w = 0,
-                     sigma_m = 0,
-                     #variant_emergence_day = 150,
-                     npi_implementation_day = 21,
-                     npi_duration = 180,
-                     vax_day = 180,
-                     campaign_duration = 180,
-                     vax_coverage = 0.5, #Specify as a number between 0 and 1
-                     coverage_correction = 0.99999
-                     ) 
+# parms_vax_model <- c(beta_w = 1.5/7, 
+#                      beta_m = 2/7,
+#                      phi = 0.6,
+#                      gamma_w = 1/14,
+#                      gamma_m = 1/36,
+#                      sigma_w = 0,
+#                      sigma_m = 0,
+#                      #variant_emergence_day = 150,
+#                      npi_implementation_day = 21,
+#                      npi_duration = 180,
+#                      vax_day = 180,
+#                      campaign_duration = 180,
+#                      vax_coverage = 0.5, #Specify as a number between 0 and 1
+#                      coverage_correction = 0.99999
+#                      ) 
 
 # Run model
-vax_dynamics <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_vax_model,
-                                    events = list(data = event_df)))
-
-# vax_dynamics %>% View()
-
-#Plot the uncontrolled and controlled epidemic on the same frames
-epidemic_complete <- left_join(no_vax_dynamics %>% select(time, K),
-                               vax_dynamics %>% select(time, K), 
-                               by = 'time', 
-                               suffix = c('_uncontrolled','_controlled'))
-
-
-epidemic_complete_long <- epidemic_complete %>% 
-    pivot_longer(cols = starts_with('K'), 
-                 names_to = 'epi_type', 
-                 values_to = 'Icum'
-    )
-
-controlled_vrs_uncontrolled_epi_plot <- ggplot(data = epidemic_complete_long, 
-                                               aes(x = time, y = Icum)
-) + geom_line(aes(color = epi_type), 
-              size = 1.2) +
-    labs(title = paste('NPIs implemented on day', 
-                       as.numeric(parms_vax_model["npi_implementation_day"]), 
-                       'for', as.numeric(parms_vax_model['npi_duration']), 
-                       'days AND\n vaccination implemented on day', 
-                       as.numeric(parms_vax_model['vax_day']),
-                       'for', 
-                       as.numeric(parms_vax_model['campaign_duration']),
-                       'days'
-    ))
-
-print(controlled_vrs_uncontrolled_epi_plot)
+# vax_dynamics <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_vax_model,
+#                                     events = list(data = event_df)))
+# 
+# # vax_dynamics %>% View()
+# 
+# #Plot the uncontrolled and controlled epidemic on the same frames
+# epidemic_complete <- left_join(no_vax_dynamics %>% select(time, K),
+#                                vax_dynamics %>% select(time, K), 
+#                                by = 'time', 
+#                                suffix = c('_uncontrolled','_controlled'))
+# 
+# 
+# epidemic_complete_long <- epidemic_complete %>% 
+#     pivot_longer(cols = starts_with('K'), 
+#                  names_to = 'epi_type', 
+#                  values_to = 'Icum'
+#     )
+# 
+# controlled_vrs_uncontrolled_epi_plot <- ggplot(data = epidemic_complete_long, 
+#                                                aes(x = time, y = Icum)
+# ) + geom_line(aes(color = epi_type), 
+#               size = 1.2) +
+#     labs(title = paste('NPIs implemented on day', 
+#                        as.numeric(parms_vax_model["npi_implementation_day"]), 
+#                        'for', as.numeric(parms_vax_model['npi_duration']), 
+#                        'days AND\n vaccination implemented on day', 
+#                        as.numeric(parms_vax_model['vax_day']),
+#                        'for', 
+#                        as.numeric(parms_vax_model['campaign_duration']),
+#                        'days'
+#     ))
+# 
+# print(controlled_vrs_uncontrolled_epi_plot)
 
 
 # # ===========================================================
