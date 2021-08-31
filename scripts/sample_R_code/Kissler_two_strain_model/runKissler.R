@@ -8,7 +8,7 @@ plot_dates <- seq.Date(start_date, end_date, by = 'year')
 seed_I <- 50 / 58000000
 step_size <- 0.1
 MAXTIME <- 52 * 10
-tmp <- readxl::read_excel('./scripts/Kissler_two_strain_model/parameters.xlsx')
+tmp <- readxl::read_excel('./scripts/sample_R_code/Kissler_two_strain_model/parameters.xlsx')
 pp <- as.list(tmp$value)
 names(pp) <- tmp$par_name
 init <- readRDS('./scripts/Kissler_two_strain_model/init.RDS')
