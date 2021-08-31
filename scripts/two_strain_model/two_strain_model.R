@@ -71,8 +71,9 @@ two_strain_model <- function(t, y, parms, browse = F) {
 #' The simulation function
 # ==============================================================================
 
-simulate_ts_model <- function(pop_inits, parms, max_time, dt){
+simulate_model <- function(pop_inits, parms, max_time, dt, browse = F){
   
+  if(browse)browser()
   # =============================================
   # Initial conditions
   # =============================================
@@ -82,6 +83,7 @@ simulate_ts_model <- function(pop_inits, parms, max_time, dt){
   # Simulation time
   # =============================================
   model_time <- 1:max_time
+  
   
   # =============================================
   # Model run
@@ -93,13 +95,13 @@ simulate_ts_model <- function(pop_inits, parms, max_time, dt){
                                     )
                               )
   
-  total_cases <- sim_results$
+  total_cases <- max(sim_results$K)
   
   # =============================================
   # Final results time
   # =============================================   
-  results_df <- cbind(results_df, sim_results)
+  results_df <- parms %>% mutate(total_cases = total_cases)
   
   
-  return(sim_results)
+  return(results_df)
 }
