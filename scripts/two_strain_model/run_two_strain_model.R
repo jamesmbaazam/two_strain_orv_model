@@ -7,13 +7,21 @@ library(patchwork)
 # Source the helper scripts
 source('./scripts/two_strain_model.R')
 
+# ==============================================================================
+#' Event data frame for introducing mutant strain into model dynamics 
+#' (check ?deSolve::event for the explanation fo the df below)
+# ==============================================================================
+event_df <- data.frame(var = c('S', 'Im'), 
+                       time = c(200, 200), #time of mutant introduction
+                       value = c(-0.01, 0.01), #index number of mutant cases
+                       method = c('add', 'replace') #operation on state variables
+)
 
-# General inputs
+# Evaluate the model at these time points
 eval_times <- seq(0, 365*2, 1) # Simulate a 2-year epidemic
 
 # Population initial conditions
-
-inits <- c(S = 0.99, 
+pop_inits <- c(S = 0.99, 
            Iw = 0.01, 
            Im = 0, 
            Iwm = 0,
@@ -25,33 +33,78 @@ inits <- c(S = 0.99,
            K = 0
            )
 
-# Disease parameters
+
+
+
+
+# ===============================
+# Parameters for dynamics
+# ===============================
+parms_table <- data.frame(beta_w = 1.5/7, 
+                        beta_m = 2/7,
+                        gamma_w = 1/14,
+                        gamma_m = 1/36,
+                        sigma_w = 0,
+                        sigma_m = 0
+                        ) %>% 
+    pivot_longer(everything(), 
+                 names_to = 'parm', 
+                 values_to = 'value'
+                 )
+
+
+# ===============================
+# Parameters for control dynamics
+# ===============================
+npi_implementation_day = unique(event_df$time) + 20 #Implement NPIs 20 days after a new variant emerges
+npi_duration = 30
+campaign_start = 180
+campaign_duration = 180
+coverage_correction = 0.999099
+
+
+
+#NPI and vaccination
+npi_intensity <- seq(0, 100, 10)
+vax_cov <- seq(0, 100, 10)
+
+
+# Combine the params (Fixed campaign )
+scenario_table <- expand.grid(phi = npi_intensity, 
+                                 vax_coverage = vax_cov
+                                 ) 
+
+
+simulation_params <- scenario_table %>% 
+    mutate(npi_implementation_day = npi_implementation_day,
+           npi_duration = npi_duration,
+           campaign_start = campaign_start,
+           campaign_duration = campaign_duration,
+           coverage_correction = 0.999099
+           )
+
+
+
+
 
 # ===========================================================
 # Simulations
 # ===========================================================
 
-# ========================
-# No vaccination, no NPIs (uncontrolled epidemic)
-# ========================
-# ===============================
-# Parameters for model run
-# ===============================
-parms_no_vax_model <- c(beta_w = 1.5/7, 
-                        beta_m = 2/7,
-                        phi = 0,
-                        gamma_w = 1/14,
-                        gamma_m = 1/36,
-                        sigma_w = 0,
-                        sigma_m = 0,
-                        #variant_emergence_day = 300,
-                        npi_implementation_day = 0,
-                        npi_duration = 0,
-                        vax_day = 0,
-                        campaign_duration = 0,
-                        vax_coverage = 0, 
-                        coverage_correction = 0.99999
-                        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Run the model
 no_vax_dynamics <- as.data.frame(lsoda(inits, eval_times, two_strain_model, parms = parms_no_vax_model,
