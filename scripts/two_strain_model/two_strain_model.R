@@ -12,9 +12,9 @@
 #' 
 
 
-# ==============================================================================
-#' The two strain model
-# ==============================================================================
+
+#' The two strain model ====
+
 
 two_strain_model <- function(t, y, parms, browse = F) {
   
@@ -22,34 +22,27 @@ two_strain_model <- function(t, y, parms, browse = F) {
   
     with(c(as.list(y), parms), {
       
-    # ========================================  
-    # Force of infection of the wild-type virus
-    # ========================================
+    
+    # Force of infection of the wild-type strain ####
+    
     FOI_Iw <- beta_w * (Iw + Imw)
     
-    # ======================================== 
-    # Introduce transmission variant transmission after t >= variant_emergence_day
-    # ======================================== 
+    # Force of infection of the variant strain ####
     FOI_Im <- beta_m * (Im + Iwm)
     
     
-    # ======================================== 
-    # Implement NPIs with intensity phi between a time period
-    # ======================================== 
+    # NPIs control #### 
     
     phi <- ifelse(t < npi_implementation_day | t > npi_implementation_day + npi_duration, 0, phi)
     
-    # ======================================== 
-    # Convert the vaccination coverage to a rate 
-    # ======================================== 
+
+    # Vaccination coverage to a rate ####
+    coverage_correction <- 0.9909 #Use this to prevent the epsilon coversion from going to infinity when coverage = 1
     
     epsilon <- ifelse(t < campaign_start | t > campaign_start + campaign_duration | vax_coverage == 0, 0, (-log(1 - vax_coverage*coverage_correction) / campaign_duration))
     
     
-    
-    # ======================================== 
-    # The two strain model
-    # ======================================== 
+    # Model equations ####
     
     dSdt <- -(1 - phi) * FOI_Iw * S - (1 - phi) * FOI_Im * S - epsilon * S
     dIwdt <- (1 - phi) * FOI_Iw * S - gamma_w * Iw
