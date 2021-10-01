@@ -60,40 +60,38 @@ two_strain_model <- function(t, y, parms, browse = F) {
   })
 }
 
-# ==============================================================================
-#' The simulation function
-# ==============================================================================
 
-simulate_model <- function(pop_inits, parms, max_time, dt, browse = F){
+#' The simulation function ====
+
+simulate_model <- function(pop_inits, dynamics_parms, control_parms, max_time, dt, events_table, browse = F){
   
   if(browse)browser()
-  # =============================================
-  # Initial conditions
-  # =============================================
-  inits <- pop_inits
 
-  # =============================================
-  # Simulation time
-  # =============================================
+  
+  # Simulation time ####
   model_time <- 1:max_time
   
+  events_table <- events_table %>% 
+    mutate(time = rep(control_parms$variant_emergence_day, 
+                      nrow(events_table)
+                      )
+           )
   
-  # =============================================
-  # Model run
-  # =============================================  
-  
-  sim_results <- as.data.frame(lsoda(inits, dt, two_strain_model, 
-                                    parms = parms,
-                                    events = list(data = event_df)
+  sim_parms <- bind_cols(dynamics_parms, control_parms)
+  # Model run ####
+  sim_results <- as.data.frame(lsoda(pop_inits, dt, 
+                                     two_strain_model, 
+                                    parms = sim_parms,
+                                    events = list(data = events_table)
                                     )
                               )
   
   total_cases <- max(sim_results$K)
   
-  # =============================================
-  # Final results time
-  # =============================================   
-  results_df <- parms %>% mutate(total_cases = total_cases)
+  #' Final results time ####
+  
+  results_df <- sim_parms %>% mutate(total_cases = total_cases)
+  
   
   
   return(results_df)
