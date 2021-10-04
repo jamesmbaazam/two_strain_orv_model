@@ -6,7 +6,7 @@ eval_times <- seq(0, max_time, 1) # Simulate a 2-year epidemic
 
 # When the variant will emerge
 #variant_emergence_day <- 60
-variant_emergence_day_vec <- seq(60, max_time, 1) 
+#variant_emergence_day_vec <- seq(60, max_time, 1) 
 
 #Population parameters
 target_pop <- 10E6 #target population size
