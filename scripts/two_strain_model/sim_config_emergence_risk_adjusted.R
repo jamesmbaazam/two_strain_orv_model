@@ -12,43 +12,40 @@ source('./scripts/two_strain_model/sim_config_global_params.R')
 
 # Event times ====
 # NPI ####
-npi_implementation_day <- 30
+# Best case scenario ####
+npi_implementation_day <- 1
+npi_duration <- max_time
 npi_intensity <- seq(0, 1, 0.1)
 
 # Vaccination ====
-campaign_start <- 365
+# Best case scenario ####
+campaign_start <- 1
+campaign_duration <- max_time
 vax_cov <- seq(0, 1, 0.1)
 
 # Variant emergence ====
-variant_emergence_times <- seq(60, max_time, 30)
+variant_emergence_times <- seq(1, max_time, 1)
 
 
 
 # Complete set of scenarios ====
 # All combinations of vaccination coverage and NPI intensity  
-control_scenarios <- expand.grid(phi = npi_intensity, 
-                                 vax_coverage = vax_cov
-) 
+control_scenarios <- expand.grid(phi = npi_intensity, vax_coverage = vax_cov) 
 
 control_scenarios_rep <- control_scenarios %>% 
-    slice(rep(1:n(), 
-              times = length(variant_emergence_times)
-    )
-    ) # repeat the control_scenarios df many times
+    slice(rep(1:n(), times = length(variant_emergence_times))) # repeat the control_scenarios df many times
 
 
 # Repeat the variant emergence times for binding
-variant_emergence_times_rep <- data.frame(variant_emergence_day = rep(variant_emergence_times, 
-                                                                      each = nrow(control_scenarios)
-)
-) 
+variant_emergence_times_rep <- data.frame(variant_emergence_day = rep(variant_emergence_times, each = nrow(control_scenarios))) 
 
 # Full simulation table ====
 simulation_table <- cbind(control_scenarios_rep, variant_emergence_times_rep) %>% 
     mutate(campaign_start = campaign_start, 
            campaign_duration = campaign_duration,
            npi_implementation_day = npi_implementation_day,
-           npi_duration = npi_duration)
+           npi_duration = npi_duration
+           )
 
 
 
@@ -105,8 +102,8 @@ orv_full_simulation_plot <- ggplot(data = orv_full_simulation) +
          y = 'NPI intensity', 
          fill = 'Cumulative incidence'
     ) +
-   # facet_wrap(variant_emergence_day ~ npi_implementation_day + campaign_start) + 
+    facet_wrap('variant_emergence_day') + 
     theme_minimal()
 
-plot(full_sim_hm_plot)
+plot(orv_full_simulation_plot)
 
