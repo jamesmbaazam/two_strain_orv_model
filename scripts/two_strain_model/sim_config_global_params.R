@@ -29,10 +29,10 @@ pop_inits <- c(S = 1 - Iw_index/target_pop,
 # ===============================
 # Parameters for dynamics
 # ===============================
-dynamics_params <- data.frame(beta_w = 1.5/7, 
-                        beta_m = 2/7,
-                        gamma_w = 1/14,
-                        gamma_m = 1/14,
+dynamics_params <- data.frame(beta_w = 1.5/(7*target_pop), 
+                        beta_m = 2/(7*target_pop),
+                        gamma_w = 1/7,
+                        gamma_m = 1/7,
                         sigma_w = 1,
                         sigma_m = 1
                         ) 
@@ -41,10 +41,6 @@ dynamics_params <- data.frame(beta_w = 1.5/7,
 # ===============================
 # Parameters for control dynamics
 # ===============================
-npi_start <- 30
-npi_duration <- 60
-campaign_start <- 120
-campaign_duration <- 365
 coverage_correction <- 0.999099
 
 
