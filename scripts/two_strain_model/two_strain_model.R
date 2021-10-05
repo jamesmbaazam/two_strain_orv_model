@@ -87,12 +87,15 @@ simulate_model <- function(pop_inits, dynamics_parms, control_parms, max_time, d
                               )
   
   total_cases <- max(sim_results$K)
+  incidence <- sim_results$Iw + sim_results$Im + sim_results$Iwm + sim_results$Imw
+  peak_magnitude <- max(incidence)
   
   #' Final results time ####
   
-  results_df <- sim_parms %>% mutate(total_cases = total_cases)
-  
-  
-  
-  return(results_df)
+  if(!return_dynamics){
+    results_df <- sim_parms %>% mutate(total_cases = total_cases, peak_cases = peak_magnitude)
+    return(results_df)
+  }else{
+    return(sim_results)
+    }
 }
