@@ -16,7 +16,7 @@
 #' The two strain model ====
 
 
-two_strain_model <- function(t, y, parms, browse = F) {
+two_strain_model <- function(t, y, parms, browse = FALSE) {
   
     if(browse) browser()
   
@@ -63,7 +63,8 @@ two_strain_model <- function(t, y, parms, browse = F) {
 
 #' The simulation function ====
 
-simulate_model <- function(pop_inits, dynamics_parms, control_parms, max_time, dt, events_table, browse = F){
+simulate_model <- function(pop_inits, dynamics_parms, control_parms, max_time, 
+                           dt, events_table, return_dynamics = FALSE, browse = FALSE){
   
   if(browse)browser()
 
