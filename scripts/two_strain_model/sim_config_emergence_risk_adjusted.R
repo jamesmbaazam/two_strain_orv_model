@@ -61,12 +61,36 @@ event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
 
 
 # Uncontrolled epidemic ====
+no_control_parms_df <- data.frame(phi = 0, vax_coverage = 0, variant_emergence_day = 1, 
+                            campaign_start = 1, campaign_duration = 0, 
+                            npi_implementation_day = 1, npi_duration = 0
+                            )
+
+no_control_epidemic <- simulate_model(pop_inits = pop_inits, 
+                                      dynamics_parms = dynamics_params,
+                                      control_parms = no_control_parms_df,
+                                      max_time = max_time, 
+                                      dt = eval_times,
+                                      events_table = event_df,
+                                      return_dynamics = TRUE,
+                                      browse = FALSE
+                                      )
+
+
+no_control_epidemic_long <- no_control_epidemic %>%
+    select(time, Iw, Im, Iwm, Imw) %>% 
+    pivot_longer(cols = -time, names_to = 'state', values_to = 'value')
+
+
+ggplot(data = no_control_epidemic_long, aes(x = time, y = value, color = state)) +
+    geom_line(size = 1)
 
 
 
 
 # Controlled epidemic ====
 orv_full_simulation <- simulation_table %>% 
+    filter(variant_emergence_day %in% seq(1, 150, 7)) %>% 
     rowwise() %>% 
     do({with(., 
              simulate_model(pop_inits = pop_inits, 
