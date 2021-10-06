@@ -30,12 +30,19 @@ pop_inits <- c(S = 1 - Iw_index/target_pop,
 # ===============================
 # Parameters for dynamics
 # ===============================
-dynamics_params <- data.frame(beta_w = 1.5/(7*target_pop), 
-                        beta_m = 2/(7*target_pop),
-                        gamma_w = 1/7,
-                        gamma_m = 1/7,
-                        sigma_w = 1,
-                        sigma_m = 1
+R0_w <- 2
+R0_m <- 2.5
+IP_w <- 7 #Infectious period (wild type)
+IP_m <- 7 #Infectious period (variant)
+RP_w <- 14 #recovery period (wild type)
+RP_m <- 14 #recovery period (variant)
+
+dynamics_params <- data.frame(beta_w = R0_w/IP_w, 
+                        beta_m = R0_m/IP_m,
+                        gamma_w = 1/RP_w, 
+                        gamma_m = 1/RP_m, 
+                        sigma_w = 1, #cross-protection provided by wildtype
+                        sigma_m = 1 #cross-protection provided by variant
                         ) 
 
 
