@@ -1,7 +1,7 @@
 library(deSolve)
 library(ggplot2)
 
-source('./scripts/Kissler_two_strain_model/Kissler_two_strain_model.R')
+source('./scripts/sample_R_code/Kissler_two_strain_model/Kissler_two_strain_model.R')
 start_date <- as.Date('2020-01-01')
 end_date <- as.Date('2030-01-01')
 plot_dates <- seq.Date(start_date, end_date, by = 'year')
@@ -11,7 +11,7 @@ MAXTIME <- 52 * 10
 tmp <- readxl::read_excel('./scripts/sample_R_code/Kissler_two_strain_model/parameters.xlsx')
 pp <- as.list(tmp$value)
 names(pp) <- tmp$par_name
-init <- readRDS('./scripts/Kissler_two_strain_model/init.RDS')
+init <- readRDS('./scripts/sample_R_code/Kissler_two_strain_model/init.RDS')
 
 ## Scenarios with moderate cross immunity from seasonal coronaviruses
 
