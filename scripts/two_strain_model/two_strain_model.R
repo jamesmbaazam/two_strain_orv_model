@@ -63,14 +63,17 @@ two_strain_model <- function(t, y, parms, browse = FALSE) {
 
 #' The simulation function ====
 
-simulate_model <- function(pop_inits, dynamics_parms, control_parms, max_time, 
-                           dt, events_table, return_dynamics = FALSE, browse = FALSE){
+simulate_model <- function(pop_inits, dynamics_parms, 
+                           control_parms, max_time, 
+                           dt, events_table, 
+                           return_dynamics = FALSE, browse = FALSE
+                           ){
   
   if(browse)browser()
 
   
   # Simulation time ####
-  model_time <- 1:max_time
+ # model_time <- 1:max_time
   
   events_table <- events_table %>% 
     mutate(time = rep(control_parms$variant_emergence_day, 
