@@ -1,5 +1,5 @@
 # Run the model for this number of days
-max_time <- 365
+max_time <- 365*2
 
 # Evaluate the model at these time points
 eval_times <- seq(0, max_time, 1) # Simulate a 2-year epidemic
@@ -9,8 +9,8 @@ eval_times <- seq(0, max_time, 1) # Simulate a 2-year epidemic
 #variant_emergence_day_vec <- seq(60, max_time, 1) 
 
 #Population parameters
-target_pop <- 1E6 #target population size
-Iw_index <- 10 #Initial/Index wild type cases
+target_pop <- 50E6 #target population size
+Iw_index <- 50 #Initial/Index wild type cases
 
 
 # Population initial conditions
@@ -37,8 +37,8 @@ IP_m <- 7 #Infectious period (variant)
 RP_w <- 14 #recovery period (wild type)
 RP_m <- 14 #recovery period (variant)
 
-dynamics_params <- data.frame(beta_w = R0_w/IP_w, 
-                        beta_m = R0_m/IP_m,
+dynamics_params <- data.frame(beta_w = 0.143, 
+                        beta_m = 0.193,
                         gamma_w = 1/RP_w, 
                         gamma_m = 1/RP_m, 
                         sigma_w = 1, #cross-protection provided by wildtype
