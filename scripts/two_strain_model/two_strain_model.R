@@ -33,11 +33,11 @@ two_strain_model <- function(t, y, parms, browse = FALSE) {
     
     # NPIs control #### 
     
-    npi_intensity <- ifelse(t < npi_start | t > npi_start + npi_duration, 0, npi_intensity)
+    npi_intensity <- ifelse(t < npi_start | t > npi_start + npi_duration | npi_intensity == 0, 0, npi_intensity)
     
 
     # Vaccination coverage to a rate ####
-    coverage_correction <- 0.9909 #Use this to prevent the epsilon coversion from going to infinity when coverage = 1
+    coverage_correction <- 0.9909 #Use this to prevent the epsilon conversion from going to infinity when coverage = 1
     
     epsilon <- ifelse(t < vax_start | t > vax_start + campaign_duration | vax_coverage == 0, 0, (-log(1 - vax_coverage*coverage_correction) / campaign_duration))
     
