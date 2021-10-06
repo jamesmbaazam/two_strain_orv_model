@@ -13,7 +13,7 @@ source('./scripts/two_strain_model/sim_config_global_params.R')
 # Event times ====
 # NPI ####
 # Best case scenario ####
-npi_start <- 1
+npi_start <- 1:max_time
 npi_duration <- max_time - npi_start
 npi_intensity <- seq(0, 1, 0.2) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
 
