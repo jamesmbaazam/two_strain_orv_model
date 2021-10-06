@@ -13,15 +13,15 @@ source('./scripts/two_strain_model/sim_config_global_params.R')
 # Event times ====
 # NPI ####
 # Best case scenario ####
-npi_implementation_day <- 1
-npi_duration <- max_time
-npi_intensity <- seq(0, 1, 0.1)
+npi_start <- 1
+npi_duration <- max_time - npi_start
+npi_intensity <- seq(0, 1, 0.2) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
 
 # Vaccination ====
 # Best case scenario ####
-campaign_start <- 1
-campaign_duration <- max_time
-vax_cov <- seq(0, 1, 0.1)
+vax_start <- 1
+campaign_duration <- max_time - vax_start
+vax_cov <- seq(0, 1, 0.25)
 
 # Variant emergence ====
 variant_emergence_times <- seq(1, max_time, 1)
@@ -30,7 +30,7 @@ variant_emergence_times <- seq(1, max_time, 1)
 
 # Complete set of scenarios ====
 # All combinations of vaccination coverage and NPI intensity  
-control_scenarios <- expand.grid(phi = npi_intensity, vax_coverage = vax_cov) 
+control_scenarios <- expand.grid(npi_intensity = npi_intensity, vax_coverage = vax_cov) 
 
 control_scenarios_rep <- control_scenarios %>% 
     slice(rep(1:n(), times = length(variant_emergence_times))) # repeat the control_scenarios df many times
@@ -41,9 +41,9 @@ variant_emergence_times_rep <- data.frame(variant_emergence_day = rep(variant_em
 
 # Full simulation table ====
 simulation_table <- cbind(control_scenarios_rep, variant_emergence_times_rep) %>% 
-    mutate(campaign_start = campaign_start, 
+    mutate(vax_start = vax_start, 
            campaign_duration = campaign_duration,
-           npi_implementation_day = npi_implementation_day,
+           npi_start = npi_start,
            npi_duration = npi_duration
            )
 
@@ -61,9 +61,9 @@ event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
 
 
 # Uncontrolled epidemic ====
-no_control_parms_df <- data.frame(phi = 0, vax_coverage = 0, variant_emergence_day = 1, 
-                            campaign_start = 1, campaign_duration = 0, 
-                            npi_implementation_day = 1, npi_duration = 0
+no_control_parms_df <- data.frame(npi_intensity = 0, vax_coverage = 0, variant_emergence_day = 1, 
+                            vax_start = 1, campaign_duration = 0, 
+                            npi_start = 1, npi_duration = 0
                             )
 
 no_control_epidemic <- simulate_model(pop_inits = pop_inits, 
@@ -110,7 +110,7 @@ orv_full_simulation <- simulation_table %>%
 # Select the columns for the plot
 orv_full_simulation_plot <- ggplot(data = orv_full_simulation) + 
     geom_tile(aes(x = vax_coverage, 
-                  y = phi, 
+                  y = npi_intensity, 
                   fill = total_cases
     ), 
     stat = 'identity'
