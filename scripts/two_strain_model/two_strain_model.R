@@ -33,27 +33,27 @@ two_strain_model <- function(t, y, parms, browse = FALSE) {
     
     # NPIs control #### 
     
-    phi <- ifelse(t < npi_implementation_day | t > npi_implementation_day + npi_duration, 0, phi)
+    npi_intensity <- ifelse(t < npi_start | t > npi_start + npi_duration, 0, npi_intensity)
     
 
     # Vaccination coverage to a rate ####
     coverage_correction <- 0.9909 #Use this to prevent the epsilon coversion from going to infinity when coverage = 1
     
-    epsilon <- ifelse(t < campaign_start | t > campaign_start + campaign_duration | vax_coverage == 0, 0, (-log(1 - vax_coverage*coverage_correction) / campaign_duration))
+    epsilon <- ifelse(t < vax_start | t > vax_start + campaign_duration | vax_coverage == 0, 0, (-log(1 - vax_coverage*coverage_correction) / campaign_duration))
     
     
     # Model equations ####
     
-    dSdt <- -(1 - phi) * FOI_Iw * S - (1 - phi) * FOI_Im * S - epsilon * S
-    dIwdt <- (1 - phi) * FOI_Iw * S - gamma_w * Iw
-    dImdt <- (1 - phi) * FOI_Im * S - gamma_m * Im
-    dIwmdt <- (1 - phi) * (1 - sigma_w) * FOI_Im * RwSm - gamma_m * Iwm
-    dImwdt <- (1 - phi) * (1 - sigma_m) * FOI_Iw * RmSw - gamma_w * Imw
-    dRwSmdt <- gamma_w * Iw - epsilon * RwSm - (1 - phi) * (1 - sigma_w) * FOI_Im * RwSm
-    dRmSwdt <- gamma_m * Im - epsilon * RmSw - (1 - phi) * (1 - sigma_m) * FOI_Iw * RmSw
+    dSdt <- -(1 - npi_intensity) * FOI_Iw * S - (1 - npi_intensity) * FOI_Im * S - epsilon * S
+    dIwdt <- (1 - npi_intensity) * FOI_Iw * S - gamma_w * Iw
+    dImdt <- (1 - npi_intensity) * FOI_Im * S - gamma_m * Im
+    dIwmdt <- (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm - gamma_m * Iwm
+    dImwdt <- (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw - gamma_w * Imw
+    dRwSmdt <- gamma_w * Iw - epsilon * RwSm - (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm
+    dRmSwdt <- gamma_m * Im - epsilon * RmSw - (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw
     dRdt <- gamma_m * Iwm + gamma_w * Imw
     dVdt <- epsilon * (S + RwSm + RmSw)
-    dKdt <- (1 - phi) * FOI_Iw * S + (1 - phi) * FOI_Im * S + (1 - phi) * (1 - sigma_w) * FOI_Im * RwSm + (1 - phi) * (1 - sigma_m) * FOI_Iw * RmSw #Cumulative incidence
+    dKdt <- (1 - npi_intensity) * FOI_Iw * S + (1 - npi_intensity) * FOI_Im * S + (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm + (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw #Cumulative incidence
 
     mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, dRwSmdt, dRmSwdt, dRdt, dVdt, dKdt))
     return(mod_result)
