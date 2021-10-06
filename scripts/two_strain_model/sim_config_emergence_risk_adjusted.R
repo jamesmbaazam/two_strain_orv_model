@@ -55,7 +55,7 @@ simulation_table <- cbind(control_scenarios_rep, variant_emergence_times_rep) %>
 #' (check ?deSolve::event for more on the structure of the event_df below)
 
 event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
-                       value = c(-0.01, 0.01), #index number of variant cases to introduce
+                       value = c(-1/target_pop, 1/target_pop), #index number of variant cases to introduce
                        method = c('add', 'replace')
                        ) #operation on state variables
 
