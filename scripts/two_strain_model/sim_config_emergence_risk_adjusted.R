@@ -8,7 +8,52 @@ source('./scripts/two_strain_model/two_strain_model.R')
 source('./scripts/two_strain_model/sim_config_global_params.R')
 
 
-# Simulation set up ---- 
+# Uncontrolled epidemic simulation ----
+# Events ====
+#' Event data frame for introducing mutant strain into model dynamics 
+#' (check ?deSolve::event for more on the structure of the event_df below)
+
+event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
+                       value = c(-50/target_pop, 50/target_pop), #introduce 10 variant cases
+                       method = c('add', 'replace')
+                       ) #operation on state variables
+
+
+# Uncontrolled epidemic ====
+no_control_parms_df <- data.frame(npi_intensity = 0, vax_coverage = 0, 
+                                  variant_emergence_day = 1, vax_start = 1, 
+                                  campaign_duration = 0, npi_start = 1, 
+                                  npi_duration = 0
+                                  )
+
+no_control_epidemic <- simulate_model(pop_inits = pop_inits, 
+                                      dynamics_parms = dynamics_params,
+                                      control_parms = no_control_parms_df,
+                                      max_time = max_time, 
+                                      dt = eval_times,
+                                      events_table = event_df,
+                                      return_dynamics = TRUE,
+                                      browse = FALSE
+                                      )
+
+
+no_control_epidemic_long <- no_control_epidemic %>%
+    mutate(S = S*target_pop,
+           Iw_all = (Iw + Imw)*target_pop,
+           Im_all = (Im + Iwm)*target_pop,
+          # Iwm = Iwm*target_pop,
+           #Imw = Imw*target_pop,
+           R_all = (R + RwSm + RmSw)*target_pop
+           ) %>% 
+    select(time, S, Iw_all, Im_all, R_all) %>% 
+    pivot_longer(cols = -time, names_to = 'state', values_to = 'value')
+
+
+ggplot(data = no_control_epidemic_long, aes(x = time, y = value, color = state)) +
+    geom_line(size = 1)
+
+
+# Controlled epidemic simulations set up ---- 
 
 # Event times ====
 # NPI ####
@@ -19,7 +64,7 @@ npi_intensity <- seq(0, 1, 0.2) #Five levels of npi intensity (could correspond 
 
 # Vaccination ====
 # Best case scenario ####
-vax_start <- 1
+vax_start <- 1:max_time
 campaign_duration <- max_time - vax_start
 vax_cov <- seq(0, 1, 0.25)
 
@@ -37,58 +82,18 @@ control_scenarios_rep <- control_scenarios %>%
 
 
 # Repeat the variant emergence times for binding
-variant_emergence_times_rep <- data.frame(variant_emergence_day = rep(variant_emergence_times, each = nrow(control_scenarios))) 
+variant_emergence_times <- data.frame(variant_emergence_day = rep(variant_emergence_times, each = length(vax_start))) 
 
 # Full simulation table ====
-simulation_table <- cbind(control_scenarios_rep, variant_emergence_times_rep) %>% 
+simulation_table <- cbind(control_scenarios_rep, variant_emergence_times) %>% 
     mutate(vax_start = vax_start, 
            campaign_duration = campaign_duration,
            npi_start = npi_start,
            npi_duration = npi_duration
-           )
+    )
 
 
-
-# Simulations ----
-# Events ====
-#' Event data frame for introducing mutant strain into model dynamics 
-#' (check ?deSolve::event for more on the structure of the event_df below)
-
-event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
-                       value = c(-1/target_pop, 1/target_pop), #index number of variant cases to introduce
-                       method = c('add', 'replace')
-                       ) #operation on state variables
-
-
-# Uncontrolled epidemic ====
-no_control_parms_df <- data.frame(npi_intensity = 0, vax_coverage = 0, variant_emergence_day = 1, 
-                            vax_start = 1, campaign_duration = 0, 
-                            npi_start = 1, npi_duration = 0
-                            )
-
-no_control_epidemic <- simulate_model(pop_inits = pop_inits, 
-                                      dynamics_parms = dynamics_params,
-                                      control_parms = no_control_parms_df,
-                                      max_time = max_time, 
-                                      dt = eval_times,
-                                      events_table = event_df,
-                                      return_dynamics = TRUE,
-                                      browse = FALSE
-                                      )
-
-
-no_control_epidemic_long <- no_control_epidemic %>%
-    select(time, Iw, Im, Iwm, Imw) %>% 
-    pivot_longer(cols = -time, names_to = 'state', values_to = 'value')
-
-
-ggplot(data = no_control_epidemic_long, aes(x = time, y = value, color = state)) +
-    geom_line(size = 1)
-
-
-
-
-# Controlled epidemic ====
+# Run simulations ====
 orv_full_simulation <- simulation_table %>% 
     filter(variant_emergence_day %in% seq(1, 150, 7)) %>% 
     rowwise() %>% 
