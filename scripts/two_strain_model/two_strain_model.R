@@ -96,10 +96,10 @@ simulate_model <- function(pop_inits, dynamics_parms,
   
   #' Final results time ####
   
-  if(!return_dynamics){
-    results_df <- sim_parms %>% mutate(total_cases = total_cases, peak_cases = peak_magnitude)
-    return(results_df)
-  }else{
+  if(return_dynamics){
     return(sim_results)
+  }else{
+    results_df <- control_parms %>% mutate(total_cases = total_cases, peak_cases = peak_magnitude)
+    return(results_df)
     }
 }
