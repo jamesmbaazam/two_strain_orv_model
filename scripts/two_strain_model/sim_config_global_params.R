@@ -46,6 +46,7 @@ dynamics_params <- data.frame(beta_w = 0.143,
                         ) 
 
 
+
 # ===============================
 # Parameters for control dynamics
 # ===============================
@@ -53,8 +54,12 @@ coverage_correction <- 0.999099
 
 
 
-#' Event data frame for introducing mutant strain into model dynamics 
+#' Event data frame for introducing the variant into the model dynamics 
 #' (check ?deSolve::event for more on the structure of the event_df below)
+#' 
+
+# Variant emergence times ===
+variant_emergence_times <- seq(1, max_time, 1)
 
 event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
                        value = c(-50/target_pop, 50/target_pop), #introduce 10 variant cases
