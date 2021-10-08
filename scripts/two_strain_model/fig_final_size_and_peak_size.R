@@ -31,7 +31,7 @@ no_control_epidemic_final_size_plot <- ggplot(data = no_control_epidemic_rescale
     ) +
     theme_minimal(base_size = 12)
 
-plot(no_control_epidemic_final_size_plot)
+#plot(no_control_epidemic_final_size_plot)
 
 
 #Plot the peak cases
@@ -47,7 +47,7 @@ no_control_epidemic_peak_cases_plot <- ggplot(data = no_control_epidemic_rescale
     ) +
     theme_minimal(base_size = 12)
 
-plot(no_control_epidemic_peak_cases_plot)
+#plot(no_control_epidemic_peak_cases_plot)
 
 #Plot the two size by size
 plot(no_control_epidemic_final_size_plot | no_control_epidemic_peak_cases_plot)
