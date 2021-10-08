@@ -92,9 +92,10 @@ total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
               ) + 
     scale_color_viridis_d() + 
     scale_x_continuous(labels = scales::percent_format()) +
+    scale_y_continuous(labels = comma) +
     expand_limits(x = min(vax_rate_vec)) +
     labs(title = 'Total cases per variant emergence day', 
-         subtitle = 'Campaign starts on day 1 with 100% coverage objective',
+         subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
          x = 'Vaccination rate',
          y = 'Total cases',
          color = 'Variant emerges',
@@ -128,9 +129,10 @@ peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     ) + 
     scale_color_viridis_d() + 
     scale_x_continuous(labels = scales::percent_format()) +
+    scale_y_continuous(labels = comma) +
     expand_limits(x = min(vax_rate_vec)) +
     labs(title = 'Peak daily cases per variant emergence day', 
-         subtitle = 'Campaign starts on day 1 with 100% coverage objective',
+         subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
          x = 'Vaccination rate',
          y = 'Peak daily cases',
          color = 'Variant emerges',
