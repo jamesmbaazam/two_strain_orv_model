@@ -35,7 +35,7 @@ npi_intensity <- 0 #Five levels of npi intensity (could correspond to the five s
 # Simple case: vaccination starts on day 1 and can achieve 100% coverage but at different rates
 vax_start <- 1
 vax_cov <- 1
-vax_rate_vec <- seq(0.1, 1, 0.1)
+vax_rate_vec <- seq(0.1, 1, 0.05)
 
 #Find the time it will take to achieve the assumed coverate with the given rates
 campaign_controls_df <- vax_rate_vec %>% 
