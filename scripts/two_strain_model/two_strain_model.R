@@ -99,7 +99,15 @@ simulate_model <- function(pop_inits, dynamics_parms,
   if(return_dynamics){
     return(sim_results)
   }else{
-    results_df <- control_parms %>% mutate(total_cases = total_cases, peak_cases = peak_magnitude)
+    control_parms_df <- as_tibble(control_parms)
+    
+    results_df <- control_parms_df %>% mutate(total_cases = total_cases, peak_cases = peak_magnitude)
     return(results_df)
     }
+}
+
+calc_campaign_duration <- function(vax_coverage, vax_rate, coverage_correction){
+  duration <- round(-log(1 - vax_coverage*coverage_correction) / vax_rate)
+  res <- data.frame(vax_rate = vax_rate, vax_coverage = vax_coverage, campaign_duration = duration)
+  return(res)
 }
