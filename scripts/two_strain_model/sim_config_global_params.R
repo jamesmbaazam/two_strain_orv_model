@@ -30,8 +30,8 @@ pop_inits <- c(S = 1 - Iw_index/target_pop,
 # ===============================
 # Parameters for dynamics
 # ===============================
-R0_w <- 1.4 #R0 of the wild type
-R0_m <- 1.7 #R0 of the variant
+R0_w <- 2.0 #R0 of the wild type
+R0_m <- 3.0 #R0 of the variant
 IP_w <- 7 #Infectious period (wild type)
 IP_m <- 7 #Infectious period (variant)
 RP_w <- 14 #recovery period (wild type)
