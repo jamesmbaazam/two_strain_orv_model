@@ -15,7 +15,7 @@ controlled_epidemic <- readRDS('./model_output/simulation_controlled_epidemic.rd
 controlled_epidemic_rescaled <- controlled_epidemic %>%
     mutate(total_cases = total_cases*target_pop, 
            peak_cases = peak_cases*target_pop,
-           emergence_emerges = ifelse(variant_emergence_day < max_time, 
+           variant_emerges = ifelse(variant_emergence_day < max_time, 
                                       'yes',
                                       'no'
            )
@@ -29,8 +29,8 @@ total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     geom_line(aes(x = vax_rate, 
                   y = total_cases,
                   group = variant_emergence_day,
-                  color = emergence_emerges,
-                  linetype = emergence_emerges
+                  color = variant_emerges,
+                  linetype = variant_emerges
     ), size = 1
     ) +
     geom_text(data = controlled_epidemic_rescaled %>% 
@@ -72,8 +72,8 @@ peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     geom_line(aes(x = vax_rate, 
                   y = peak_cases,
                   group = variant_emergence_day,
-                  color = emergence_emerges,
-                  linetype = emergence_emerges
+                  color = variant_emerges,
+                  linetype = variant_emerges
     ), size = 1
     ) +
     geom_text(data = controlled_epidemic_rescaled %>% 
@@ -110,40 +110,5 @@ ggsave(plot = peak_daily_cases_line_plot,
        units = 'cm'
 )
 
-#Contour plot
-# ggplot(data = controlled_epidemic_rescaled) + 
-#     geom_contour(aes(x = vax_rate, 
-#                   y = variant_emergence_day,
-#                   z = total_cases
-#                   ),
-#                  size = 1
-#               ) +
-#     scale_x_continuous(labels = scales::percent_format(),
-#                        expand = c(0,0)
-#     ) +
-#     theme_minimal(base_size = 12)
 
 
-# Select the columns for the plot
-# orv_full_simulation_plot <- ggplot(data = controlled_epidemic_rescaled) + 
-#     geom_tile(aes(x = vax_rate, 
-#                   y = campaign_duration, 
-#                   fill = total_cases
-#     ), 
-#     stat = 'identity'
-#     ) +
-#     scale_x_continuous(labels = scales::percent_format(), 
-#                        expand = c(0,0)
-#     ) +
-#     scale_y_continuous(labels = scales::percent_format(), 
-#                        expand = c(0,0)
-#     ) +
-#     scale_fill_viridis_b(direction = -1) +
-#     labs(x = 'Vaccination coverage', 
-#          y = 'NPI intensity', 
-#          fill = 'Cumulative incidence'
-#     ) +
-#     #facet_wrap(variant_emergence_day) + 
-#     theme_minimal()
-# 
-# plot(orv_full_simulation_plot)
