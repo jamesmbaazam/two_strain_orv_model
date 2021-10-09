@@ -5,6 +5,7 @@ library(tidyverse)
 
 #helper scripts
 source('./scripts/two_strain_model/sim_config_global_params.R')
+source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 #Read the model output
 controlled_epidemic <- readRDS('./model_output/simulation_controlled_epidemic.rds')
