@@ -59,6 +59,12 @@ total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
 
 print(total_cases_line_plot)
 
+ggsave(plot = total_cases_line_plot,
+       filename = './figures/total_cases_line_plot.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+)
 
 
 #Line plot of peak daily cases per vaccination rate
@@ -96,6 +102,13 @@ peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     theme_minimal(base_size = 12)
 
 print(peak_daily_cases_line_plot)
+
+ggsave(plot = peak_daily_cases_line_plot,
+       filename = './figures/peak_daily_cases_line_plot.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+)
 
 #Contour plot
 # ggplot(data = controlled_epidemic_rescaled) + 
