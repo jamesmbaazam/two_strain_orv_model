@@ -38,7 +38,8 @@ baseline_no_variant_rescaled <- baseline_no_variant %>%
     mutate(total_cases = total_cases*target_pop, 
            peak_cases = peak_cases*target_pop
            ) %>% 
-    select(-c(vax_start, vax_coverage, starts_with('npi_')))
+    select(-c(vax_start, starts_with('npi_')))
+   # select(-c(vax_start, vax_coverage, starts_with('npi_')))
 
 
 #Simulations with variant emergence
