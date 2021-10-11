@@ -35,13 +35,14 @@ npi_intensity <- 0 #Five levels of npi intensity (could correspond to the five s
 # Simple case: vaccination starts on day 1 and can achieve 100% coverage but at different rates
 vax_start <- 1
 vax_cov <- 1
-vax_rate_vec <- seq(0.1, 1, 0.1)
+daily_vaccinated_prop <- seq(0.01E-2, 1E-2, length.out = 20) #daily proportion of total population vaccinated
+#daily_vax_rate_vec <- daily_vaccinated_prop*target_pop
 
 #Find the time it will take to achieve the assumed coverate with the given rates
-campaign_controls_df <- vax_rate_vec %>% 
-    purrr::map_df(function(x) {
-        calc_campaign_duration(vax_rate = x, vax_coverage = vax_cov, coverage_correction = 0.9999)
-    })
+campaign_controls_df <- data.frame(vax_prop = daily_vaccinated_prop)# %>% 
+    # purrr::map_df(function(x) {
+    #     calc_campaign_duration(vax_rate = x, vax_coverage = vax_cov, coverage_correction = 0.9999)
+    # })
 
 # Full simulation table with variant emergence times appended ====
 simulation_table <- campaign_controls_df %>%
