@@ -15,18 +15,20 @@ controlled_epidemic <- readRDS('./model_output/simulation_controlled_epidemic.rd
 controlled_epidemic_rescaled <- controlled_epidemic %>%
     mutate(total_cases = total_cases*target_pop, 
            peak_cases = peak_cases*target_pop,
+           total_vaccinated = total_vaccinated*target_pop,
            variant_emerges = ifelse(variant_emergence_day < max_time, 
                                       'yes',
                                       'no'
            )
     ) %>% 
-    select(-c(vax_start, vax_coverage, starts_with('npi_')))
+    select(-c(vax_start, starts_with('npi_')))
+    # select(-c(vax_start, vax_coverage, starts_with('npi_')))
 
 
 
 #Line plot of total cases per vaccination rate
 total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
-    geom_line(aes(x = vax_rate, 
+    geom_line(aes(x = vax_prop, 
                   y = total_cases,
                   group = variant_emergence_day,
                   color = variant_emerges,
