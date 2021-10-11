@@ -94,6 +94,7 @@ simulate_model <- function(pop_inits, dynamics_parms,
                               )
   
   total_cases <- max(sim_results$K)
+  total_vaccinated <- max(sim_results$V)
   incidence <- sim_results$Iw + sim_results$Im + sim_results$Iwm + sim_results$Imw
   peak_magnitude <- max(incidence)
   
@@ -104,7 +105,10 @@ simulate_model <- function(pop_inits, dynamics_parms,
   }else{
     control_parms_df <- as_tibble(control_parms)
     
-    results_df <- control_parms_df %>% mutate(total_cases = total_cases, peak_cases = peak_magnitude)
+    results_df <- control_parms_df %>% mutate(total_cases = total_cases, 
+                                              peak_cases = peak_magnitude, 
+                                              total_vaccinated = total_vaccinated
+                                              )
     return(results_df)
     }
 }
