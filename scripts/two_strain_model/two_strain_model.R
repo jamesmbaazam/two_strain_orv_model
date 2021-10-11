@@ -37,10 +37,13 @@ two_strain_model <- function(t, y, parms, browse = FALSE) {
     
 
     # Vaccination coverage to a rate ####
-    coverage_correction <- 0.9909 #Use this to prevent the epsilon conversion from going to infinity when coverage = 1
+    #coverage_correction <- 0.9909 #Use this to prevent the epsilon conversion from going to infinity when coverage = 1
     
-    epsilon <- ifelse(t < vax_start | t > vax_start + campaign_duration | vax_coverage == 0, 0, (-log(1 - vax_coverage*coverage_correction) / campaign_duration))
-    
+    #epsilon <- ifelse(t < vax_start | t > vax_start + campaign_duration | vax_coverage == 0, 0, (-log(1 - vax_coverage*coverage_correction) / campaign_duration))
+    vax_target_group <- S + RwSm + RmSw
+    vax_rate <- vax_prop*vax_target_group
+      
+    epsilon <- ifelse((t >= vax_start) & (vax_target_group > 0), min(vax_rate, vax_target_group), 0)
     
     # Model equations ####
     
