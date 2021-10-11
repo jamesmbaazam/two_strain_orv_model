@@ -114,3 +114,25 @@ ggsave(plot = peak_daily_cases_line_plot,
 
 
 
+ggplot(data = controlled_epidemic_rescaled) + 
+    geom_line(aes(x = vax_prop, 
+                  y = total_vaccinated,
+                  group = variant_emergence_day,
+                  color = variant_emerges,
+                  linetype = variant_emerges
+    ), size = 1
+    ) +
+    geom_text(data = controlled_epidemic_rescaled %>% 
+                  filter(variant_emergence_day %in% c(1, max_time)), 
+              aes(x = vax_prop, 
+                  y = total_vaccinated, 
+                  group = variant_emergence_day, 
+                  label = variant_emergence_day
+              ),
+              size = 3,
+              color = 'red',
+              check_overlap = TRUE
+    ) + 
+    scale_color_viridis_d() + 
+    scale_x_continuous(labels = scales::percent_format()) +
+    scale_y_continuous(labels = comma) 
