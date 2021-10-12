@@ -10,10 +10,6 @@ source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 
-
-
-
-
 # Controlled epidemic
 
 #Baseline; no variant emerges and only wild type prevails
@@ -38,8 +34,8 @@ baseline_no_variant_rescaled <- baseline_no_variant %>%
     mutate(total_cases = total_cases*target_pop, 
            peak_cases = peak_cases*target_pop
            ) %>% 
-    select(-c(vax_start, starts_with('npi_')))
-   # select(-c(vax_start, vax_coverage, starts_with('npi_')))
+    #select(-c(vax_start, starts_with('npi_')))
+    select(-c(vax_start, vax_coverage, starts_with('npi_')))
 
 
 #Simulations with variant emergence
@@ -61,3 +57,7 @@ orv_full_simulation <- simulation_table %>%
 
 #save the simulation
 saveRDS(object = orv_full_simulation, file = './model_output/simulation_controlled_epidemic.rds')
+
+
+
+
