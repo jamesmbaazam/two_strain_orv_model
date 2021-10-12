@@ -10,12 +10,13 @@ eval_times <- seq(0, max_time, 1) # Simulate a 2-year epidemic
 
 #Population parameters
 target_pop <- 50E6 #target population size
-Iw_index <- 50 #Initial/Index wild type cases
+Iw_index_cases <- 50 #Initial/Index wild type cases
+Im_index_cases <- 50 #Initial/Index variant cases
 
 
 # Population initial conditions
-pop_inits <- c(S = 1 - Iw_index/target_pop, 
-           Iw = Iw_index/target_pop, 
+pop_inits <- c(S = 1 - Iw_index_cases/target_pop, 
+           Iw = Iw_index_cases/target_pop, 
            Im = 0, 
            Iwm = 0,
            Imw = 0,
@@ -50,7 +51,7 @@ dynamics_params <- data.frame(beta_w = R0_w/RP_w,
 # ===============================
 # Parameters for control dynamics
 # ===============================
-coverage_correction <- 0.999099
+#coverage_correction <- 0.999099
 
 
 
@@ -62,7 +63,7 @@ coverage_correction <- 0.999099
 variant_emergence_times <- seq(1, max_time, 1)
 
 event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
-                       value = c(-50/target_pop, 50/target_pop), #introduce 10 variant cases
+                       value = c(-Im_index_cases/target_pop, Im_index_cases/target_pop), #introduce 10 variant cases
                        method = c('add', 'replace')
                        ) #operation on state variables
 
