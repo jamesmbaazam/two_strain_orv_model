@@ -27,13 +27,14 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 
 
 #Line plot of total cases per vaccination rate
-total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
+total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
+                                    filter(variant_emergence_day %in% seq(1, 365, length.out = 5))) + 
     geom_line(aes(x = vax_rate, 
                   y = total_cases,
                   group = variant_emergence_day,
                   color = variant_emerges,
                   linetype = variant_emerges
-    ), size = 1
+    ), size = 2
     ) +
     geom_text(data = controlled_epidemic_rescaled %>% 
                   filter(variant_emergence_day %in% c(1, max_time)), 
@@ -71,13 +72,15 @@ ggsave(plot = total_cases_line_plot,
 
 
 #Line plot of peak daily cases per vaccination rate
-peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
+peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
+                                         filter(variant_emergence_day %in% seq(1, 365, length.out = 5))
+                                     ) + 
     geom_line(aes(x = vax_rate, 
                   y = peak_cases,
                   group = variant_emergence_day,
                   color = variant_emerges,
                   linetype = variant_emerges
-    ), size = 1
+    ), size = 2
     ) +
     geom_text(data = controlled_epidemic_rescaled %>% 
                   filter(variant_emergence_day %in% c(1, max_time)), 
