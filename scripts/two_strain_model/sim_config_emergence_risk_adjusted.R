@@ -1,8 +1,5 @@
 #Packages ----
-library(deSolve)
-library(scales)
-library(patchwork)
-library(tidyverse)
+library(dplyr)
 
 # Helper scripts ----
 source('./scripts/two_strain_model/sim_config_global_params.R')
@@ -34,13 +31,15 @@ npi_intensity <- 0 #Five levels of npi intensity (could correspond to the five s
 
 # Simple case: vaccination starts on day 1 and can achieve 100% coverage but at different rates
 vax_start <- 1
-vax_cov <- 1
-daily_vaccination_rate <- seq(0.0001, 0.01, length.out = 20) #daily proportion of total population vaccinated
+vax_cov <- c(1) #various levels of coverage
+vax_speed_scenarios <- seq(1, 10, length.out = 5) #how many times faster than the daily vaccination rate
+daily_vax_rate <- (vax_cov/(max_time - vax_start))*vax_speed_scenarios #daily rate of achieving the same coverage by the end of the period
 #daily_vax_rate_vec <- daily_vaccinated_prop*target_pop
 
 #Find the time it will take to achieve the assumed coverate with the given rates
-campaign_controls_df <- data.frame(vax_rate = rep(daily_vaccination_rate, times = 2), 
-                                   vax_coverage = rep(c(1, 0.5), each = length(daily_vaccination_rate))
+campaign_controls_df <- data.frame(vax_rate = daily_vax_rate,
+                                   vax_speed = vax_speed_scenarios,
+                                   vax_coverage = vax_cov
                                    )
 
 # Full simulation table with variant emergence times appended ====
