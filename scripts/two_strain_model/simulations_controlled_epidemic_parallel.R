@@ -1,7 +1,7 @@
 
 #Packages ----
 library(doParallel)
-library(microbenchmark)
+#library(microbenchmark)
 library(deSolve)
 library(scales)
 library(patchwork)
@@ -74,4 +74,4 @@ stopCluster(cl)
 
 
 #save the simulation
-saveRDS(object = orv_par_sim_output, file = './model_output/simulation_controlled_epidemic.rds')
+saveRDS(object = orv_par_sim_output, file = './model_output/simulation_controlled_epidemic_parallel_run.rds')
