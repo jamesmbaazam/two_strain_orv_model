@@ -1,3 +1,11 @@
+#' Paper title: "Population impact of SARS-CoV-2 variants with 
+#' enhanced transmissibility and/or partial immune escape". 
+#' 
+#' Paper DOI: https://doi.org/10.1101/2021.08.26.21262579
+#' 
+#' Code source: https://osf.io/z9x2p/?view_only=6def9d71316645d0a54a30fa6e9ffe13
+
+
 # setup ########
 
 library(deSolve) # ODE numerical integration
