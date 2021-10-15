@@ -116,8 +116,22 @@ simulate_model <- function(pop_inits, dynamics_parms,
     }
 }
 
-# calc_campaign_duration <- function(vax_coverage, vax_rate, coverage_correction){
-#   duration <- round(-log(1 - vax_coverage*coverage_correction) / vax_rate)
-#   res <- data.frame(vax_rate = vax_rate, vax_coverage = vax_coverage, campaign_duration = duration)
-#   return(res)
-# }
+#' Calculate vaccination hazards from coverage and campaign duration 
+#'
+#' @param vax_coverage Vaccination coverage
+#' @param coverage_correction A value for preventing the result from going to zero (see details) 
+#' @param max_time #The total time of the simulation
+#' @param campaign_start #The commencement time of the campaign
+#'
+#' @return A data.frame of the vaccination coverage, vax rate, and campaign duration trio
+#' @export
+#'
+#' @examples calc_vax_rate(1, 0.9999, 365, 1)
+calc_vax_rate <- function(vax_coverage, coverage_correction = 0.9999, max_time, campaign_start){
+  
+  vax_rate <- -log(1 - vax_coverage*coverage_correction) / (max_time - campaign_start)
+  vax_controls_df <- data.frame(vax_rate = vax_rate, vax_coverage = vax_coverage, 
+                                campaign_duration = max_time - campaign_start
+                                )
+  return(vax_controls_df)
+}
