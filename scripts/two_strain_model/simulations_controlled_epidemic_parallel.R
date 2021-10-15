@@ -50,6 +50,7 @@ sims_per_job <- ceiling(n_sims/num_cores)
 
 num_of_jobs <- ceiling(n_sims/sims_per_job)
 
+start_time <- Sys.time()
 
 orv_par_sim_output <- foreach(i = 1:num_of_jobs, 
                   .combine = rbind,
@@ -72,6 +73,10 @@ orv_par_sim_output <- foreach(i = 1:num_of_jobs,
 ## Shut down the cluster 
 stopCluster(cl)
 
-
 #save the simulation
 saveRDS(object = orv_par_sim_output, file = './model_output/simulation_controlled_epidemic_parallel_run.rds')
+
+end_time <- Sys.time()
+
+run_time <- end_time - start_time
+print(run_time)
