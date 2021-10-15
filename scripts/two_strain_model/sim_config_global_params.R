@@ -51,7 +51,7 @@ dynamics_params <- data.frame(beta_w = R0_w/RP_w,
 # ===============================
 # Parameters for control dynamics
 # ===============================
-#coverage_correction <- 0.999099
+coverage_correction <- 0.999099
 
 
 
