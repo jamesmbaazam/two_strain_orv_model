@@ -1,5 +1,6 @@
 #Packages ----
 library(dplyr)
+library(purrr)
 
 # Helper scripts ----
 source('./scripts/two_strain_model/sim_config_global_params.R')
@@ -31,22 +32,42 @@ npi_intensity <- 0 #Five levels of npi intensity (could correspond to the five s
 
 # Simple case: vaccination starts on day 1 and can achieve 100% coverage but at different rates
 vax_start <- 1
-vax_cov <- c(0.5, 1) #various levels of coverage
-vax_speed_scenarios <- seq(1, 10, length.out = 5) #how many times faster than the daily vaccination rate
-daily_vax_rate <- as.vector(sapply(as.list(vax_cov/(max_time - vax_start)), function(x) {x*vax_speed_scenarios})) #daily rate of achieving the same coverage by the end of the period
-#daily_vax_rate_vec <- daily_vaccinated_prop*target_pop
+vax_cov <- seq(0.1, 1, by = 0.1) #various levels of coverage
+vax_speed_scenarios <- seq(1, 10, by = 1) #how many times faster than the daily vaccination rate
+#daily_vax_rate <- as.vector(sapply(as.list(vax_cov/(max_time - vax_start)), function(x) {x*vax_speed_scenarios})) #daily rate of achieving the same coverage by the end of the period
 
-#Find the time it will take to achieve the assumed coverate with the given rates
-campaign_controls_df <- data.frame(vax_rate = daily_vax_rate,
-                                   vax_speed = rep(vax_speed_scenarios, 2),
-                                   vax_coverage = rep(vax_cov, each = 5)
-                                   )
+#Find the time it will take to achieve the assumed coverage with the given rates
+campaign_controls_df <- pmap_dfr(list(vax_cov, max_time, vax_start), 
+                                        function(vax_cov, max_time, vax_start){
+                                            calc_vax_rate(vax_coverage = vax_cov, 
+                                                          coverage_correction = coverage_correction, 
+                                                          max_time = max_time, 
+                                                          campaign_start = vax_start
+                                            )
+                                        }
+                                        ) 
+
+#Convert the calculate vaccination rates (hazards) to various speeds
+campaign_controls_scenarios_df <- vax_speed_scenarios %>% 
+    map_dfr(function(vax_speed) {
+        campaign_controls_df %>% 
+            group_by(vax_coverage) %>% 
+            mutate(vax_rate = vax_rate*vax_speed, 
+               vax_speed = vax_speed,
+               vax_coverage = vax_coverage, 
+               campaign_duration = campaign_duration/vax_speed
+               ) 
+        }
+            ) %>% 
+    ungroup() %>% 
+    arrange(vax_coverage)
+    
 
 # Full simulation table with variant emergence times appended ====
-simulation_table <- campaign_controls_df %>%
+simulation_table <- campaign_controls_scenarios_df %>%
     slice(rep(1:n(), times = length(variant_emergence_times))) %>% 
     mutate(variant_emergence_day = rep(variant_emergence_times, 
-                                       each = nrow(campaign_controls_df)
+                                       each = nrow(campaign_controls_scenarios_df)
                                        ),
            vax_start = 1,
            npi_start = npi_start,
@@ -56,11 +77,6 @@ simulation_table <- campaign_controls_df %>%
 
 
 #Baseline; no variant emerges and only wild type prevails
-baseline_params <- campaign_controls_df %>%
-    mutate(variant_emergence_day = max_time, 
-           vax_start = 1,
-           npi_start = npi_start,
-           npi_intensity = npi_intensity,
-           npi_duration = npi_duration
-           )
+baseline_params <- simulation_table %>% 
+    filter(variant_emergence_day == max_time)
     
