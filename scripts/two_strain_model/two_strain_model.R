@@ -49,8 +49,8 @@ two_strain_model <- function(t, y, parms, browse = FALSE) {
     dImwdt <- (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw - gamma_w * Imw
     dRwSmdt <- gamma_w * Iw - epsilon * RwSm - (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm
     dRmSwdt <- gamma_m * Im - epsilon * RmSw - (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw
-    dRdt <- gamma_m * Iwm + gamma_w * Imw
-    dVdt <- epsilon * (S + RwSm + RmSw)
+    dRdt <- gamma_m * Iwm + gamma_w * Imw - epsilon * R
+    dVdt <- epsilon * (S + RwSm + RmSw + R)
     dKdt <- (1 - npi_intensity) * FOI_Iw * S + (1 - npi_intensity) * FOI_Im * S + (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm + (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw #Cumulative incidence
 
     mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, dRwSmdt, dRmSwdt, dRdt, dVdt, dKdt))
