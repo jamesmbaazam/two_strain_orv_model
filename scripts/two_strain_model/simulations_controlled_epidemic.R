@@ -3,6 +3,7 @@ library(deSolve)
 library(scales)
 library(patchwork)
 library(tidyverse)
+library(beepr)
 
 # Helper scripts ----
 source('./scripts/two_strain_model/two_strain_model.R')
@@ -40,6 +41,7 @@ baseline_no_variant_rescaled <- baseline_no_variant %>%
 
 #Simulations with variant emergence
 orv_full_simulation <- simulation_table %>% 
+    # filter(vax_speed < 2) %>% 
     rowwise() %>% 
     do({with(., 
              simulate_model(pop_inits = pop_inits, 
@@ -58,6 +60,6 @@ orv_full_simulation <- simulation_table %>%
 #save the simulation
 saveRDS(object = orv_full_simulation, file = './model_output/simulation_controlled_epidemic.rds')
 
-
+beep()
 
 
