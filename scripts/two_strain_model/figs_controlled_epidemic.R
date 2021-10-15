@@ -8,7 +8,7 @@ source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 #Read the model output
-controlled_epidemic <- readRDS('./model_output/simulation_controlled_epidemic.rds')
+controlled_epidemic <- readRDS('./model_output/simulation_controlled_epidemic_parallel_run.rds')
 
 
 #Rescale the population proportions to the actual sizes
@@ -27,18 +27,17 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 
 
 #Line plot of total cases per vaccination rate
-total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
-                                    filter(variant_emergence_day %in% seq(1, 365, length.out = 5))) + 
-    geom_line(aes(x = vax_rate, 
+total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
+    geom_line(aes(x = vax_speed, 
                   y = total_cases,
                   group = variant_emergence_day,
                   color = variant_emerges,
                   linetype = variant_emerges
-    ), size = 2
+    ), size = 1
     ) +
     geom_text(data = controlled_epidemic_rescaled %>% 
                   filter(variant_emergence_day %in% c(1, max_time)), 
-              aes(x = vax_rate, 
+              aes(x = vax_speed, 
                   y = total_cases, 
                   group = variant_emergence_day, 
                   label = variant_emergence_day
@@ -48,13 +47,13 @@ total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>%
               check_overlap = TRUE
     ) + 
     scale_color_viridis_d() + 
-    scale_x_continuous(labels = scales::percent_format()) +
+    # scale_x_continuous(labels = scales::percent_format()) +
     scale_y_continuous(labels = comma) +
     facet_wrap('vax_coverage') +
    # expand_limits(x = min(vax_rate_vec)) +
     labs(title = 'Total cases per variant emergence day', 
         # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
-         x = 'Daily vaccinated proportion',
+         x = 'Vaccination speed',
          y = 'Total cases',
          color = 'Variant emerges',
          linetype = 'Variant emerges'
@@ -72,19 +71,17 @@ ggsave(plot = total_cases_line_plot,
 
 
 #Line plot of peak daily cases per vaccination rate
-peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
-                                         filter(variant_emergence_day %in% seq(1, 365, length.out = 5))
-                                     ) + 
-    geom_line(aes(x = vax_rate, 
+peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
+    geom_line(aes(x = vax_speed, 
                   y = peak_cases,
                   group = variant_emergence_day,
                   color = variant_emerges,
                   linetype = variant_emerges
-    ), size = 2
+    ), size = 1
     ) +
     geom_text(data = controlled_epidemic_rescaled %>% 
                   filter(variant_emergence_day %in% c(1, max_time)), 
-              aes(x = vax_rate, 
+              aes(x = vax_speed, 
                   y = peak_cases, 
                   group = variant_emergence_day, 
                   label = variant_emergence_day
@@ -94,13 +91,13 @@ peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>%
               check_overlap = TRUE
     ) + 
     scale_color_viridis_d() + 
-    scale_x_continuous(labels = scales::percent_format()) +
+    # scale_x_continuous(labels = scales::percent_format()) +
     scale_y_continuous(labels = comma) +
     facet_wrap('vax_coverage') +
    # expand_limits(x = min(vax_rate_vec)) +
     labs(title = 'Peak daily cases per variant emergence day', 
         # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
-         x = 'Daily vaccinated proportion',
+         x = 'Vaccination speed',
          y = 'Peak daily cases',
          color = 'Variant emerges',
          linetype = 'Variant emerges'
@@ -120,7 +117,7 @@ ggsave(plot = peak_daily_cases_line_plot,
 
 
 total_vaccinated_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
-    geom_line(aes(x = vax_rate, 
+    geom_line(aes(x = vax_speed, 
                   y = total_vaccinated,
                   group = variant_emergence_day,
                   color = variant_emerges,
@@ -129,7 +126,7 @@ total_vaccinated_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     ) +
     geom_text(data = controlled_epidemic_rescaled %>% 
                   filter(variant_emergence_day %in% c(1, max_time)), 
-              aes(x = vax_rate, 
+              aes(x = vax_speed, 
                   y = total_vaccinated, 
                   group = variant_emergence_day, 
                   label = variant_emergence_day
@@ -139,10 +136,18 @@ total_vaccinated_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
               check_overlap = TRUE
     ) + 
     scale_color_viridis_d() + 
-    scale_x_continuous(labels = scales::percent_format()) +
-    scale_y_continuous(labels = comma) + 
-    facet_wrap('vax_coverage') 
-
+    # scale_x_continuous(labels = scales::percent_format()) +
+    scale_y_continuous(labels = comma) +
+    facet_wrap('vax_coverage') +
+    labs(title = 'Total vaccinated individuals', 
+         # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
+         x = 'Vaccination speed',
+         y = 'Total vaccinations',
+         color = 'Variant emerges',
+         linetype = 'Variant emerges'
+    ) +
+    #    coord_flip() +
+    theme_minimal(base_size = 12)
 
 print(total_vaccinated_line_plot)
 
