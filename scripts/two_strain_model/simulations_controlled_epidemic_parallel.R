@@ -6,6 +6,7 @@ library(deSolve)
 library(scales)
 library(patchwork)
 library(tidyverse)
+library(beepr)
 
 # Helper scripts ----
 source('./scripts/two_strain_model/two_strain_model.R')
@@ -80,3 +81,5 @@ end_time <- Sys.time()
 
 run_time <- end_time - start_time
 print(run_time)
+
+beepr::beep(3)
