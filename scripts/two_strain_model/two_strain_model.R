@@ -70,10 +70,10 @@ two_strain_model <- function(t, y, parms, browse = FALSE) {
 #' @param return_dynamics 
 #' @param browse 
 
-simulate_model <- function(pop_inits, dynamics_parms, 
+simulate_raw_dynamics <- function(pop_inits, dynamics_parms, 
                            control_parms, max_time, 
                            dt, events_table, 
-                           return_dynamics = FALSE, browse = FALSE
+                           browse = FALSE
                            ){
   
   if(browse)browser()
@@ -97,29 +97,42 @@ simulate_model <- function(pop_inits, dynamics_parms,
                                     )
                               )
   
-  incidence <- sim_results$Iw + sim_results$Im + sim_results$Iwm + sim_results$Imw
-  peak_magnitude <- max(incidence)
-  total_cases <- max(sim_results$K)
-  total_vaccinated <- max(sim_results$V)
+  #Add the controls as id cols to the dynamics 
+  sim_results_with_controls <- sim_results %>% 
+    mutate(variant_emergence_day = control_parms$variant_emergence_day, 
+           vax_coverage = control_parms$vax_cov, 
+           vax_rate = control_parms$vax_rate, 
+           vax_speed = control_parms$vax_speed
+           )
   
-  
-  if(return_dynamics){
-    sim_results_with_controls <- sim_results %>% mutate(variant_emergence_day = control_parms$variant_emergence_day,
-                                     vax_coverage = control_parms$vax_cov,
-                                     vax_rate = control_parms$vax_rate,
-                                     vax_speed = control_parms$vax_speed
-                                     )
     return(sim_results_with_controls)
-  }else{
-    control_parms_df <- as_tibble(control_parms)
-    
-    results_df <- control_parms_df %>% mutate(total_cases = total_cases, 
-                                              peak_cases = peak_magnitude, 
-                                              total_vaccinated = total_vaccinated
-                                              )
-    return(results_df)
-    }
 }
+
+
+#' Extract certain summaries from the two strain SIR model output
+#'
+#' @param dynamics_df 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+extract_model_summaries <- function(dynamics_df, control_parms_df) {
+  incidence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw
+  peak_magnitude <- max(incidence)
+  total_cases <- max(dynamics_df$K)
+  total_vaccinated <- max(dynamics_df$V)
+  
+  
+#The final summaries
+  results_df <- control_parms_df %>% mutate(
+    total_cases = total_cases,
+    peak_cases = peak_magnitude,
+    total_vaccinated = total_vaccinated
+  )
+  return(results_df)
+}
+
 
 #' Calculate vaccination hazards from coverage and campaign duration 
 #'
