@@ -1,7 +1,6 @@
 
 #Packages ----
 library(doParallel)
-#library(microbenchmark)
 library(deSolve)
 library(scales)
 library(patchwork)
@@ -12,6 +11,8 @@ library(beepr)
 source('./scripts/two_strain_model/two_strain_model.R')
 source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
+source('./scripts/two_strain_model/simulation_functions.R')
+
 
 #function to run simulations
 run_sim_all <- function(sim_table){
