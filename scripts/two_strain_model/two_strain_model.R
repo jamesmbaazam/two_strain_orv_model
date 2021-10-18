@@ -104,7 +104,12 @@ simulate_model <- function(pop_inits, dynamics_parms,
   
   
   if(return_dynamics){
-    return(sim_results)
+    sim_results_with_controls <- sim_results %>% mutate(variant_emergence_day = control_parms$variant_emergence_day,
+                                     vax_coverage = control_parms$vax_cov,
+                                     vax_rate = control_parms$vax_rate,
+                                     vax_speed = control_parms$vax_speed
+                                     )
+    return(sim_results_with_controls)
   }else{
     control_parms_df <- as_tibble(control_parms)
     
