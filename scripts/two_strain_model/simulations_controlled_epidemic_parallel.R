@@ -76,7 +76,7 @@ orv_par_sim_output <- foreach(i = 1:num_of_jobs,
 stopCluster(cl)
 
 #save the simulation
-saveRDS(object = orv_par_sim_output, file = './model_output/simulation_controlled_epidemic_parallel_run.rds')
+saveRDS(object = orv_par_sim_output, file = './model_output/controlled_epidemic_dynamics.rds')
 
 end_time <- Sys.time()
 
