@@ -16,7 +16,7 @@ source('./scripts/two_strain_model/two_strain_model.R')
 #Simple case: No NPI 
 npi_start <- 1
 npi_duration <- max_time - npi_start
-npi_intensity <- seq(0, 1, by = 0.05) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
+npi_intensity <- seq(0, 1, by = 0.1) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
 
 
 # Vaccination ====
@@ -27,7 +27,7 @@ npi_intensity <- seq(0, 1, by = 0.05) #Five levels of npi intensity (could corre
 
 # Simple case: vaccination starts on day 1 and can achieve 100% coverage but at different rates
 vax_start <- 1
-vax_cov <- seq(0.05, 1, by = 0.05) #various levels of coverage
+vax_cov <- seq(0.1, 1, by = 0.1) #various levels of coverage
 vax_speed_scenarios <- seq(1, 10, by = 1) #how many times faster than the daily vaccination rate
 #daily_vax_rate <- as.vector(sapply(as.list(vax_cov/(max_time - vax_start)), function(x) {x*vax_speed_scenarios})) #daily rate of achieving the same coverage by the end of the period
 
