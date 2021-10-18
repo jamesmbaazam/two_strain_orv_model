@@ -232,3 +232,109 @@ ggsave(plot = peak_incidence_contour,
        height = 17.86,
        units = 'cm'
        )
+
+
+
+#heatmaps
+# Outbreak size
+outbreak_size_heatmap <- ggplot(data = controlled_epidemic_rescaled %>% 
+                                     filter(variant_emergence_day %in% seq(1, max_time - 1, 20))
+                                ) + 
+    geom_tile(aes(x = vax_speed,
+                  y = vax_coverage,
+                  fill = total_cases
+    )) +
+    # scale_fill_viridis_d() +
+    scale_x_continuous(breaks = seq(1, max(controlled_epidemic$vax_speed), 1), 
+                       labels = seq(1, max(controlled_epidemic$vax_speed), 1)
+    ) +
+    scale_y_continuous(labels = scales::percent_format()) +
+    scale_fill_continuous(trans = 'log', labels = unit_format(unit = 'M', scale = 1E-6)) +
+    facet_wrap('variant_emergence_day') +
+    # expand_limits(x = c(0, 0)) +
+    labs(title = 'Outbreak size (log-transformed) per variant emergence day', 
+         x = 'Vaccination speed',
+         y = 'Vaccination coverage',
+         fill = 'Outbreak size'
+    ) + 
+    theme_bw(base_size = 12)
+
+#Plot in the viewer
+print(outbreak_size_heatmap)
+
+#Save the plot to file
+ggsave(plot = outbreak_size_heatmap,
+       filename = './figures/outbreak_size_heatmap.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
+
+
+
+# Peak incidence
+peak_incidence_heatmap <- ggplot(data = controlled_epidemic_rescaled %>% 
+                                     filter(variant_emergence_day %in% seq(1, max_time - 1, 20))
+                                 ) + 
+    geom_tile(aes(x = vax_speed,
+                            y = vax_coverage,
+                            fill = peak_cases
+                            )) +
+    # scale_fill_viridis_d() +
+    scale_x_continuous(breaks = seq(1, max(controlled_epidemic$vax_speed), 1), 
+                       labels = seq(1, max(controlled_epidemic$vax_speed), 1)
+    ) +
+    scale_y_continuous(labels = scales::percent_format()) +
+    scale_fill_continuous(trans = 'log', labels = unit_format(unit = 'M', scale = 1E-6)) +
+    facet_wrap('variant_emergence_day') +
+    # expand_limits(x = c(0, 0)) +
+    labs(title = 'Peak incidence (log-transformed) per variant emergence day', 
+         x = 'Vaccination speed',
+         y = 'Vaccination coverage',
+         fill = 'Peak incidence'
+    ) + 
+    theme_bw(base_size = 12)
+
+#Plot in the viewer
+print(peak_incidence_heatmap)
+
+
+#Save the plot to file
+ggsave(plot = peak_incidence_heatmap,
+       filename = './figures/peak_incidence_heatmap.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+)
+
+
+#
+outbreak_size_by_vax_coverage_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
+           filter(variant_emergence_day %in% seq(1, max_time - 1, 20))
+       ) + 
+    geom_contour_filled(aes(x = variant_emergence_day,
+                            y = vax_speed,
+                            z = log10(total_cases)
+    ), binwidth  = 1
+    ) +
+    scale_y_continuous(breaks = seq(1, max(controlled_epidemic$vax_speed), 1), 
+                       labels = seq(1, max(controlled_epidemic$vax_speed), 1)
+    ) +
+    facet_wrap('vax_coverage') +
+    labs(title = 'Outbreak size (log-transformed) per vaccination coverage', 
+         x = 'Variant emergence day',
+         y = 'Vaccination coverage',
+         fill = 'Outbreak size'
+    ) + 
+    theme_bw(base_size = 12)
+
+#Plot in the viewer
+print(outbreak_size_by_vax_coverage_contour)
+
+#Save the plot to file
+ggsave(plot = outbreak_size_by_vax_coverage_contour,
+       filename = './figures/outbreak_size_by_vax_coverage_contour.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+)
