@@ -12,18 +12,19 @@ no_control_parms_df <- data.frame(npi_intensity = 0, vax_coverage = 0,
                                   npi_start = 1, npi_duration = 0
                                   )
 # Simulations ====
-no_control_epidemic <- variant_emergence_times %>% 
+no_control_epidemic_dynamics <- variant_emergence_times %>% 
     purrr::map_df(function(x){simulate_model(pop_inits = pop_inits, 
                                              dynamics_parms = dynamics_params,
                                              control_parms = cbind(no_control_parms_df, data.frame(variant_emergence_day = x)),
                                              max_time = max_time, 
                                              dt = eval_times,
                                              events_table = event_df,
-                                             return_dynamics = FALSE,
+                                             return_dynamics = TRUE,
                                              browse = FALSE)}
                   )
 
 
 #save the output
-saveRDS(no_control_epidemic, file = './model_output/simulation_uncontrolled_epidemic.rds')
+saveRDS(no_control_epidemic_dynamics, file = './model_output/simulation_uncontrolled_epidemic_dynamics.rds')
+
 
