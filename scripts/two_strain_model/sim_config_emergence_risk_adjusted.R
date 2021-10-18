@@ -4,12 +4,6 @@ library(purrr)
 
 # Helper scripts ----
 source('./scripts/two_strain_model/sim_config_global_params.R')
-source('./scripts/two_strain_model/two_strain_model.R')
-
-
-# Uncontrolled epidemic simulation ----
-
-# Controlled epidemic simulations set up ---- 
 
 # Event times ====
 # NPI ####
