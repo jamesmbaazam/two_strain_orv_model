@@ -53,7 +53,7 @@ outbreak_size_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     labs(title = 'Total cases per vaccination coverage level', 
         # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
          x = '**Vaccination speed**',
-         y = '**Total cases**',
+         y = '**Total cases (log-transformed)**',
          color = '**Variant emerges**',
          linetype = '**Variant emerges**'
     ) +
@@ -74,9 +74,7 @@ ggsave(plot = outbreak_size_line_plot,
 
 
 #Line plot of peak incidence per vaccination rate
-peak_incidence_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
-                                         filter(variant_emergence_day %in% seq(1, max_time, 40))
-                                     ) + 
+peak_incidence_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
     geom_line(aes(x = vax_speed, 
                   y = peak_cases,
                   group = variant_emergence_day,
@@ -103,7 +101,7 @@ peak_incidence_line_plot <- ggplot(data = controlled_epidemic_rescaled %>%
     labs(title = 'Peak incidence per vaccination coverage level', 
         # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
          x = '**Vaccination speed**',
-         y = '**Peak incidence**',
+         y = '**Peak incidence (log-transformed)**',
          color = '**Variant emerges**',
          linetype = '**Variant emerges**'
     ) +
@@ -148,7 +146,7 @@ total_vaccinated_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     labs(title = 'Total vaccinated individuals per vaccination coverage level', 
          # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
          x = '**Vaccination speed**',
-         y = '**Total vaccinations**',
+         y = '**Total vaccinations (log-transformed)**',
          color = '**Variant emerges**',
          linetype = '**Variant emerges**'
     ) +
@@ -169,21 +167,22 @@ ggsave(plot = total_vaccinated_line_plot,
 
 #Outbreak size
 outbreak_size_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
-                                  filter(variant_emergence_day %in% seq(1, max_time - 1, 45))
+                                  filter(variant_emergence_day %in% seq(1, max_time - 1, 20))
                               ) + 
     geom_contour_filled(aes(x = vax_speed,
                   y = vax_coverage,
-                  z = total_cases
-                  ), bins = 10
+                  z = log10(total_cases)
+                  ), binwidth  = 1
               ) +
-    scale_fill_viridis_d() +
+    # scale_y_log10() +
+    # scale_fill_viridis_d() +
     scale_x_continuous(breaks = seq(1, max(controlled_epidemic$vax_speed), 1), 
                        labels = seq(1, max(controlled_epidemic$vax_speed), 1)
                        ) +
     scale_y_continuous(labels = scales::percent_format()) +
     facet_wrap('variant_emergence_day') +
     expand_limits(x = c(0, 0)) +
-    labs(title = 'Total cases per variant emergence day', 
+    labs(title = 'Outbreak size (log-transformed) per variant emergence day', 
          x = '**Vaccination speed**',
          y = '**Vaccination coverage**',
          fill = '**Outbreak size**'
@@ -204,21 +203,21 @@ ggsave(plot = outbreak_size_contour,
 
 # Peak incidence
 peak_incidence_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
-                                  filter(variant_emergence_day %in% seq(1, max_time - 1, 45))
+                                  filter(variant_emergence_day %in% seq(1, max_time - 1, 20))
                              ) + 
     geom_contour_filled(aes(x = vax_speed,
                             y = vax_coverage,
                             z = peak_cases
     ), bins = 10
     ) +
-    scale_fill_viridis_d() +
+    # scale_fill_viridis_d() +
     scale_x_continuous(breaks = seq(1, max(controlled_epidemic$vax_speed), 1), 
                        labels = seq(1, max(controlled_epidemic$vax_speed), 1)
     ) +
-    scale_y_continuous(labels = scales::percent_format()) +
+    scale_y_continuous(labels = scales::percent_format(), trans = 'log') +
     facet_wrap('variant_emergence_day') +
     expand_limits(x = c(0, 0)) +
-    labs(title = 'Peak incidence per variant emergence day', 
+    labs(title = 'Peak incidence (log-transformed) per variant emergence day', 
          x = '**Vaccination speed**',
          y = '**Vaccination coverage**',
          fill = '**Peak incidence**'
