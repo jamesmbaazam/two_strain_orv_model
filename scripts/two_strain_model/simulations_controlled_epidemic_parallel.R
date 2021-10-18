@@ -19,7 +19,7 @@ run_sim_all <- function(sim_table){
     res <- sim_table %>% 
         rowwise() %>% 
         do({with(., 
-                 simulate_model(pop_inits = pop_inits, 
+                 simulate_raw_dynamics(pop_inits = pop_inits, 
                                 dynamics_parms = dynamics_params,
                                 control_parms = .,
                                 max_time = max_time, 

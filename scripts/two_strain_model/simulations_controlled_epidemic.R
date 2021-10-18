@@ -17,7 +17,7 @@ source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 baseline_no_variant <- baseline_params %>% 
     rowwise() %>% 
     do({with(., 
-             simulate_model(pop_inits = pop_inits, 
+             simulate_raw_dynamics(pop_inits = pop_inits, 
                             dynamics_parms = dynamics_params,
                             control_parms = .,
                             max_time = max_time, 
@@ -44,7 +44,7 @@ orv_full_simulation <- simulation_table %>%
     # filter(vax_speed < 2) %>% 
     rowwise() %>% 
     do({with(., 
-             simulate_model(pop_inits = pop_inits, 
+             simulate_raw_dynamics(pop_inits = pop_inits, 
                             dynamics_parms = dynamics_params,
                             control_parms = .,
                             max_time = max_time, 
