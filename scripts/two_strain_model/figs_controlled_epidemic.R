@@ -10,20 +10,23 @@ source('./scripts/two_strain_model/two_strain_model.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 #Read the model output
-controlled_epidemic <- readRDS('./model_output/controlled_epidemic_dynamics.rds')
-
+# controlled_epidemic <- readRDS('./model_output/controlled_epidemic_dynamics.rds')
+controlled_epidemic <- readRDS('./model_output/simulation_controlled_epidemic_parallel_run.rds')
 
 #Rescale the population proportions to the actual sizes
-controlled_epidemic_rescaled <- controlled_epidemic %>%
-    mutate(across(.cols = S:K, .fns = ~ .x*target_pop)) #rescale the population proportions to total sizes
+# controlled_epidemic_rescaled <- controlled_epidemic %>%
+#     mutate(across(.cols = S:K, .fns = ~ .x*target_pop)) #rescale the population proportions to total sizes
 
+controlled_epidemic_rescaled <- controlled_epidemic %>%
+    mutate(across(.cols = c(total_cases, peak_cases, total_vaccinated), 
+                  .fns = ~ .x*target_pop
+                  ), 
+           variant_emerges = ifelse(variant_emergence_day < max_time, 'yes', 'no')
+           ) #rescale the population proportions to total sizes
 
 
 #Line plot of total cases per vaccination rate
-outbreak_size_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
-                                    filter(variant_emergence_day %in% seq(1, max_time, 40)
-                                           )
-                                ) + 
+outbreak_size_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
     geom_line(aes(x = vax_speed, 
                   y = total_cases,
                   group = variant_emergence_day,
