@@ -30,18 +30,9 @@ baseline_no_variant <- baseline_params %>%
     ungroup() %>% 
     as_tibble()  
 
-#Scale the proportions to totals
-baseline_no_variant_rescaled <- baseline_no_variant %>% 
-    mutate(total_cases = total_cases*target_pop, 
-           peak_cases = peak_cases*target_pop
-           ) %>% 
-    #select(-c(vax_start, starts_with('npi_')))
-    select(-c(vax_start, vax_coverage, starts_with('npi_')))
-
 
 #Simulations with variant emergence
 orv_full_simulation <- simulation_table %>% 
-    # filter(vax_speed < 2) %>% 
     rowwise() %>% 
     do({with(., 
              simulate_raw_dynamics(pop_inits = pop_inits, 
@@ -58,7 +49,7 @@ orv_full_simulation <- simulation_table %>%
     as_tibble()
 
 #save the simulation
-saveRDS(object = orv_full_simulation, file = './model_output/controlled_epidemic_dynamics.rds')
+saveRDS(object = orv_full_simulation, file = './model_output/controlled_epidemic_dynamics_sequential_run.rds')
 
 beep()
 
