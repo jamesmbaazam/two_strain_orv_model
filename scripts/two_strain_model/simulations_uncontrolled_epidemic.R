@@ -20,6 +20,6 @@ no_control_epidemic_dynamics <- variant_emergence_times %>%
 
 
 #save the output
-saveRDS(no_control_epidemic_dynamics, file = './model_output/simulation_uncontrolled_epidemic_dynamics.rds')
+saveRDS(no_control_epidemic_dynamics, file = './model_output/uncontrolled_epidemic_dynamics.rds')
 
 
