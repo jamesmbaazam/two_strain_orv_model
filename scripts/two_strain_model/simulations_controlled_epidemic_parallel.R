@@ -1,6 +1,7 @@
 
 #Packages ----
 library(doParallel)
+library(doSNOW)
 library(deSolve)
 library(scales)
 library(patchwork)
@@ -35,22 +36,34 @@ run_sim_all <- function(sim_table){
 }
 
 
+#The simulation table
+simulation_table <- orv_npi_control_config_table %>% 
+    filter(npi_intensity %in% c(0, 0.5)) #npi levels of 0%, 10%, and 50%
+
+
 # Set up parallelization ----
 # how many cores to use in the cluster? #
-num_cores <- detectCores() -1 
+num_cores <- parallel::detectCores() -1 
 
 # set up a cluster called 'cl'
-cl = makeCluster(num_cores)
+cl = makeSOCKcluster(num_cores)
 
 # register the cluster
-registerDoParallel(cl)
+registerDoSNOW(cl)
 
 ## do some parallel computations with foreach
-n_sims <- nrow(simulation_table)
+n_sims <- nrow(orv_npi_control_config_table)
 
 sims_per_job <- ceiling(n_sims/num_cores)
 
 num_of_jobs <- ceiling(n_sims/sims_per_job)
+
+pb <- txtProgressBar(min = 1, max = 1533000, style = 3)
+
+progress <- function(n){setTxtProgressBar(pb, n)}
+
+opts <- list(progress = progress)
+
 
 start_time <- Sys.time()
 
@@ -72,15 +85,18 @@ orv_par_sim_output <- foreach(i = 1:num_of_jobs,
     return(subset_run)
 }
 
-## Shut down the cluster 
+## Shut down the timer and cluster 
+close(pb)
 stopCluster(cl)
 
-#save the simulation
-saveRDS(object = orv_par_sim_output, file = './model_output/controlled_epidemic_dynamics.rds')
 
 end_time <- Sys.time()
 
 run_time <- end_time - start_time
 print(run_time)
+
+#save the simulation
+saveRDS(object = orv_par_sim_output, file = './model_output/controlled_epidemic_dynamics_parallel_run.rds')
+
 
 beepr::beep(3)
