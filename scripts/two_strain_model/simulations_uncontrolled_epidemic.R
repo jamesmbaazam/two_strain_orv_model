@@ -13,13 +13,12 @@ no_control_parms_df <- data.frame(npi_intensity = 0, vax_coverage = 0,
                                   )
 # Simulations ====
 no_control_epidemic_dynamics <- variant_emergence_times %>% 
-    purrr::map_df(function(x){simulate_model(pop_inits = pop_inits, 
+    purrr::map_df(function(x){simulate_raw_dynamics(pop_inits = pop_inits, 
                                              dynamics_parms = dynamics_params,
                                              control_parms = cbind(no_control_parms_df, data.frame(variant_emergence_day = x)),
                                              max_time = max_time, 
                                              dt = eval_times,
                                              events_table = event_df,
-                                             return_dynamics = TRUE,
                                              browse = FALSE)}
                   )
 
