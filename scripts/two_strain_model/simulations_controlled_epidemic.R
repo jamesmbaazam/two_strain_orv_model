@@ -58,7 +58,7 @@ orv_full_simulation <- simulation_table %>%
     as_tibble()
 
 #save the simulation
-saveRDS(object = orv_full_simulation, file = './model_output/simulation_controlled_epidemic.rds')
+saveRDS(object = orv_full_simulation, file = './model_output/controlled_epidemic_dynamics.rds')
 
 beep()
 
