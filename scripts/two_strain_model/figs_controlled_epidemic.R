@@ -74,7 +74,9 @@ ggsave(plot = total_cases_line_plot,
 
 
 #Line plot of peak daily cases per vaccination rate
-peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
+peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
+                                         filter(variant_emergence_day %in% seq(1, max_time, 40))
+                                     ) + 
     geom_line(aes(x = vax_speed, 
                   y = peak_cases,
                   group = variant_emergence_day,
