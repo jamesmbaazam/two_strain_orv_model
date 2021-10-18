@@ -32,15 +32,15 @@ outbreak_size_no_control_line_plot <- ggplot(data = no_control_epidemic_rescaled
     ) +
     scale_y_continuous(labels = comma) +
     labs(x = 'Variant emergence day', 
-         y = 'Total cases'
+         y = 'Outbreak size'
     ) +
     theme_minimal(base_size = 12)
 
-#plot(no_control_epidemic_final_size_plot)
+print(outbreak_size_no_control_line_plot)
 
 
 #Plot the peak cases
-no_control_epidemic_peak_cases_plot <- ggplot(data = no_control_epidemic_rescaled) + 
+peak_incidence_no_control_line_plot <- ggplot(data = no_control_epidemic_rescaled) + 
     geom_line(aes(x = variant_emergence_day, 
                   y = peak_cases
     ),
@@ -48,11 +48,9 @@ no_control_epidemic_peak_cases_plot <- ggplot(data = no_control_epidemic_rescale
     ) +
     scale_y_continuous(labels = comma) +
     labs(x = 'Variant emergence day', 
-         y = 'Peak daily incidence'
+         y = 'Peak incidence'
     ) +
     theme_minimal(base_size = 12)
 
-#plot(no_control_epidemic_peak_cases_plot)
+print(peak_incidence_no_control_line_plot)
 
-#Plot the two size by size
-plot(no_control_epidemic_final_size_plot | no_control_epidemic_peak_cases_plot)
