@@ -11,7 +11,9 @@ source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 #Read the model output
 # controlled_epidemic <- readRDS('./model_output/controlled_epidemic_dynamics.rds')
-controlled_epidemic <- readRDS('./model_output/simulation_controlled_epidemic_parallel_run.rds')
+controlled_epidemic_npi0_20 <- readRDS('./model_output/orv_npi0_20_simulation_dynamics_parallel.rds')
+controlled_epidemic_npi50 <- readRDS('./model_output/orv_npi50_dynamics_parallel.rds')
+controlled_epidemic <- rbind(controlled_epidemic_npi0_20, controlled_epidemic_npi50)
 
 #Rescale the population proportions to the actual sizes
 # controlled_epidemic_rescaled <- controlled_epidemic %>%
