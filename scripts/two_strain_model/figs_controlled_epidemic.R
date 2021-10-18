@@ -10,20 +10,12 @@ source('./scripts/two_strain_model/two_strain_model.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 #Read the model output
-controlled_epidemic <- readRDS('./model_output/simulation_controlled_epidemic_parallel_run.rds')
+controlled_epidemic <- readRDS('./model_output/controlled_epidemic_dynamics.rds')
 
 
 #Rescale the population proportions to the actual sizes
 controlled_epidemic_rescaled <- controlled_epidemic %>%
-    mutate(total_cases = total_cases*target_pop, 
-           peak_cases = peak_cases*target_pop,
-           total_vaccinated = total_vaccinated*target_pop,
-           variant_emerges = ifelse(variant_emergence_day < max_time, 
-                                      'yes',
-                                      'no'
-           )
-    ) %>% 
-    select(-c(vax_start, starts_with('npi_')))
+    mutate(across(.cols = S:K, .fns = ~ .x*target_pop)) #rescale the population proportions to total sizes
 
 
 
