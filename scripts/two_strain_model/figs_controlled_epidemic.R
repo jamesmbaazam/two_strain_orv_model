@@ -160,3 +160,56 @@ print(total_vaccinated_line_plot)
 
 ggplot(data = controlled_epidemic_rescaled) + 
     geom_contour(aes(x = vax_rate, y = variant_emergence_day, z = total_cases))
+
+#Contour plots ----
+
+
+total_cases_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
+                                  filter(variant_emergence_day %in% seq(1, max_time - 1, 45))
+                              ) + 
+    geom_contour_filled(aes(x = vax_speed,
+                  y = vax_coverage,
+                  z = total_cases
+                  ), bins = 10
+              ) +
+    scale_fill_viridis_d() +
+    scale_x_continuous(breaks = seq(1, max(controlled_epidemic$vax_speed), 1), 
+                       labels = seq(1, max(controlled_epidemic$vax_speed), 1)
+                       ) +
+    scale_y_continuous(labels = scales::percent_format()) +
+    facet_wrap('variant_emergence_day') +
+    expand_limits(x = c(0, 0)) +
+    labs(title = 'Total cases per variant emergence day', 
+         x = 'Vaccination speed',
+         y = 'Vaccination coverage',
+         fill = 'Outbreak size'
+         ) +
+    theme_bw(base_size = 12)
+
+print(total_cases_contour)
+
+
+
+peak_daily_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
+                                  filter(variant_emergence_day %in% seq(1, max_time - 1, 45))
+                             ) + 
+    geom_contour_filled(aes(x = vax_speed,
+                            y = vax_coverage,
+                            z = peak_cases
+    ), bins = 10
+    ) +
+    scale_fill_viridis_d() +
+    scale_x_continuous(breaks = seq(1, max(controlled_epidemic$vax_speed), 1), 
+                       labels = seq(1, max(controlled_epidemic$vax_speed), 1)
+    ) +
+    scale_y_continuous(labels = scales::percent_format()) +
+    facet_wrap('variant_emergence_day') +
+    expand_limits(x = c(0, 0)) +
+    labs(title = 'Total cases per variant emergence day', 
+         x = 'Vaccination speed',
+         y = 'Vaccination coverage',
+         fill = 'Outbreak size'
+    ) +
+    theme_bw(base_size = 12)
+
+print(peak_daily_contour)
