@@ -4,6 +4,7 @@ library(purrr)
 
 # Helper scripts ----
 source('./scripts/two_strain_model/sim_config_global_params.R')
+source('./scripts/two_strain_model/two_strain_model.R')
 
 # Event times ====
 # NPI ####
@@ -13,9 +14,9 @@ source('./scripts/two_strain_model/sim_config_global_params.R')
 # npi_intensity <- seq(0.2, 1, 0.2) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
 
 #Simple case: No NPI 
-npi_start <- max_time
-npi_duration <- 0
-npi_intensity <- 0 #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
+npi_start <- 1
+npi_duration <- max_time - npi_start
+npi_intensity <- seq(0, 1, by = 0.05) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
 
 
 # Vaccination ====
@@ -26,7 +27,7 @@ npi_intensity <- 0 #Five levels of npi intensity (could correspond to the five s
 
 # Simple case: vaccination starts on day 1 and can achieve 100% coverage but at different rates
 vax_start <- 1
-vax_cov <- seq(0.1, 1, by = 0.1) #various levels of coverage
+vax_cov <- seq(0.05, 1, by = 0.05) #various levels of coverage
 vax_speed_scenarios <- seq(1, 10, by = 1) #how many times faster than the daily vaccination rate
 #daily_vax_rate <- as.vector(sapply(as.list(vax_cov/(max_time - vax_start)), function(x) {x*vax_speed_scenarios})) #daily rate of achieving the same coverage by the end of the period
 
@@ -57,20 +58,30 @@ campaign_controls_scenarios_df <- vax_speed_scenarios %>%
     arrange(vax_coverage)
     
 
+campaign_controls_scenarios_df <- campaign_controls_scenarios_df %>% 
+    slice(rep(1:n(), times = length(npi_intensity))) %>% 
+    mutate(npi_intensity = rep(npi_intensity, each = nrow(campaign_controls_scenarios_df)))
+
+
 # Full simulation table with variant emergence times appended ====
-simulation_table <- campaign_controls_scenarios_df %>%
+orv_npi_control_config_table <- campaign_controls_scenarios_df %>%
     slice(rep(1:n(), times = length(variant_emergence_times))) %>% 
     mutate(variant_emergence_day = rep(variant_emergence_times, 
                                        each = nrow(campaign_controls_scenarios_df)
                                        ),
            vax_start = 1,
            npi_start = npi_start,
-           npi_intensity = npi_intensity,
            npi_duration = npi_duration
            )
 
+#Vaccination only intervention
+vax_only_config_table <- orv_npi_control_config_table %>% 
+    filter(npi_intensity == 0)
+
+
 
 #Baseline; no variant emerges and only wild type prevails
-baseline_params <- simulation_table %>% 
+baseline_params <- orv_npi_control_config_table %>% 
     filter(variant_emergence_day == max_time)
-    
+
+
