@@ -1,10 +1,12 @@
 #Packages ----
 library(scales)
 library(patchwork)
+library(mdthemes)
 library(tidyverse)
 
 #helper scripts
 source('./scripts/two_strain_model/sim_config_global_params.R')
+source('./scripts/two_strain_model/two_strain_model.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 #Read the model output
@@ -22,12 +24,11 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
            )
     ) %>% 
     select(-c(vax_start, starts_with('npi_')))
-    # select(-c(vax_start, vax_coverage, starts_with('npi_')))
 
 
 
 #Line plot of total cases per vaccination rate
-total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
+outbreak_size_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
                                     filter(variant_emergence_day %in% seq(1, max_time, 40)
                                            )
                                 ) + 
@@ -56,25 +57,29 @@ total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>%
    # expand_limits(x = min(vax_rate_vec)) +
     labs(title = 'Total cases per vaccination coverage level', 
         # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
-         x = 'Vaccination speed',
-         y = 'Total cases',
-         color = 'Variant emerges',
-         linetype = 'Variant emerges'
+         x = '**Vaccination speed**',
+         y = '**Total cases**',
+         color = '**Variant emerges**',
+         linetype = '**Variant emerges**'
     ) +
-    theme_minimal(base_size = 12)
+    md_theme_minimal(base_size = 12)
 
-print(total_cases_line_plot)
 
-ggsave(plot = total_cases_line_plot,
-       filename = './figures/total_cases_line_plot.png',
+#Plot in the viewer
+print(outbreak_size_line_plot)
+
+
+#Save the plot to file
+ggsave(plot = outbreak_size_line_plot,
+       filename = './figures/outbreak_size_line_plot.png',
        width = 23.76,
        height = 17.86,
        units = 'cm'
-)
+       )
 
 
-#Line plot of peak daily cases per vaccination rate
-peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
+#Line plot of peak incidence per vaccination rate
+peak_incidence_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
                                          filter(variant_emergence_day %in% seq(1, max_time, 40))
                                      ) + 
     geom_line(aes(x = vax_speed, 
@@ -100,27 +105,28 @@ peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>%
     scale_y_log10(labels = comma) +
     facet_wrap('vax_coverage') +
    # expand_limits(x = min(vax_rate_vec)) +
-    labs(title = 'Peak daily cases per vaccination coverage level', 
+    labs(title = 'Peak incidence per vaccination coverage level', 
         # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
-         x = 'Vaccination speed',
-         y = 'Peak daily cases',
-         color = 'Variant emerges',
-         linetype = 'Variant emerges'
+         x = '**Vaccination speed**',
+         y = '**Peak incidence**',
+         color = '**Variant emerges**',
+         linetype = '**Variant emerges**'
     ) +
-    #    coord_flip() +
-    theme_minimal(base_size = 12)
+    md_theme_minimal(base_size = 12)
 
-print(peak_daily_cases_line_plot)
+#Plot in the viewer
+print(peak_incidence_line_plot)
 
-ggsave(plot = peak_daily_cases_line_plot,
-       filename = './figures/peak_daily_cases_line_plot.png',
+#Save the plot to file
+ggsave(plot = peak_incidence_line_plot,
+       filename = './figures/peak_incidence_line_plot.png',
        width = 23.76,
        height = 17.86,
        units = 'cm'
-)
+       )
 
 
-
+#Total vaccinations
 total_vaccinated_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
     geom_line(aes(x = vax_speed, 
                   y = total_vaccinated,
@@ -146,25 +152,28 @@ total_vaccinated_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     facet_wrap('vax_coverage') +
     labs(title = 'Total vaccinated individuals per vaccination coverage level', 
          # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
-         x = 'Vaccination speed',
-         y = 'Total vaccinations',
-         color = 'Variant emerges',
-         linetype = 'Variant emerges'
+         x = '**Vaccination speed**',
+         y = '**Total vaccinations**',
+         color = '**Variant emerges**',
+         linetype = '**Variant emerges**'
     ) +
-    #    coord_flip() +
-    theme_minimal(base_size = 12)
+    md_theme_minimal(base_size = 12)
 
+#Plot in the viewer
 print(total_vaccinated_line_plot)
 
-
-
-ggplot(data = controlled_epidemic_rescaled) + 
-    geom_contour(aes(x = vax_rate, y = variant_emergence_day, z = total_cases))
+#Save the plot to file
+ggsave(plot = total_vaccinated_line_plot,
+       filename = './figures/total_vaccinated_line_plot.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
 
 #Contour plots ----
 
-
-total_cases_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
+#Outbreak size
+outbreak_size_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
                                   filter(variant_emergence_day %in% seq(1, max_time - 1, 45))
                               ) + 
     geom_contour_filled(aes(x = vax_speed,
@@ -180,17 +189,26 @@ total_cases_contour <- ggplot(data = controlled_epidemic_rescaled %>%
     facet_wrap('variant_emergence_day') +
     expand_limits(x = c(0, 0)) +
     labs(title = 'Total cases per variant emergence day', 
-         x = 'Vaccination speed',
-         y = 'Vaccination coverage',
-         fill = 'Outbreak size'
+         x = '**Vaccination speed**',
+         y = '**Vaccination coverage**',
+         fill = '**Outbreak size**'
          ) +
-    theme_bw(base_size = 12)
+    md_theme_bw(base_size = 12)
 
-print(total_cases_contour)
+#Plot in the viewer
+print(outbreak_size_contour)
+
+#Save the plot to file
+ggsave(plot = outbreak_size_contour,
+       filename = './figures/outbreak_size_contour.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
 
 
-
-peak_daily_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
+# Peak incidence
+peak_incidence_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
                                   filter(variant_emergence_day %in% seq(1, max_time - 1, 45))
                              ) + 
     geom_contour_filled(aes(x = vax_speed,
@@ -205,11 +223,20 @@ peak_daily_contour <- ggplot(data = controlled_epidemic_rescaled %>%
     scale_y_continuous(labels = scales::percent_format()) +
     facet_wrap('variant_emergence_day') +
     expand_limits(x = c(0, 0)) +
-    labs(title = 'Total cases per variant emergence day', 
-         x = 'Vaccination speed',
-         y = 'Vaccination coverage',
-         fill = 'Outbreak size'
+    labs(title = 'Peak incidence per variant emergence day', 
+         x = '**Vaccination speed**',
+         y = '**Vaccination coverage**',
+         fill = '**Peak incidence**'
     ) +
-    theme_bw(base_size = 12)
+    md_theme_bw(base_size = 12)
 
-print(peak_daily_contour)
+#Plot in the viewer
+print(peak_incidence_contour)
+
+#Save the plot to file
+ggsave(plot = peak_incidence_contour,
+       filename = './figures/peak_incidence_contour.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
