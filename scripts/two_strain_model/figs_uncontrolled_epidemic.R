@@ -5,9 +5,10 @@ library(tidyverse)
 
 #helper scripts
 source('./scripts/two_strain_model/sim_config_global_params.R')
+source('./scripts/two_strain_model/sim_config_uncontrolled_epidemic.R')
 
 #Read the model output
-no_control_epidemic_dynamics <- readRDS('./model_output/simulation_uncontrolled_epidemic_dynamics.rds')
+no_control_epidemic_dynamics <- readRDS('./model_output/uncontrolled_epidemic_dynamics.rds')
 
 
 #Rescale the population proportions to the actual sizes
