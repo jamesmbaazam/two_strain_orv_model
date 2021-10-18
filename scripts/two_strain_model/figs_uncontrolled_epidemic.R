@@ -7,7 +7,8 @@ library(tidyverse)
 source('./scripts/two_strain_model/sim_config_global_params.R')
 
 #Read the model output
-no_control_epidemic <- readRDS('./model_output/simulation_uncontrolled_epidemic.rds')
+no_control_epidemic_summaries <- readRDS('./model_output/simulation_uncontrolled_epidemic.rds')
+no_control_epidemic_dynamics <- readRDS('./model_output/simulation_uncontrolled_epidemic_dynamics.rds')
 
 
 #Rescale the population proportions to the actual sizes
@@ -16,6 +17,15 @@ no_control_epidemic_rescaled <- no_control_epidemic %>%
            peak_cases = peak_cases*target_pop) %>% 
     select(-c(npi_start, npi_intensity, npi_duration, 
               vax_start, campaign_duration, vax_coverage))
+
+
+
+ggplot(data = no_control_epidemic_dynamics) + 
+    geom_line(aes(x = time, 
+                  y = (Iw + Im + Iwm + Imw)*target_pop
+                  )
+              ) +
+    scale_y_log10(labels = comma)
 
 
 #Plot the final size
