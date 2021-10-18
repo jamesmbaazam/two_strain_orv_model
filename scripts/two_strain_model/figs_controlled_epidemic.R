@@ -27,7 +27,10 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 
 
 #Line plot of total cases per vaccination rate
-total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled) + 
+total_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>% 
+                                    filter(variant_emergence_day %in% seq(1, max_time, 40)
+                                           )
+                                ) + 
     geom_line(aes(x = vax_speed, 
                   y = total_cases,
                   group = variant_emergence_day,
