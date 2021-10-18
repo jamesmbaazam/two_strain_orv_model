@@ -97,10 +97,10 @@ peak_daily_cases_line_plot <- ggplot(data = controlled_epidemic_rescaled %>%
     ) + 
     scale_color_viridis_d() + 
     # scale_x_continuous(labels = scales::percent_format()) +
-    scale_y_continuous(labels = comma) +
+    scale_y_log10(labels = comma) +
     facet_wrap('vax_coverage') +
    # expand_limits(x = min(vax_rate_vec)) +
-    labs(title = 'Peak daily cases per variant emergence day', 
+    labs(title = 'Peak daily cases per vaccination coverage level', 
         # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
          x = 'Vaccination speed',
          y = 'Peak daily cases',
@@ -144,7 +144,7 @@ total_vaccinated_line_plot <- ggplot(data = controlled_epidemic_rescaled) +
     # scale_x_continuous(labels = scales::percent_format()) +
     scale_y_continuous(labels = comma) +
     facet_wrap('vax_coverage') +
-    labs(title = 'Total vaccinated individuals', 
+    labs(title = 'Total vaccinated individuals per vaccination coverage level', 
          # subtitle = paste0('Campaign starts on day ', vax_start, ' with ', vax_cov*100, '% coverage objective'),
          x = 'Vaccination speed',
          y = 'Total vaccinations',
