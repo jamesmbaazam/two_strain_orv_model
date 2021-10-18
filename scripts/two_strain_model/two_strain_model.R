@@ -118,6 +118,7 @@ simulate_raw_dynamics <- function(pop_inits, dynamics_parms,
 #'
 #' @examples
 extract_model_summaries <- function(dynamics_df, control_parms_df) {
+  variant_emergence_day <- unique(dynamics_df$variant_emergence_day)
   incidence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw
   peak_magnitude <- max(incidence)
   total_cases <- max(dynamics_df$K)
@@ -126,6 +127,7 @@ extract_model_summaries <- function(dynamics_df, control_parms_df) {
   
 #The final summaries
   results_df <- control_parms_df %>% mutate(
+    variant_emergence_day = variant_emergence_day,
     total_cases = total_cases,
     peak_cases = peak_magnitude,
     total_vaccinated = total_vaccinated
