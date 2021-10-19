@@ -46,8 +46,11 @@ run_sim_all <- function(sim_table){
 
 
 #The simulation table
-orv_npi0_20_simulation_table <- orv_npi_control_config_table %>% 
-    filter(npi_intensity %in% c(0, 0.2)) #npi of 50%
+#All scenarios
+orv_npi_all_scenarios_simulation_table <- orv_npi_control_config_table 
+
+# orv_npi0_20_simulation_table <- orv_npi_control_config_table %>% 
+#     filter(npi_intensity %in% c(0, 0.2)) #npi of 50%
 
 # Set up parallelization ----
 # how many cores to use in the cluster? #
@@ -60,7 +63,7 @@ cl = makeSOCKcluster(num_cores)
 registerDoSNOW(cl)
 
 ## do some parallel computations with foreach
-n_sims <- nrow(orv_npi0_20_simulation_table)
+n_sims <- nrow(orv_npi_all_scenarios_simulation_table)
 
 sims_per_job <- ceiling(n_sims/num_cores)
 
@@ -75,16 +78,17 @@ num_of_jobs <- ceiling(n_sims/sims_per_job)
 
 start_time <- Sys.time()
 
-orv_npi0_20_simulation_dynamics <- foreach(i = 1:num_of_jobs, 
+orv_npi_all_scenarios_dynamics <- foreach(i = 1:num_of_jobs, 
                   .combine = rbind,
-                  .packages = c('tidyverse', 'foreach', 'deSolve')) %dopar% 
+                  .packages = c('tidyverse', 'foreach', 'deSolve'), 
+                  .errorhandling = 'remove') %dopar% 
     {
         
     start_index <- 1 + (i - 1)*sims_per_job
     
     end_index <- min(start_index + sims_per_job - 1, n_sims)
     
-    sim_subset <- orv_npi0_20_simulation_table %>% 
+    sim_subset <- orv_npi_all_scenarios_simulation_table %>% 
         slice(start_index:end_index)
         
         
@@ -104,7 +108,7 @@ run_time <- end_time - start_time
 print(run_time)
 
 #save the simulation
-saveRDS(object = orv_npi0_20_simulation_dynamics, file = './model_output/orv_npi0_20_simulation_dynamics_parallel.rds')
+saveRDS(object = orv_npi_all_scenarios_dynamics, file = './model_output/orv_npi_all_scenarios_dynamics_parallel.rds')
 
 
 beepr::beep(3)
