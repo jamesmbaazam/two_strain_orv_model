@@ -11,9 +11,10 @@ source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 #Read the model output
 # controlled_epidemic <- readRDS('./model_output/controlled_epidemic_dynamics.rds')
-controlled_epidemic_npi0_20 <- readRDS('./model_output/orv_npi0_20_simulation_dynamics_parallel.rds')
-controlled_epidemic_npi50 <- readRDS('./model_output/orv_npi50_dynamics_parallel.rds')
-controlled_epidemic <- rbind(controlled_epidemic_npi0_20, controlled_epidemic_npi50)
+# controlled_epidemic_npi0_20 <- readRDS('./model_output/orv_npi0_20_simulation_dynamics_parallel.rds')
+# controlled_epidemic_npi50 <- readRDS('./model_output/orv_npi50_dynamics_parallel.rds')
+# controlled_epidemic <- rbind(controlled_epidemic_npi0_20, controlled_epidemic_npi50)
+controlled_epidemic <- readRDS('./model_output/orv_npi_all_scenarios_dynamics_parallel.rds')
 
 #Rescale the population proportions to the actual sizes
 # controlled_epidemic_rescaled <- controlled_epidemic %>%
@@ -314,20 +315,19 @@ ggsave(plot = peak_incidence_heatmap,
 
 #
 outbreak_size_by_vax_coverage_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
-           filter(variant_emergence_day %in% seq(1, max_time - 1, 20))
-       ) + 
+           filter(npi_intensity %in% c(0, 0.2)))+
     geom_contour_filled(aes(x = variant_emergence_day,
                             y = vax_speed,
                             z = log10(total_cases)
     ), binwidth  = 1
     ) +
-    scale_y_continuous(breaks = seq(1, max(controlled_epidemic$vax_speed), 1), 
-                       labels = seq(1, max(controlled_epidemic$vax_speed), 1)
+    scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
+                       labels = seq(0, max(controlled_epidemic$vax_speed), 2)
     ) +
-    facet_wrap('vax_coverage') +
-    labs(title = 'Outbreak size (log-transformed) per vaccination coverage', 
+    facet_wrap(~ vax_coverage + npi_intensity) +
+    labs(title = 'Outbreak size (log-transformed) for various levels of vaccination coverage and NPI = 50%', 
          x = 'Variant emergence day',
-         y = 'Vaccination coverage',
+         y = 'Vaccination speed',
          fill = 'Outbreak size'
     ) + 
     theme_bw(base_size = 12)
