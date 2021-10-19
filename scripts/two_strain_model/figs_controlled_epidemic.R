@@ -315,7 +315,7 @@ ggsave(plot = peak_incidence_heatmap,
 
 #
 outbreak_size_by_vax_coverage_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
-           filter(npi_intensity %in% c(0, 0.2)))+
+           filter(npi_intensity %in% c(0, 0.5)))+
     geom_contour_filled(aes(x = variant_emergence_day,
                             y = vax_speed,
                             z = log10(total_cases)
