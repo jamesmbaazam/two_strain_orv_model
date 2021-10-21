@@ -15,73 +15,112 @@ controlled_epidemic <- readRDS('./model_output/orv_npi_all_scenarios_dynamics_pa
 #Rescale the population proportions to total sizes
 controlled_epidemic_rescaled <- controlled_epidemic %>%
     mutate(across(.cols = c(total_cases, peak_cases, total_vaccinated), 
-                  .fns = ~ .x*target_pop
-                  ), 
+                  .fns = ~ .x*target_pop #rescale the population proportions to total sizes
+                  ),
+           across(.cols = c(total_cases, peak_cases, total_vaccinated), 
+                  .fns = ~ log10(.x),
+                  .names = "{.col}_log10" #put the population sizes on log-scale
+           ),
+           across(.cols = c(total_cases_log10, peak_cases_log10), 
+                  .fns = ~ cut(.x, breaks = 0:8),
+                  .names = "{.col}_target"
+           ),
            variant_emerges = ifelse(variant_emergence_day < max_time, 'yes', 'no')
-           ) #rescale the population proportions to total sizes
+           ) 
+
+
+#contour plots
+outbreak_size_by_target_contour <- ggplot(data = controlled_epidemic_rescaled)+
+    geom_contour_filled(aes(x = vax_coverage, 
+                     y = vax_speed,
+                     z = total_cases_log10,
+                     group = variant_emergence_day
+    ), binwidth = 1,
+    ) +
+    scale_x_continuous(labels = percent_format()) +
+    scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
+                       labels = seq(0, max(controlled_epidemic$vax_speed), 2)
+    ) +
+    facet_wrap('total_cases_log10_target', ncol = 4, labeller = label_both) +
+    labs(#title = 'Impact of vaccination and NPI\'s on outbreak size', 
+         x = 'Vaccination coverage',
+         y = 'Vaccination speed'
+    ) + 
+    theme_bw(base_size = 12)
+
+#Plot in the viewer
+print(outbreak_size_by_target_contour)
+
+
+
+
+
+
+
+
 
 
 
 #Contour plots faceted by the interventions
-outbreak_size_by_vax_coverage_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
-                                                    filter(npi_intensity %in% c(0, 0.5)))+
-    geom_contour_filled(aes(x = variant_emergence_day,
-                            y = vax_speed,
-                            z = log10(total_cases)
-    ), binwidth  = 1
-    ) +
-    scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
-                       labels = seq(0, max(controlled_epidemic$vax_speed), 2)
-    ) +
-    facet_wrap(vax_coverage ~ npi_intensity, ncol = 4, labeller = label_both) +
-    labs(title = 'Impact of vaccination and NPI\'s on outbreak size', 
-         x = 'Variant emergence day',
-         y = 'Vaccination speed',
-         fill = 'Outbreak size (log-transformed)'
-    ) + 
-    theme_bw(base_size = 12)
-
-#Plot in the viewer
-print(outbreak_size_by_vax_coverage_contour)
-
-#Save the plot to file
-ggsave(plot = outbreak_size_by_vax_coverage_contour,
-       filename = './figures/outbreak_size_by_vax_coverage_contour.png',
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-)
-
-
-#Peak incidence
-peak_incidence_by_vax_coverage_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
-                                                    filter(npi_intensity %in% c(0, 0.5)))+
-    geom_contour_filled(aes(x = variant_emergence_day,
-                            y = vax_speed,
-                            z = log10(peak_cases)
-    ), binwidth  = 1
-    ) +
-    scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
-                       labels = seq(0, max(controlled_epidemic$vax_speed), 2)
-    ) +
-    facet_wrap(vax_coverage ~ npi_intensity, ncol = 4, labeller = label_both) +
-    labs(title = 'Impact of vaccination and NPI\'s on peak incidence', 
-         x = 'Variant emergence day',
-         y = 'Vaccination speed',
-         fill = 'Peak incidence (log-transformed)'
-    ) + 
-    theme_bw(base_size = 12)
-
-#Plot in the viewer
-print(peak_incidence_by_vax_coverage_contour)
-
-#Save the plot to file
-ggsave(plot = peak_incidence_by_vax_coverage_contour,
-       filename = './figures/peak_incidence_by_vax_coverage_contour.png',
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-)
+# outbreak_size_by_vax_coverage_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
+#                                                     filter(npi_intensity %in% c(0, 0.5)))+
+#     geom_contour_filled(aes(x = variant_emergence_day,
+#                             y = vax_speed,
+#                             z = log10(total_cases)
+#     ), binwidth  = 1
+#     ) +
+#     scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
+#                        labels = seq(0, max(controlled_epidemic$vax_speed), 2)
+#     ) +
+#     facet_wrap(vax_coverage ~ npi_intensity, ncol = 4, labeller = label_both) +
+#     labs(title = 'Impact of vaccination and NPI\'s on outbreak size', 
+#          x = 'Variant emergence day',
+#          y = 'Vaccination speed',
+#          fill = 'Outbreak size (log-transformed)'
+#     ) + 
+#     theme_bw(base_size = 12)
+# 
+# #Plot in the viewer
+# print(outbreak_size_by_vax_coverage_contour)
+# 
+# #Save the plot to file
+# ggsave(plot = outbreak_size_by_vax_coverage_contour,
+#        filename = './figures/outbreak_size_by_vax_coverage_contour.png',
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+# )
+# 
+# 
+# #Peak incidence
+# peak_incidence_by_vax_coverage_contour <- ggplot(data = controlled_epidemic_rescaled %>% 
+#                                                     filter(npi_intensity %in% c(0, 0.5)))+
+#     geom_contour_filled(aes(x = variant_emergence_day,
+#                             y = vax_speed,
+#                             z = log10(peak_cases)
+#     ), binwidth  = 1
+#     ) +
+#     scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
+#                        labels = seq(0, max(controlled_epidemic$vax_speed), 2)
+#     ) +
+#     facet_wrap(vax_coverage ~ npi_intensity, ncol = 4, labeller = label_both) +
+#     labs(title = 'Impact of vaccination and NPI\'s on peak incidence', 
+#          x = 'Variant emergence day',
+#          y = 'Vaccination speed',
+#          fill = 'Peak incidence (log-transformed)'
+#     ) + 
+#     theme_bw(base_size = 12)
+# 
+# #Plot in the viewer
+# print(peak_incidence_by_vax_coverage_contour)
+# 
+# #Save the plot to file
+# ggsave(plot = peak_incidence_by_vax_coverage_contour,
+#        filename = './figures/peak_incidence_by_vax_coverage_contour.png',
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+# )
 
 
 
