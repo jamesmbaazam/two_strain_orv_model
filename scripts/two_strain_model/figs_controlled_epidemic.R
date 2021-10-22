@@ -3,6 +3,7 @@ library(scales)
 library(patchwork)
 library(mdthemes)
 library(tidyverse)
+library(metR)
 
 #helper scripts
 source('./scripts/two_strain_model/sim_config_global_params.R')
@@ -26,39 +27,60 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
                   .names = "{.col}_target"
            ),
            variant_emerges = ifelse(variant_emergence_day < max_time, 'yes', 'no')
-           ) 
+           ) %>% 
+    select(-c(npi_duration, total_vaccinated, total_vaccinated_log10))
+
+
+
+
+# sample_target_df <- controlled_epidemic_rescaled %>%
+#     filter(total_cases_log10_target %in% c('(1,2]', '(2,3]')) %>% 
+#     select(-starts_with('peak_')) %>% 
+#     arrange(variant_emergence_day, vax_coverage, vax_speed)
+# 
+# 
+# View(sample_target_df)
+
+#Summary contour plot
+ggplot(data = controlled_epidemic_rescaled %>% 
+           filter(variant_emergence_day %in% c(seq(1, 365, 15), 365),
+                  # total_cases_log10_target == '(7,8]'#, 
+                  npi_intensity %in% c(0)
+                  )
+       ) +
+    stat_contour(aes(x = vax_coverage, 
+                     y = vax_speed,
+                     z = total_cases_log10,
+                     color = variant_emerges,
+                     group = variant_emergence_day
+                     ),
+                    size = 0.5
+                 ) +
+    theme_bw(base_size = 12) +
+    facet_wrap('total_cases_log10_target')
 
 
 #contour plots
-outbreak_size_by_target_contour <- ggplot(data = controlled_epidemic_rescaled)+
-    geom_contour_filled(aes(x = vax_coverage, 
-                     y = vax_speed,
-                     z = total_cases_log10,
-                     group = variant_emergence_day
-    ), binwidth = 1,
-    ) +
-    scale_x_continuous(labels = percent_format()) +
-    scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
-                       labels = seq(0, max(controlled_epidemic$vax_speed), 2)
-    ) +
-    facet_wrap('total_cases_log10_target', ncol = 4, labeller = label_both) +
-    labs(#title = 'Impact of vaccination and NPI\'s on outbreak size', 
-         x = 'Vaccination coverage',
-         y = 'Vaccination speed'
-    ) + 
-    theme_bw(base_size = 12)
-
-#Plot in the viewer
-print(outbreak_size_by_target_contour)
-
-
-
-
-
-
-
-
-
+# outbreak_size_by_target_contour <- ggplot(data = controlled_epidemic_rescaled)+
+#     geom_contour_filled(aes(x = vax_coverage, 
+#                      y = vax_speed,
+#                      z = total_cases_log10,
+#                      group = variant_emergence_day
+#     ), binwidth = 1,
+#     ) +
+#     scale_x_continuous(labels = percent_format()) +
+#     scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
+#                        labels = seq(0, max(controlled_epidemic$vax_speed), 2)
+#     ) +
+#     facet_wrap('total_cases_log10_target', ncol = 4, labeller = label_both) +
+#     labs(#title = 'Impact of vaccination and NPI\'s on outbreak size', 
+#          x = 'Vaccination coverage',
+#          y = 'Vaccination speed'
+#     ) + 
+#     theme_bw(base_size = 12)
+# 
+# #Plot in the viewer
+# print(outbreak_size_by_target_contour)
 
 
 #Contour plots faceted by the interventions
