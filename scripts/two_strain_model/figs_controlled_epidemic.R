@@ -32,32 +32,61 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 
 
 
+#' Summary contour plot
 
-# sample_target_df <- controlled_epidemic_rescaled %>%
-#     filter(total_cases_log10_target %in% c('(1,2]', '(2,3]')) %>% 
-#     select(-starts_with('peak_')) %>% 
-#     arrange(variant_emergence_day, vax_coverage, vax_speed)
-# 
-# 
-# View(sample_target_df)
 
-#Summary contour plot
-ggplot(data = controlled_epidemic_rescaled %>% 
-           filter(variant_emergence_day %in% c(seq(1, 365, 15), 365),
-                  # total_cases_log10_target == '(7,8]'#, 
-                  npi_intensity %in% c(0)
-                  )
-       ) +
-    stat_contour(aes(x = vax_coverage, 
-                     y = vax_speed,
-                     z = total_cases_log10,
-                     color = variant_emerges,
-                     group = variant_emergence_day
-                     ),
-                    size = 0.5
-                 ) +
-    theme_bw(base_size = 12) +
-    facet_wrap('total_cases_log10_target')
+
+#' Loop through the npi levels and facet by total cases target
+
+npi_levels <- npi_intensity
+
+plot_list <- list()
+
+for (npi_level in 1:length(npi_levels)) {
+    plot_df <- controlled_epidemic_rescaled %>% 
+        filter(#variant_emergence_day %in% c(seq(1, 365, 15), 365),
+               npi_intensity == npi_levels[npi_level]
+               )
+               
+    contour_plot <- ggplot(data = plot_df) +
+        stat_contour(aes(x = vax_coverage, 
+                         y = vax_speed,
+                         z = total_cases_log10,
+                         color = variant_emerges,
+                         group = variant_emergence_day
+        ),
+        size = 0.5
+        ) +
+        scale_color_viridis_d(option = "cividis") +
+        scale_x_continuous(labels = percent_format()) + 
+        scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2), 
+                           labels = seq(0, max(controlled_epidemic$vax_speed), 2)
+                           ) +
+        theme_bw(base_size = 12) +
+        labs(title = paste('NPI = ', npi_levels[npi_level]),
+             x = 'Vaccination coverage',
+             y = 'Vaccination campaign speed'
+             ) +
+        facet_wrap('total_cases_log10_target')
+    
+    
+    plot_list[[npi_level]] <- contour_plot
+    
+    file_name <-  paste0('./figures/contour_plot_npi_', npi_levels[npi_level],'.png') 
+    #Save the files to a pdf
+    ggsave(contour_plot, 
+           file = file_name,
+           width = 23.76,
+           height = 17.86,
+           units = 'cm')
+}
+
+
+pdf("./figures/summary_contour_plots.pdf")
+for (npi_level in 1:length(npi_levels)) {
+    print(plot_list[[npi_level]])
+}
+dev.off()
 
 
 #contour plots
