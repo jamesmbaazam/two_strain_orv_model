@@ -60,7 +60,7 @@ coverage_correction <- 0.999099
 #' 
 
 # Variant emergence times ===
-variant_emergence_times <- c(seq(1, 151, 15), 365)
+variant_emergence_times <- c(seq(1, 151, 15), max_time)
 
 event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
                        value = c(-Im_index_cases/target_pop, Im_index_cases/target_pop), #introduce 10 variant cases
