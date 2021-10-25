@@ -34,8 +34,8 @@ run_sim_all <- function(sim_table){
                                 max_time = max_time, 
                                 dt = eval_times,
                                 events_table = event_df,
-                                get_summaries = T,
-                                browse = F
+                                get_summaries = TRUE,
+                                browse = FALSE
                                 )
            )
         }) %>% 
