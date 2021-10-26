@@ -34,7 +34,7 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 
 
 
-#' Isocline
+#' Towards the outbreak size isoclines
 
 outbreak_size_isocline_df <- controlled_epidemic_rescaled %>% 
     filter(npi_intensity == 0.00, total_cases <= 1000) %>% 
@@ -60,7 +60,7 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df %>%
               size = 2.5, 
               color = 'black'
               ) +
-    scale_x_continuous(labels = percent_format()) +
+    scale_x_continuous(labels = percent_format(), limits = c(0.5, 1), breaks = seq(0.5, 1, 0.05)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     labs(title = paste('Cumulative cases threshold = 1000, NPI = ', unique(outbreak_size_isocline_df$npi_intensity)), 
          x = 'Vaccination coverage', 
@@ -110,7 +110,7 @@ for (npi_level in 1:length(npi_levels)) {
               size = 2.5, 
               color = 'black'
     ) +
-    scale_x_continuous(labels = percent_format()) +
+    scale_x_continuous(labels = percent_format(), limits = c(0.3, 1), breaks = seq(0.3, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     labs(title = paste('Cumulative cases threshold = 1000, NPI = ', 
                        unique(isocline_df$npi_intensity)
@@ -134,7 +134,7 @@ for (npi_level in 1:length(npi_levels)) {
 }
 
 
-pdf("./figures/isocline_plots.pdf")
+pdf("./figures/isoclines_outbreak_size.pdf")
 for (npi_level in 1:length(npi_levels)) {
     print(plot_list[[npi_level]])
 }
