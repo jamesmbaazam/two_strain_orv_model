@@ -136,7 +136,105 @@ dev.off()
 
 
 
+#' Towards the peak incidence isoclines
 
+peak_incidence_isocline_df <- controlled_epidemic_rescaled %>% 
+    filter(npi_intensity == 0.00, peak_cases <= 100) %>% #25% quantile
+    group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
+    mutate(min_speed = min(vax_speed))
+
+peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>% 
+                                     filter(variant_emergence_day %in% c(seq(1, 151, 30), 365)), 
+                                 aes(x = vax_coverage, 
+                                     y = min_speed, 
+                                     color = as.factor(variant_emergence_day)
+                                 )) + 
+    geom_line(size = 1, show.legend = FALSE) + 
+    geom_text(data = peak_incidence_isocline_df %>% 
+                  filter(variant_emergence_day %in% c(seq(1, 151, 30), 365)) %>% 
+                  group_by(variant_emergence_day) %>% 
+                  slice(1) %>% 
+                  ungroup(),
+              aes(x = vax_coverage, 
+                  y = min_speed,
+                  label = variant_emergence_day
+              ),
+              size = 2.5, 
+              color = 'black'
+    ) +
+    scale_x_continuous(labels = percent_format(), limits = c(0.5, 1), breaks = seq(0.5, 1, 0.05)) +
+    scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
+    labs(title = paste('Peak incidence <= 100, NPI = ', unique(peak_incidence_isocline_df$npi_intensity)), 
+         x = 'Vaccination coverage', 
+         y = 'Vaccination speed', 
+         color = 'Variant emergence day'
+    ) +
+    theme_minimal(base_size = 12)
+
+print(peak_incidence_isocline)
+
+
+#' Loop through the npi levels and facet by peak incidence target
+npi_levels <- npi_intensity
+
+plot_list <- list()
+
+for (npi_level in 1:length(npi_levels)) {
+    #subset the data
+    isocline_df <- controlled_epidemic_rescaled %>% 
+        filter(npi_intensity == npi_levels[npi_level], peak_cases <= 100) %>% 
+        group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
+        mutate(min_speed = min(vax_speed))
+    
+    isocline_plot <- ggplot(isocline_df %>% 
+                                filter(variant_emergence_day %in% c(seq(1, 151, 30), 365)), 
+                            aes(x = vax_coverage, 
+                                y = min_speed, 
+                                color = as.factor(variant_emergence_day)
+                            )
+    ) + 
+        geom_line(size = 1, show.legend = FALSE) + 
+        geom_text(data = isocline_df %>% 
+                      filter(variant_emergence_day %in% c(seq(1, 151, 30), 365)) %>% 
+                      group_by(variant_emergence_day) %>% 
+                      slice(1) %>% 
+                      ungroup(),
+                  aes(x = vax_coverage, 
+                      y = min_speed,
+                      label = variant_emergence_day
+                  ),
+                  size = 2.5, 
+                  color = 'black'
+        ) +
+        scale_x_continuous(labels = percent_format(), limits = c(0.3, 1), breaks = seq(0.3, 1, 0.1)) +
+        scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
+        labs(title = paste('Peak incidence <= 100, NPI = ', 
+                           unique(isocline_df$npi_intensity)
+        ), 
+        x = 'Vaccination coverage', 
+        y = 'Vaccination speed', 
+        color = 'Variant emergence day'
+        ) +
+        theme_minimal(base_size = 12)
+    
+    
+    plot_list[[npi_level]] <- isocline_plot
+    
+    # file_name <-  paste0('./figures/isocline_plot_npi_', npi_levels[npi_level],'.png')
+    #Save the files to a pdf
+    # ggsave(isocline_plot,
+    #        file = file_name,
+    #        width = 23.76,
+    #        height = 17.86,
+    #        units = 'cm')
+}
+
+
+pdf("./figures/isoclines_peak_incidence.pdf")
+for (npi_level in 1:length(npi_levels)) {
+    print(plot_list[[npi_level]])
+}
+dev.off()
 
 
 
