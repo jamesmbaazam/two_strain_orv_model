@@ -62,7 +62,7 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df %>%
               ) +
     scale_x_continuous(labels = percent_format(), limits = c(0.5, 1), breaks = seq(0.5, 1, 0.05)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    labs(title = paste('Cumulative cases threshold = 1000, NPI = ', unique(outbreak_size_isocline_df$npi_intensity)), 
+    labs(title = paste('Cumulative cases threshold <= 1000, NPI = ', unique(outbreak_size_isocline_df$npi_intensity)), 
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
          color = 'Variant emergence day'
@@ -71,12 +71,6 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df %>%
 
 print(outbreak_size_isocline)
 
-# ggsave(plot = outbreak_size_isocline,
-#        filename = './figures/outbreak_size_isocline.png',
-#        width = 23.76,
-#        height = 17.86,
-#        units = 'cm'
-#        )
 
 #' Loop through the npi levels and facet by total cases target
 npi_levels <- npi_intensity
@@ -112,7 +106,7 @@ for (npi_level in 1:length(npi_levels)) {
     ) +
     scale_x_continuous(labels = percent_format(), limits = c(0.3, 1), breaks = seq(0.3, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    labs(title = paste('Cumulative cases threshold = 1000, NPI = ', 
+    labs(title = paste('Cumulative cases threshold <= 1000, NPI = ', 
                        unique(isocline_df$npi_intensity)
                        ), 
          x = 'Vaccination coverage', 
@@ -124,13 +118,13 @@ for (npi_level in 1:length(npi_levels)) {
 
     plot_list[[npi_level]] <- isocline_plot
 
-    file_name <-  paste0('./figures/isocline_plot_npi_', npi_levels[npi_level],'.png')
-    #Save the files to a pdf
-    ggsave(isocline_plot,
-           file = file_name,
-           width = 23.76,
-           height = 17.86,
-           units = 'cm')
+    # file_name <-  paste0('./figures/isocline_plot_npi_', npi_levels[npi_level],'.png')
+    # #Save the files to a pdf
+    # ggsave(isocline_plot,
+    #        file = file_name,
+    #        width = 23.76,
+    #        height = 17.86,
+    #        units = 'cm')
 }
 
 
@@ -183,13 +177,13 @@ for (npi_level in 1:length(npi_levels)) {
 
     plot_list[[npi_level]] <- contour_plot
 
-    file_name <-  paste0('./figures/contour_plot_npi_', npi_levels[npi_level],'.png')
-    #Save the files to a pdf
-    ggsave(contour_plot,
-           file = file_name,
-           width = 23.76,
-           height = 17.86,
-           units = 'cm')
+    # file_name <-  paste0('./figures/contour_plot_npi_', npi_levels[npi_level],'.png')
+    # #Save the files to a pdf
+    # ggsave(contour_plot,
+    #        file = file_name,
+    #        width = 23.76,
+    #        height = 17.86,
+    #        units = 'cm')
 }
 
 
