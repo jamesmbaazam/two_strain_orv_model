@@ -16,7 +16,7 @@ source('./scripts/two_strain_model/two_strain_model.R')
 #Simple case: No NPI 
 npi_start <- 1
 npi_duration <- max_time - npi_start
-npi_intensity <- seq(0, 1, by = 0.25) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
+npi_intensity <- seq(0, 0.3, by = 0.02) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
 
 
 # Vaccination ====
