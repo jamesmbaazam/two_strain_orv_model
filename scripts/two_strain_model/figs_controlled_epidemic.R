@@ -37,7 +37,7 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 #' Towards the outbreak size isoclines
 
 outbreak_size_isocline_df <- controlled_epidemic_rescaled %>% 
-    filter(npi_intensity == 0.00, total_cases <= 1000) %>% 
+    filter(npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), total_cases <= 1000) %>% 
     group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
     mutate(min_speed = min(vax_speed))
 
@@ -60,17 +60,24 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df %>%
               size = 2.5, 
               color = 'black'
               ) +
-    scale_x_continuous(labels = percent_format(), limits = c(0.5, 1), breaks = seq(0.5, 1, 0.05)) +
+    scale_x_continuous(labels = percent_format()) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    labs(title = paste('Cumulative cases threshold <= 1000, NPI = ', unique(outbreak_size_isocline_df$npi_intensity)), 
+    labs(title = paste('Cumulative cases threshold <= 1000 at various NPI intensity levels'), 
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
          color = 'Variant emergence day'
          ) +
-    theme_minimal(base_size = 12)
+    facet_wrap('npi_intensity', labeller = 'label_both') +
+    theme_bw(base_size = 12)
 
 print(outbreak_size_isocline)
 
+#Save the files 
+ggsave(outbreak_size_isocline,
+       file = './figures/outbreak_size_isocline_summary.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm')
 
 #' Loop through the npi levels and facet by total cases target
 npi_levels <- npi_intensity
@@ -139,7 +146,7 @@ dev.off()
 #' Towards the peak incidence isoclines
 
 peak_incidence_isocline_df <- controlled_epidemic_rescaled %>% 
-    filter(npi_intensity == 0.00, peak_cases <= 100) %>% #25% quantile
+    filter(npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), peak_cases <= 100) %>% #25% quantile
     group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
     mutate(min_speed = min(vax_speed))
 
@@ -162,16 +169,25 @@ peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>%
               size = 2.5, 
               color = 'black'
     ) +
-    scale_x_continuous(labels = percent_format(), limits = c(0.5, 1), breaks = seq(0.5, 1, 0.05)) +
+    scale_x_continuous(labels = percent_format()) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    labs(title = paste('Peak incidence <= 100, NPI = ', unique(peak_incidence_isocline_df$npi_intensity)), 
+    labs(title = paste('Peak incidence <= 100 at various NPI intensity levels'), 
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
          color = 'Variant emergence day'
     ) +
-    theme_minimal(base_size = 12)
+    facet_wrap('npi_intensity', labeller = 'label_both') +
+    theme_bw(base_size = 12) 
 
 print(peak_incidence_isocline)
+
+
+#Save the files 
+ggsave(peak_incidence_isocline,
+       file = './figures/peak_incidence_isocline_summary.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm')
 
 
 #' Loop through the npi levels and facet by peak incidence target
