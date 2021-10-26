@@ -71,12 +71,12 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df %>%
 
 print(outbreak_size_isocline)
 
-ggsave(plot = outbreak_size_isocline,
-       filename = './figures/outbreak_size_isocline.png',
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-       )
+# ggsave(plot = outbreak_size_isocline,
+#        filename = './figures/outbreak_size_isocline.png',
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+#        )
 
 #' Loop through the npi levels and facet by total cases target
 npi_levels <- npi_intensity
