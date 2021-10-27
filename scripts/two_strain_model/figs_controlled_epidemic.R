@@ -49,7 +49,7 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df %>%
                                      )) + 
     geom_line(size = 1, show.legend = FALSE) + 
     geom_text(data = outbreak_size_isocline_df %>% 
-                  filter(variant_emergence_day %in% c(seq(1, 151, 30), 365)) %>% 
+                  filter(variant_emergence_day %in% c(seq(1, 151, 60), 365)) %>% 
                   group_by(variant_emergence_day) %>% 
                   slice(1) %>% 
                   ungroup(),
@@ -62,7 +62,7 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df %>%
               ) +
     scale_x_continuous(labels = percent_format()) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    labs(title = paste('Cumulative cases threshold <= 1000 at various NPI intensity levels'), 
+    labs(#title = paste('Cumulative cases threshold <= 1000 at various NPI intensity levels'), 
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
          color = 'Variant emergence day'
@@ -100,7 +100,7 @@ for (npi_level in 1:length(npi_levels)) {
                             ) + 
         geom_line(size = 1, show.legend = FALSE) + 
         geom_text(data = isocline_df %>% 
-                  filter(variant_emergence_day %in% c(seq(1, 151, 30), 365)) %>% 
+                  filter(variant_emergence_day %in% c(seq(1, 151, 60), 365)) %>% 
                   group_by(variant_emergence_day) %>% 
                   slice(1) %>% 
                   ungroup(),
@@ -113,9 +113,7 @@ for (npi_level in 1:length(npi_levels)) {
     ) +
     scale_x_continuous(labels = percent_format(), limits = c(0.3, 1), breaks = seq(0.3, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    labs(title = paste('Cumulative cases threshold <= 1000, NPI = ', 
-                       unique(isocline_df$npi_intensity)
-                       ), 
+    labs(title = paste('Cumulative cases threshold <= 1000, NPI = ', unique(isocline_df$npi_intensity)), 
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
          color = 'Variant emergence day'
@@ -158,7 +156,7 @@ peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>%
                                  )) + 
     geom_line(size = 1, show.legend = FALSE) + 
     geom_text(data = peak_incidence_isocline_df %>% 
-                  filter(variant_emergence_day %in% c(seq(1, 151, 30), 365)) %>% 
+                  filter(variant_emergence_day %in% c(seq(1, 151, 60), 365)) %>% 
                   group_by(variant_emergence_day) %>% 
                   slice(1) %>% 
                   ungroup(),
@@ -171,7 +169,7 @@ peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>%
     ) +
     scale_x_continuous(labels = percent_format()) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    labs(title = paste('Peak incidence <= 100 at various NPI intensity levels'), 
+    labs(#title = paste('Peak incidence <= 100 at various NPI intensity levels'), 
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
          color = 'Variant emergence day'
@@ -224,9 +222,7 @@ for (npi_level in 1:length(npi_levels)) {
         ) +
         scale_x_continuous(labels = percent_format(), limits = c(0.3, 1), breaks = seq(0.3, 1, 0.1)) +
         scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-        labs(title = paste('Peak incidence <= 100, NPI = ', 
-                           unique(isocline_df$npi_intensity)
-        ), 
+        labs(#title = paste('Peak incidence <= 100, NPI = ', unique(isocline_df$npi_intensity)), 
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
         color = 'Variant emergence day'
