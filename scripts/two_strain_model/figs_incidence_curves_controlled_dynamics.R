@@ -3,7 +3,6 @@ library(scales)
 library(patchwork)
 library(mdthemes)
 library(tidyverse)
-library(metR)
 
 #helper scripts
 source('./scripts/two_strain_model/sim_config_global_params.R')
