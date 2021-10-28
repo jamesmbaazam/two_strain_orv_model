@@ -20,7 +20,12 @@ controlled_epidemic_dynamics_rescaled <- controlled_epidemic_dynamics %>%
               incidence = Iw + Iwm + Im + Imw,
               .keep = 'unused'
               ) %>% 
-    mutate(across(.cols = incidence, .fns = ~ .x*target_pop))
+    mutate(across(.cols = incidence, .fns = ~ .x*target_pop)) %>% 
+    group_by(variant_emergence_day) %>% 
+    mutate(outbreak_size = max(incidence), #what is the outbreak size for each emergence day and when does it occur
+           peak_time = which.max(incidence)
+           ) %>% 
+    ungroup()
 
 
 #The incidence curves
