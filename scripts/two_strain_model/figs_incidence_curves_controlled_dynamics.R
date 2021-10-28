@@ -40,7 +40,8 @@ incidence_curves <- ggplot(data = controlled_epidemic_dynamics_rescaled) +
     facet_wrap(npi_intensity ~ vax_speed, labeller = 'label_both') +
     labs(color = 'Variant emergence day', 
          y = 'Incidence'
-         )
+         ) +
+    theme_minimal(base_size = 14)
 
 
 print(incidence_curves)
