@@ -20,18 +20,27 @@ controlled_epidemic_dynamics_rescaled <- controlled_epidemic_dynamics %>%
               incidence = Iw + Iwm + Im + Imw,
               .keep = 'unused'
               ) %>% 
-    mutate(across(.cols = incidence, .fns = ~ .x*target_pop))
+    mutate(across(.cols = incidence, .fns = ~ .x*target_pop)) %>% 
+    group_by(variant_emergence_day) %>% 
+    mutate(outbreak_size = max(incidence), #what is the outbreak size for each emergence day and when does it occur
+           peak_time = which.max(incidence)
+           ) %>% 
+    ungroup()
 
 
 #The incidence curves
 incidence_curves <- ggplot(data = controlled_epidemic_dynamics_rescaled) + 
     geom_line(aes(x = time, 
                   y = incidence,
-                  color = variant_emergence_day
+                  color = as.factor(variant_emergence_day)
                   ), 
-              size = 0.1
+              size = 1
               ) + 
-    facet_wrap(~ as.factor(vax_speed))
+    scale_y_continuous(labels = unit_format(unit = 'M', scale = 1E-6)) +
+    facet_wrap(npi_intensity ~ vax_speed, labeller = 'label_both') +
+    labs(color = 'Variant emergence day', 
+         y = 'Incidence'
+         )
 
 
 print(incidence_curves)
