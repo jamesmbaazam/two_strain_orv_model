@@ -86,7 +86,7 @@ extract_model_summaries <- function(dynamics_df) {
 }
 
 
-#' The simulation function ====
+#' Function to run one instance of the two strain model ====
 #'
 #' @param pop_inits 
 #' @param dynamics_parms 
@@ -144,6 +144,33 @@ simulate_raw_dynamics <- function(pop_inits, dynamics_parms,
   }
 
 
+#' Function to run all the scenarios provided in a df ====
+#'
+#' @param sim_table #The simulation table
+#'
+#' @return
+#' @export
+#'
+#' @examples
+run_sim_all <- function(sim_table, get_summaries = TRUE){
+    res <- sim_table %>% 
+        rowwise() %>% 
+        do({with(.,
+                 simulate_raw_dynamics(pop_inits = pop_inits, 
+                                       dynamics_parms = dynamics_params,
+                                       control_parms = .,
+                                       max_time = max_time, 
+                                       dt = eval_times,
+                                       events_table = event_df,
+                                       get_summaries = get_summaries,
+                                       browse = FALSE
+                 )
+        )
+        }) %>% 
+        ungroup() %>% 
+        as_tibble()
+    return(res)
+}
 
 #' Calculate vaccination hazards from coverage and campaign duration 
 #'
