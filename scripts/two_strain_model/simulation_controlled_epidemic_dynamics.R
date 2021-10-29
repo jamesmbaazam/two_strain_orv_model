@@ -21,7 +21,7 @@ dynamics_simulation_table <- orv_npi_control_config_table %>%
     filter(npi_intensity %in% c(0, 0.1), 
            vax_coverage == 0.80, 
            vax_speed %in% c(1, 3.75), 
-           variant_emergence_day %in% seq(1, max_time, by = 15)
+           variant_emergence_day %in% c(seq(1, max_time, by = 30), max_time)
            )
 
 # orv_npi0_20_simulation_table <- orv_npi_control_config_table %>% 
