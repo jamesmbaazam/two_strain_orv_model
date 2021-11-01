@@ -12,20 +12,31 @@ library(beepr)
 source('./scripts/two_strain_model/two_strain_model.R')
 source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
+source('./scripts/two_strain_model/sim_config_uncontrolled_epidemic.R')
 source('./scripts/two_strain_model/simulation_functions.R')
 
 
 #The simulation table
-#Select scenarios
-dynamics_simulation_table <- orv_npi_control_config_table %>% 
+#Select the control case studies
+control_sim_params <- orv_npi_control_config_table %>% 
     filter(npi_intensity %in% c(0, 0.1), 
            vax_coverage == 0.80, 
            vax_speed %in% c(1, 3.75), 
-           variant_emergence_day %in% c(seq(1, max_time, by = 30), max_time)
+           variant_emergence_day %in% c(31, max_time)
+           ) %>% 
+    mutate(is_control_scenario = TRUE)
+
+
+#Select the case studies for no control
+no_control_sim_parms <- no_control_parms_df %>% 
+    rbind(no_control_parms_df) %>% 
+    mutate(variant_emergence_day = c(31, 365),
+           is_control_scenario = FALSE
            )
 
-# orv_npi0_20_simulation_table <- orv_npi_control_config_table %>% 
-#     filter(npi_intensity %in% c(0, 0.2)) #npi of 50%
+#The final simulation tables for the controlled versus uncontrolled dynamics
+all_case_studies_sim_table <- rbind(control_sim_params, no_control_sim_parms)
+
 
 # Set up parallelization ----
 # how many cores to use in the cluster? #
@@ -38,7 +49,7 @@ cl = makeSOCKcluster(num_cores)
 registerDoSNOW(cl)
 
 ## do some parallel computations with foreach
-n_sims <- nrow(dynamics_simulation_table)
+n_sims <- nrow(all_case_studies_sim_table)
 
 sims_per_job <- ceiling(n_sims/num_cores)
 
@@ -53,7 +64,7 @@ num_of_jobs <- ceiling(n_sims/sims_per_job)
 
 start_time <- Sys.time()
 
-control_dynamics_case_studies <- foreach(i = 1:num_of_jobs, 
+dynamics_case_studies <- foreach(i = 1:num_of_jobs, 
                                           .combine = rbind,
                                           .packages = c('tidyverse', 'foreach', 'deSolve'), 
                                           .errorhandling = 'remove') %dopar% 
@@ -63,7 +74,7 @@ control_dynamics_case_studies <- foreach(i = 1:num_of_jobs,
         
         end_index <- min(start_index + sims_per_job - 1, n_sims)
         
-        sim_subset <- dynamics_simulation_table %>% 
+        sim_subset <- all_case_studies_sim_table %>% 
             slice(start_index:end_index)
         
         
@@ -83,7 +94,7 @@ run_time <- end_time - start_time
 print(run_time)
 
 #save the simulation
-saveRDS(object = control_dynamics_case_studies, file = './model_output/control_dynamics_case_studies.rds')
+saveRDS(object = dynamics_case_studies, file = './model_output/dynamics_case_studies_controlled_vs_uncontrolled.rds')
 
 
 beepr::beep(3)
