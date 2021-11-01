@@ -17,26 +17,23 @@ thesis_plot_path <- "C:/Users/JAMESAZAM/Dropbox/My Academic Repository/_SACEMA/A
 
 
 #Load the model output
-controlled_epidemic_dynamics <- readRDS('./model_output/control_dynamics_case_studies.rds')
+case_studies_dynamics_df <- readRDS('./model_output/dynamics_case_studies_controlled_vs_uncontrolled.rds')
 
 #Rescale the population proportions to total sizes
-controlled_epidemic_dynamics_rescaled <- controlled_epidemic_dynamics %>%
-    select(!starts_with(c('S', 'R', 'V', 'K'), ignore.case = FALSE)) %>% 
-    mutate(time = time,
-           variant_emergence_day = variant_emergence_day,
-              incidence = Iw + Iwm + Im + Imw,
-              .keep = 'unused'
-              ) %>% 
-    mutate(across(.cols = incidence, .fns = ~ .x*target_pop)) %>% 
-    group_by(variant_emergence_day) %>% 
-    mutate(outbreak_size = max(incidence), #what is the outbreak size for each emergence day and when does it occur
+case_studies_dynamics_rescaled <- case_studies_dynamics_df %>%
+    group_by(variant_emergence_day, npi_intensity, vax_speed) %>% 
+    mutate(incidence = Iw + Iwm + Im + Imw, 
+           outbreak_size = max(K), #what is the outbreak size for each emergence day and when does it occur
            peak_time = which.max(incidence)
            ) %>% 
+    mutate(across(.cols = c(incidence, outbreak_size), .fns = ~ .x*target_pop),
+           with_control = ifelse(vax_coverage == 0 & npi_intensity == 0, 'uncontrolled', 'controlled')) %>% 
+    select(!starts_with(c('S', 'R', 'V', 'K'), ignore.case = FALSE)) %>% 
     ungroup()
 
 
 #The incidence curves
-controlled_epidemic_inc_curves <- ggplot(data = controlled_epidemic_dynamics_rescaled %>% 
+incidence_curves <- ggplot(data = case_studies_dynamics_rescaled %>% 
                                filter(variant_emergence_day %in% c(31, 365)) %>% 
                                    mutate(emergence_scenario = as.factor(ifelse(variant_emergence_day == 31, #Scenarios for emergence on day 31 versus no emergence
                                                                       'day_31', 
@@ -46,28 +43,28 @@ controlled_epidemic_inc_curves <- ggplot(data = controlled_epidemic_dynamics_res
                            ) + 
     geom_line(aes(x = time, 
                   y = incidence,
-                  color = emergence_scenario,
+                  color = with_control,
                   linetype = emergence_scenario
                   ), 
               size = 1
               ) + 
-    scale_y_log10(labels = unit_format(unit = 'M', scale = 1E-6)) +
+    scale_y_continuous(labels = comma) +
     facet_wrap(npi_intensity ~ vax_speed, labeller = 'label_both', scales = 'free') +
-    labs(color = 'Variant emergence',
+    labs(color = 'Control scenario',
          linetype = 'Variant emergence',
          x = 'Days',
-         y = 'Incidence (log-transformed)',
+         y = 'Incidence',
          ) +
     theme_minimal(base_size = 14) +
     theme(strip.text.x = element_text(size = 12, face = 'bold')) 
 
 
-print(controlled_epidemic_inc_curves)
+print(incidence_curves)
 
 
 #Save the plot to git folder
-ggsave(plot = controlled_epidemic_inc_curves,
-       filename = 'controlled_epidemic_inc_curves.png',
+ggsave(plot = incidence_curves,
+       filename = 'incidence_curves.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
@@ -76,8 +73,8 @@ ggsave(plot = controlled_epidemic_inc_curves,
 
 
 #Save the plot to thesis folder
-ggsave(plot = controlled_epidemic_inc_curves,
-       filename = 'controlled_epidemic_inc_curves.png',
+ggsave(plot = incidence_curves,
+       filename = 'incidence_curves.png',
        path = thesis_plot_path,
        width = 23.76,
        height = 17.86,
