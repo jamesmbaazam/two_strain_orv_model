@@ -84,17 +84,11 @@ ggsave(plot = incidence_curves,
 
 
 #Summaries
-#order of magnitude function (https://stackoverflow.com/questions/7906996/algorithm-to-round-to-the-next-order-of-magnitude-in-r)
-log10_ceiling <- function(x) {
-    10^(ceiling(log10(x)))
-}
-
-
-control_scenarios_df <- controlled_epidemic_dynamics_rescaled %>% 
-    filter(variant_emergence_day %in% c(31, 365))
-
-
-control_scenarios_df %>% 
+case_studies_dynamics_rescaled %>% 
     group_by(variant_emergence_day, npi_intensity, vax_speed) %>% 
-    summarise(peak_incidence = max(incidence)) %>% 
-    ungroup()
+    summarise(peak_incidence = max(incidence),
+              outbreak_size = max(outbreak_size)
+              ) %>% 
+    ungroup() %>% 
+    filter(variant_emergence_day == 31) %>% 
+    arrange(outbreak_size)
