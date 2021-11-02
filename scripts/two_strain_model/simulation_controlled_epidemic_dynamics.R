@@ -18,21 +18,29 @@ source('./scripts/two_strain_model/simulation_functions.R')
 
 #The simulation table
 #Select the control case studies
+variant_emergence_days <- c(seq(1, 151, by = 15), max_time)
+
+
+#control scenarios
 control_sim_params <- orv_npi_control_config_table %>% 
     filter(npi_intensity %in% c(0, 0.1), 
            vax_coverage == 0.80, 
            vax_speed %in% c(1, 3.75), 
-           variant_emergence_day %in% c(31, max_time)
-           ) %>% 
-    mutate(is_control_scenario = TRUE)
+           variant_emergence_day %in% variant_emergence_days
+           ) 
 
 
-#Select the case studies for no control
-no_control_sim_parms <- no_control_parms_df %>% 
-    rbind(no_control_parms_df) %>% 
-    mutate(variant_emergence_day = c(31, 365),
-           is_control_scenario = FALSE
-           )
+#no control
+no_control_sim_parms <- data.frame(vax_coverage = rep(0, times = length(variant_emergence_days)), 
+                                   vax_rate = rep(0, times = length(variant_emergence_days)), 
+                                   vax_speed = rep(0, times = length(variant_emergence_days)), 
+                                   vax_start = rep(max_time, times = length(variant_emergence_days)), 
+                                   campaign_duration = rep(0, times = length(variant_emergence_days)), 
+                                   npi_intensity = rep(0, times = length(variant_emergence_days)),
+                                   npi_start = rep(max_time, times = length(variant_emergence_days)), 
+                                   npi_duration = rep(0, times = length(variant_emergence_days))
+                                   ) %>% 
+    mutate(variant_emergence_day = variant_emergence_days)
 
 #The final simulation tables for the controlled versus uncontrolled dynamics
 all_case_studies_sim_table <- rbind(control_sim_params, no_control_sim_parms)
