@@ -26,45 +26,60 @@ case_studies_dynamics_rescaled <- case_studies_dynamics_df %>%
            outbreak_size = max(K), #what is the outbreak size for each emergence day and when does it occur
            peak_time = which.max(incidence)
            ) %>% 
-    mutate(across(.cols = c(incidence, outbreak_size), .fns = ~ .x*target_pop),
-           with_control = ifelse(vax_coverage == 0 & npi_intensity == 0, 'uncontrolled', 'controlled')) %>% 
+    mutate(across(.cols = c(incidence, outbreak_size), .fns = ~ .x*target_pop)) %>%  
     select(!starts_with(c('S', 'R', 'V', 'K'), ignore.case = FALSE)) %>% 
     ungroup()
 
 
-#The incidence curves
-incidence_curves <- ggplot(data = case_studies_dynamics_rescaled %>% 
-                               filter(variant_emergence_day %in% c(31, 365)) %>% 
-                                   mutate(emergence_scenario = as.factor(ifelse(variant_emergence_day == 31, #Scenarios for emergence on day 31 versus no emergence
-                                                                      'day_31', 
-                                                                      'no_emergence'
-                                                                      ))
-                                          )
-                           ) + 
+
+#Add a column to label the control scenarios
+case_studies_dynamics <- case_studies_dynamics_rescaled %>% 
+    mutate(control_type = case_when(npi_intensity == 0 & vax_speed > 0 ~ 'vax_only', 
+                                    npi_intensity > 0 ~ 'vax+npi',
+                                    npi_intensity == 0 & vax_speed == 0 ~ 'no_control'
+                                    ),
+           control_type = as.factor(control_type)
+           )
+
+
+#The incidence curves (controlled scenario)
+#Get the vax only and no control dynamics data
+vax_only_dynamics_df <- case_studies_dynamics %>% 
+    filter(control_type %in% c('vax_only', 'no_control'),
+           variant_emergence_day %in% c(seq(1, 151, by = 60), max_time)
+           ) %>% 
+    mutate(vax_speed = ifelse(control_type == 'no_control', NA, vax_speed))
+
+
+#Plot the vax only dynamics
+incidence_curves_vax_only <- ggplot(data = vax_only_dynamics_df) + 
     geom_line(aes(x = time, 
                   y = incidence,
-                  color = with_control,
-                  linetype = emergence_scenario
+                  color = as.factor(variant_emergence_day)
                   ), 
               size = 1
               ) + 
-    scale_y_continuous(labels = comma) +
-    facet_wrap(npi_intensity ~ vax_speed, labeller = 'label_both', scales = 'free') +
-    labs(color = 'Control scenario',
-         linetype = 'Variant emergence',
+    scale_y_log10(labels = comma) +
+    facet_wrap(control_type ~ vax_speed, 
+               labeller = labeller(control_type = label_value, 
+                                   vax_speed = label_both
+                                   ), 
+               scales = 'fixed'
+               ) +
+    labs(color = 'Variant emergence',
          x = 'Days',
-         y = 'Incidence',
+         y = 'Incidence (log-transformed)',
          ) +
     theme_minimal(base_size = 14) +
-    theme(strip.text.x = element_text(size = 12, face = 'bold')) 
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
 
 
-print(incidence_curves)
+print(incidence_curves_vax_only)
 
 
 #Save the plot to git folder
-ggsave(plot = incidence_curves,
-       filename = 'incidence_curves.png',
+ggsave(plot = incidence_curves_vax_only,
+       filename = 'incidence_curves_vax_only.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
@@ -73,8 +88,8 @@ ggsave(plot = incidence_curves,
 
 
 #Save the plot to thesis folder
-ggsave(plot = incidence_curves,
-       filename = 'incidence_curves.png',
+ggsave(plot = incidence_curves_vax_only,
+       filename = 'incidence_curves_vax_only.png',
        path = thesis_plot_path,
        width = 23.76,
        height = 17.86,
@@ -83,12 +98,70 @@ ggsave(plot = incidence_curves,
 
 
 
+
+#Get the vax + NPI control and no control dynamics data
+vax_and_npi_dynamics <- case_studies_dynamics %>% 
+    filter(control_type != 'vax_only',
+           variant_emergence_day %in% c(seq(1, 151, by = 60), max_time)
+           ) %>% 
+    mutate(vax_speed = ifelse(control_type == 'no_control', NA, vax_speed),
+           npi_intensity = ifelse(control_type == 'no_control', NA, npi_intensity)
+           )
+
+
+#Plot the vax only dynamics
+incidence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) + 
+    geom_line(aes(x = time, 
+                  y = incidence,
+                  color = as.factor(variant_emergence_day)
+    ), 
+    size = 1
+    ) + 
+    scale_y_log10(labels = comma) +
+    facet_wrap(control_type ~ vax_speed + npi_intensity, 
+               labeller = labeller(control_type = label_value, 
+                                   vax_speed = label_both,
+                                   npi_intensity = label_both
+                                   ), 
+               scales = 'fixed'
+    ) +
+    labs(color = 'Variant emergence',
+         x = 'Days',
+         y = 'Incidence (log-transformed)',
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+
+
+print(incidence_curves_vax_and_npi)
+
+
+#Save the plot to git folder
+ggsave(plot = incidence_curves_vax_and_npi,
+       filename = 'incidence_curves_vax_and_npi.png',
+       path = git_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
+
+
+#Save the plot to thesis folder
+ggsave(plot = incidence_curves_vax_and_npi,
+       filename = 'incidence_curves_vax_and_npi.png',
+       path = thesis_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
+
+
 #Summaries
 case_studies_dynamics_rescaled %>% 
     group_by(variant_emergence_day, npi_intensity, vax_coverage, vax_speed) %>% 
     summarise(peak_incidence = max(incidence),
-              outbreak_size = max(outbreak_size)
+              outbreak_size = max(outbreak_size), 
+              .groups = 'drop'
               ) %>% 
-    ungroup() %>% 
     # filter(vax_coverage == 0.0) %>% 
     arrange(outbreak_size)
