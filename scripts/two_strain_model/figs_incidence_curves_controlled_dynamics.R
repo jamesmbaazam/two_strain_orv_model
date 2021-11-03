@@ -154,14 +154,3 @@ ggsave(plot = incidence_curves_vax_and_npi,
        height = 17.86,
        units = 'cm'
        )
-
-
-#Summaries
-case_studies_dynamics_rescaled %>% 
-    group_by(variant_emergence_day, npi_intensity, vax_coverage, vax_speed) %>% 
-    summarise(peak_incidence = max(incidence),
-              outbreak_size = max(outbreak_size), 
-              .groups = 'drop'
-              ) %>% 
-    # filter(vax_coverage == 0.0) %>% 
-    arrange(outbreak_size)
