@@ -59,7 +59,7 @@ incidence_curves_vax_only <- ggplot(data = vax_only_dynamics_df) +
                   ), 
               size = 1
               ) + 
-    scale_y_log10(labels = comma) +
+    scale_y_continuous(labels = comma) +
     facet_wrap(control_type ~ vax_speed, 
                labeller = labeller(control_type = label_value, 
                                    vax_speed = label_both
@@ -68,7 +68,7 @@ incidence_curves_vax_only <- ggplot(data = vax_only_dynamics_df) +
                ) +
     labs(color = 'Variant emergence',
          x = 'Days',
-         y = 'Incidence (log-transformed)',
+         y = 'Incidence',
          ) +
     theme_minimal(base_size = 14) +
     theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
@@ -117,7 +117,7 @@ incidence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) +
     ), 
     size = 1
     ) + 
-    scale_y_log10(labels = comma) +
+    scale_y_continuous(labels = comma) +
     facet_wrap(control_type ~ vax_speed + npi_intensity, 
                labeller = labeller(control_type = label_value, 
                                    vax_speed = label_both,
@@ -127,7 +127,7 @@ incidence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) +
     ) +
     labs(color = 'Variant emergence',
          x = 'Days',
-         y = 'Incidence (log-transformed)',
+         y = 'Incidence',
     ) +
     theme_minimal(base_size = 14) +
     theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
