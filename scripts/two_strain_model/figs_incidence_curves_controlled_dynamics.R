@@ -154,3 +154,21 @@ ggsave(plot = incidence_curves_vax_and_npi,
        height = 17.86,
        units = 'cm'
        )
+
+
+#Peak timing versus variant emergence day
+
+peak_vs_variant_emergence_timing <- ggplot(data = case_studies_dynamics) +
+    geom_line(aes(x = variant_emergence_day, 
+                  y = peak_time),
+              size = 1
+              ) +
+    theme_minimal(base_size = 12) +
+    facet_wrap(npi_intensity ~  vax_coverage + vax_speed, 
+               labeller = label_both
+               ) +
+    labs(x = 'Variant emergence day', 
+         y = 'Timing of peak'
+         )
+
+print(peak_vs_variant_emergence_timing)
