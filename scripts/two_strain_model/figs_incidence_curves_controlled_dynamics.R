@@ -156,19 +156,82 @@ ggsave(plot = incidence_curves_vax_and_npi,
        )
 
 
-#Peak timing versus variant emergence day
 
-peak_vs_variant_emergence_timing <- ggplot(data = case_studies_dynamics) +
+
+#Subset the unmitigated epidemic dynamics
+dynamics_no_control <- case_studies_dynamics %>% 
+    filter(control_type == 'no_control')
+
+
+#Incidence curves (no control) ----
+incidence_curve_unmitigated <- ggplot(data = dynamics_no_control %>% 
+                                          filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time))
+                                      ) +
+    geom_line(aes(x = time, 
+                  y = incidence,
+                  color = as.factor(variant_emergence_day)
+                  ),
+              size = 1
+    ) +
+    scale_y_continuous(labels = comma) +
+    labs(x = 'Time (days)', y = 'Incidence', color = 'Variant emergence day') +
+    theme_bw(base_size = 14) +
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+
+
+print(incidence_curve_unmitigated)
+
+#Save the plot to git folder
+ggsave(plot = incidence_curve_unmitigated,
+       filename = 'incidence_curve_unmitigated.png',
+       path = git_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
+
+
+#Save the plot to thesis folder
+ggsave(plot = incidence_curve_unmitigated,
+       filename = 'incidence_curve_unmitigated.png',
+       path = thesis_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
+
+
+#Peak timing versus variant emergence day (no control) ----
+peak_timing_vs_emergence_unmitigated <- ggplot(data = dynamics_no_control) +
     geom_line(aes(x = variant_emergence_day, 
                   y = peak_time),
               size = 1
               ) +
-    theme_minimal(base_size = 12) +
-    facet_wrap(npi_intensity ~  vax_coverage + vax_speed, 
-               labeller = label_both
-               ) +
-    labs(x = 'Variant emergence day', 
-         y = 'Timing of peak'
-         )
+    scale_y_continuous(breaks = seq(1, 200, 10), 
+                       labels = seq(1, 200, 10)
+                       ) +
+    labs(x = 'Variant emergence day', y = 'Timing of peak') +
+    theme_bw(base_size = 14) +
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+   
 
-print(peak_vs_variant_emergence_timing)
+print(peak_timing_vs_emergence_unmitigated)
+
+#Save the plot to git folder
+ggsave(plot = peak_timing_vs_emergence_unmitigated,
+       filename = 'peak_timing_vs_emergence_unmitigated.png',
+       path = git_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
+
+
+#Save the plot to thesis folder
+ggsave(plot = peak_timing_vs_emergence_unmitigated,
+       filename = 'peak_timing_vs_emergence_unmitigated.png',
+       path = thesis_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
