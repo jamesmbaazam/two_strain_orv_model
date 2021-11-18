@@ -37,19 +37,39 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 #' Towards the outbreak size isoclines
 
 outbreak_size_isocline_df <- controlled_epidemic_rescaled %>% 
-    filter(variant_emergence_day %in% c(seq(1, 151, 30), 365), 
+    filter(variant_emergence_day %in% c(1, 61, 121, 151, 365), 
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            total_cases <= 1000
            ) %>% 
     group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
     mutate(min_speed = min(vax_speed))
 
+#Outbreak size isocline (vax only)
+outbreak_size_isocline_vax_only <- ggplot(outbreak_size_isocline_df %>% filter(npi_intensity == 0), 
+                                 aes(x = vax_coverage, 
+                                     y = min_speed, 
+                                     color = as.factor(variant_emergence_day)
+                                 )) + 
+    geom_line(size = 1, show.legend = FALSE) + 
+    scale_x_continuous(labels = percent_format()) +
+    scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
+    labs(#title = paste('Cumulative cases threshold <= 1000 at various NPI intensity levels'), 
+        x = 'Vaccination coverage', 
+        y = 'Vaccination speed', 
+        color = 'Variant emergence day'
+    ) +
+    # facet_wrap('npi_intensity', labeller = 'label_both') +
+    theme_bw(base_size = 12)
 
-# outbreak_size_above_isocline_df <- controlled_epidemic_rescaled %>% 
-#     filter(npi_intensity == 0, vax_coverage == 0.775)
-#     # filter(npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), total_cases > 1000) %>% 
-    # group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
-    # mutate(min_speed = min(vax_speed))
+print(outbreak_size_isocline_vax_only)
+
+#Save the files 
+ggsave(outbreak_size_isocline_vax_only,
+       file = './figures/outbreak_size_isocline_vax_only.png',
+       width = 23.76,
+       height = 17.86,
+       units = 'cm')
+
 
 
 outbreak_size_isocline <- ggplot(outbreak_size_isocline_df, 
