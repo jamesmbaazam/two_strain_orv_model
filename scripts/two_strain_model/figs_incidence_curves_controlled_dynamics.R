@@ -97,19 +97,17 @@ ggsave(plot = incidence_curves_vax_only,
        )
 
 
-
-
 #Get the vax + NPI control and no control dynamics data
 vax_and_npi_dynamics <- case_studies_dynamics %>% 
     filter(control_type != 'vax_only',
-           variant_emergence_day %in% c(seq(1, 151, by = 60), max_time)
+           variant_emergence_day %in% c(seq(1, 151, by = 50), max_time)
            ) %>% 
     mutate(vax_speed = ifelse(control_type == 'no_control', NA, vax_speed),
            npi_intensity = ifelse(control_type == 'no_control', NA, npi_intensity)
            )
 
 
-#Plot the vax only dynamics
+#Vax + NPI vs no control (log scaled) ####
 incidence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) + 
     geom_line(aes(x = time, 
                   y = incidence,
