@@ -35,31 +35,31 @@ case_studies_dynamics_rescaled <- case_studies_dynamics_df %>%
 #Add a column to label the control scenarios
 case_studies_dynamics <- case_studies_dynamics_rescaled %>% 
     mutate(control_type = case_when(npi_intensity == 0 & vax_speed > 0 ~ 'vax_only', 
-                                    npi_intensity > 0 ~ 'vax+npi',
+                                    npi_intensity > 0 ~ 'vax + NPIs',
                                     npi_intensity == 0 & vax_speed == 0 ~ 'no_control'
                                     ),
            control_type = as.factor(control_type)
            )
 
 
-#The incidence curves (controlled scenario)
+#Incidence curves ----
 #Get the vax only and no control dynamics data
-vax_only_dynamics_df <- case_studies_dynamics %>% 
+vax_vs_unmitigated_dynamics_df <- case_studies_dynamics %>% 
     filter(control_type %in% c('vax_only', 'no_control'),
-           variant_emergence_day %in% c(seq(1, 151, by = 60), max_time)
+           variant_emergence_day %in% c(seq(1, 151, by = 50), max_time)
            ) %>% 
     mutate(vax_speed = ifelse(control_type == 'no_control', NA, vax_speed))
 
 
-#Plot the vax only dynamics
-incidence_curves_vax_only <- ggplot(data = vax_only_dynamics_df) + 
+#Vax only vs no control (log scaled) #### 
+incidence_curves_vax_only <- ggplot(data = vax_vs_unmitigated_dynamics_df) + 
     geom_line(aes(x = time, 
                   y = incidence,
                   color = as.factor(variant_emergence_day)
                   ), 
               size = 1
               ) + 
-    scale_y_continuous(labels = comma) +
+    scale_y_log10(labels = comma) +
     facet_wrap(control_type ~ vax_speed, 
                labeller = labeller(control_type = label_value, 
                                    vax_speed = label_both
