@@ -117,7 +117,7 @@ incidence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) +
     ), 
     size = 1
     ) + 
-    scale_y_continuous(labels = comma) +
+    scale_y_log10(labels = comma) +
     facet_wrap(control_type ~ vax_speed + npi_intensity, 
                labeller = labeller(control_type = label_value, 
                                    vax_speed = label_both,
