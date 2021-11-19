@@ -10,6 +10,10 @@ source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/two_strain_model.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
+#plot paths for thesis and git
+git_plot_path <- './figures/'
+thesis_plot_path <- "C:/Users/JAMESAZAM/Dropbox/My Academic Repository/_SACEMA/Academic/_PhD/__PhD_Thesis/_Thesis_LaTeX/figs/chapter_5/"
+
 #Load the model output
 controlled_epidemic <- readRDS('./model_output/orv_npi_all_scenarios_dynamics_parallel.rds')
 
