@@ -233,3 +233,28 @@ ggsave(plot = peak_timing_vs_emergence_unmitigated,
        height = 17.86,
        units = 'cm'
        )
+
+
+#combine the incidence curve and peak timing curves
+incidence_curve_and_peak_timing <- incidence_curve_unmitigated + peak_timing_vs_emergence_unmitigated + plot_layout(guides = "collect") & theme(legend.position = 'bottom') #this operation is possible using the patchworks package
+
+#Save the plot to git folder
+ggsave(plot = incidence_curve_and_peak_timing,
+       filename = 'incidence_curve_and_peak_timing.png',
+       path = git_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
+
+
+#Save the plot to thesis folder
+ggsave(plot = incidence_curve_and_peak_timing,
+       filename = 'incidence_curve_and_peak_timing.png',
+       path = thesis_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm'
+       )
+
+
