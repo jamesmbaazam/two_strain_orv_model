@@ -46,7 +46,7 @@ case_studies_dynamics <- case_studies_dynamics_rescaled %>%
 #Get the vax only and no control dynamics data
 vax_vs_unmitigated_dynamics_df <- case_studies_dynamics %>% 
     filter(control_type %in% c('vax_only', 'no_control'),
-           variant_emergence_day %in% c(seq(1, 151, by = 50), max_time)
+           variant_emergence_day %in% c(1, 61, 121, 151, max_time)
            ) %>% 
     mutate(vax_speed = ifelse(control_type == 'no_control', NA, vax_speed))
 
@@ -100,7 +100,7 @@ ggsave(plot = incidence_curves_vax_only,
 #Get the vax + NPI control and no control dynamics data
 vax_and_npi_dynamics <- case_studies_dynamics %>% 
     filter(control_type != 'vax_only',
-           variant_emergence_day %in% c(seq(1, 151, by = 50), max_time)
+           variant_emergence_day %in% c(1, 61, 121, 151, max_time)
            ) %>% 
     mutate(vax_speed = ifelse(control_type == 'no_control', NA, vax_speed),
            npi_intensity = ifelse(control_type == 'no_control', NA, npi_intensity)
