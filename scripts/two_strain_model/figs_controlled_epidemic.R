@@ -62,8 +62,9 @@ outbreak_size_isocline_vax_only <- ggplot(outbreak_size_isocline_df %>% filter(n
         y = 'Vaccination speed', 
         color = 'Variant emergence day'
     ) +
-    # facet_wrap('npi_intensity', labeller = 'label_both') +
-    theme_bw(base_size = 12)
+    facet_wrap('npi_intensity', labeller = 'label_both') +
+    theme_bw(base_size = 14) +
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
 
 print(outbreak_size_isocline_vax_only)
 
@@ -151,9 +152,10 @@ for (npi_level in 1:length(npi_levels)) {
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
          color = 'Variant emergence day'
-    ) +
-    theme_minimal(base_size = 12)
-
+    ) + 
+        theme_bw(base_size = 14) +
+        theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+    
 
     plot_list[[npi_level]] <- isocline_plot
 
@@ -212,14 +214,24 @@ peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>%
          color = 'Variant emergence day'
     ) +
     facet_wrap('npi_intensity', labeller = 'label_both') +
-    theme_bw(base_size = 12) 
+    theme_bw(base_size = 14) +
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+
 
 print(peak_incidence_isocline)
 
 
 #Save the files 
 ggsave(peak_incidence_isocline,
-       file = './figures/peak_incidence_isocline_summary.png',
+       filename = 'peak_incidence_isocline_summary.png',
+       path = git_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm')
+
+ggsave(peak_incidence_isocline,
+       filename = 'peak_incidence_isocline_summary.png',
+       path = thesis_plot_path,
        width = 23.76,
        height = 17.86,
        units = 'cm')
@@ -264,7 +276,9 @@ for (npi_level in 1:length(npi_levels)) {
         y = 'Vaccination speed', 
         color = 'Variant emergence day'
         ) +
-        theme_minimal(base_size = 12)
+        theme_bw(base_size = 14) +
+        theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+    
     
     
     plot_list[[npi_level]] <- isocline_plot
@@ -314,12 +328,14 @@ for (npi_level in 1:length(npi_levels)) {
         scale_y_continuous(breaks = seq(0, max(controlled_epidemic$vax_speed), 2),
                            labels = seq(0, max(controlled_epidemic$vax_speed), 2)
                            ) +
-        theme_bw(base_size = 12) +
         labs(title = paste('NPI = ', npi_levels[npi_level]),
              x = 'Vaccination coverage',
              y = 'Vaccination campaign speed'
              ) +
-        facet_wrap('total_cases_log10_target')
+        facet_wrap('total_cases_log10_target') +
+        theme_bw(base_size = 14) +
+        theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+    
 
 
     plot_list[[npi_level]] <- contour_plot
