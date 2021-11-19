@@ -57,6 +57,7 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df,
     geom_line(size = 1, show.legend = TRUE) + 
     scale_x_continuous(labels = percent_format()) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
+    scale_color_viridis_d(option = 'viridis') +
     labs(#title = paste('Cumulative cases threshold <= 1000 at various NPI intensity levels'), 
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
@@ -78,7 +79,7 @@ ggsave(outbreak_size_isocline,
        units = 'cm')
 
 ggsave(outbreak_size_isocline,
-       filename = 'outbreak_size_isocline_summary.png',
+       filename = 'outbreak_size_isocline_summary.eps',
        path = thesis_plot_path,
        width = 23.76,
        height = 17.86,
@@ -155,6 +156,7 @@ peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>%
     geom_line(size = 1, show.legend = TRUE) + 
     scale_x_continuous(labels = percent_format()) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
+    scale_color_viridis_d(option = 'viridis') +
     labs(#title = paste('Peak incidence <= 100 at various NPI intensity levels'), 
          x = 'Vaccination coverage', 
          y = 'Vaccination speed', 
@@ -177,7 +179,7 @@ ggsave(peak_incidence_isocline,
        units = 'cm')
 
 ggsave(peak_incidence_isocline,
-       filename = 'peak_incidence_isocline_summary.png',
+       filename = 'peak_incidence_isocline_summary.eps',
        path = thesis_plot_path,
        width = 23.76,
        height = 17.86,
