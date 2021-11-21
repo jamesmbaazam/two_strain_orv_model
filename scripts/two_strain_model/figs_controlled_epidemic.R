@@ -93,19 +93,19 @@ peak_incidence_isocline_df <- controlled_epidemic_rescaled %>%
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
 
-peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>% 
-                                 aes(x = vax_coverage, 
-                                     y = min_speed, 
-                                     color = as.factor(variant_emergence_day)
-                                 )) + 
+peak_incidence_isocline <- ggplot(peak_incidence_isocline_df, 
+                                  aes(x = vax_coverage, 
+                                      y = min_speed, 
+                                      color = variant_emergence_day
+                                  )) + 
     geom_line(size = 1, show.legend = TRUE) + 
     scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
-    labs(#title = paste('Peak incidence <= 100 at various NPI intensity levels'), 
-         x = 'Vaccination coverage', 
-         y = 'Vaccination speed', 
-         color = 'Variant emergence day'
+    labs(#title = paste('Peak prevalence <= 300 at various NPI intensity levels'), 
+        x = 'Vaccination coverage', 
+        y = 'Vaccination speed', 
+        color = 'Variant emergence day'
     ) +
     facet_wrap('npi_intensity', labeller = 'label_both') +
     theme_bw(base_size = 14) +
