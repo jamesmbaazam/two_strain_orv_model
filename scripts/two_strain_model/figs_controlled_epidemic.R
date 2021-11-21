@@ -94,7 +94,6 @@ peak_incidence_isocline_df <- controlled_epidemic_rescaled %>%
     ungroup()
 
 peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>% 
-                                     filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time)), 
                                  aes(x = vax_coverage, 
                                      y = min_speed, 
                                      color = as.factor(variant_emergence_day)
