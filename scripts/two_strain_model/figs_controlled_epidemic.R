@@ -33,7 +33,7 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 #' Towards the outbreak size isoclines
 
 outbreak_size_isocline_df <- controlled_epidemic_rescaled %>% 
-    filter(variant_emergence_day %in% c(seq(1, 151, 30), max_time), 
+    filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            total_cases <= 1000
            ) %>% 
@@ -90,7 +90,7 @@ for (npi_level in 1:length(npi_levels)) {
         mutate(min_speed = min(vax_speed))
 
     isocline_plot <- ggplot(isocline_df %>% 
-                                filter(variant_emergence_day %in% c(seq(1, 151, 30), max_time)), 
+                                filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time)), 
                             aes(x = vax_coverage, 
                                 y = min_speed, 
                                 color = as.factor(variant_emergence_day)
@@ -132,7 +132,7 @@ dev.off()
 #Peak incidence isoclines ----
 
 peak_incidence_isocline_df <- controlled_epidemic_rescaled %>% 
-    filter(variant_emergence_day %in% c(seq(1, 151, 30), 365), 
+    filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            peak_cases <= 100
            ) %>% 
@@ -140,7 +140,7 @@ peak_incidence_isocline_df <- controlled_epidemic_rescaled %>%
     mutate(min_speed = min(vax_speed))
 
 peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>% 
-                                     filter(variant_emergence_day %in% c(seq(1, 151, 30), max_time)), 
+                                     filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time)), 
                                  aes(x = vax_coverage, 
                                      y = min_speed, 
                                      color = as.factor(variant_emergence_day)
@@ -191,7 +191,7 @@ for (npi_level in 1:length(npi_levels)) {
         mutate(min_speed = min(vax_speed))
     
     isocline_plot <- ggplot(isocline_df %>% 
-                                filter(variant_emergence_day %in% c(seq(1, 151, 30), max_time)), 
+                                filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time)), 
                             aes(x = vax_coverage, 
                                 y = min_speed, 
                                 color = as.factor(variant_emergence_day)
