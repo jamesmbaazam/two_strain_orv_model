@@ -135,7 +135,7 @@ dev.off()
 peak_incidence_isocline_df <- controlled_epidemic_rescaled %>% 
     filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
-           peak_cases <= 100
+           peak_cases <= 300
            ) %>% 
     group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
     mutate(min_speed = min(vax_speed))
