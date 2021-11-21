@@ -47,7 +47,7 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df,
                                      color = as.factor(variant_emergence_day)
                                      )) + 
     geom_line(size = 1, show.legend = TRUE) + 
-    scale_x_continuous(labels = percent_format()) +
+    scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
     labs(#title = paste('Cumulative cases threshold <= 1000 at various NPI intensity levels'), 
