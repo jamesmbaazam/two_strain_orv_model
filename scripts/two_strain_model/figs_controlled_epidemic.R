@@ -37,8 +37,9 @@ outbreak_size_isocline_df <- controlled_epidemic_rescaled %>%
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            total_cases <= 1000
            ) %>% 
-    group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
-    mutate(min_speed = min(vax_speed))
+    group_by(variant_emergence_day, vax_coverage, npi_intensity) %>% # add npi_intensity
+    mutate(min_speed = min(vax_speed)) %>% 
+    ungroup()
 
 #Outbreak size isoclines ----
 outbreak_size_isocline <- ggplot(outbreak_size_isocline_df, 
