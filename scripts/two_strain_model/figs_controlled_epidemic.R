@@ -21,8 +21,7 @@ controlled_epidemic <- readRDS('./model_output/orv_npi_all_scenarios_dynamics_pa
 controlled_epidemic_rescaled <- controlled_epidemic %>%
     mutate(across(.cols = c(total_cases, peak_cases, total_vaccinated), 
                   .fns = ~ .x*target_pop #rescale the population proportions to total sizes
-                  ),
-           variant_emerges = ifelse(variant_emergence_day < max_time, 'yes', 'no')
+                  )
            ) %>% 
     select(-c(npi_duration, total_vaccinated))
 
