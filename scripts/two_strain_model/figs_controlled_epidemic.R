@@ -36,15 +36,17 @@ outbreak_size_isocline_df <- controlled_epidemic_rescaled %>%
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            total_cases <= 1000
            ) %>% 
-    group_by(variant_emergence_day, vax_coverage, npi_intensity) %>% # add npi_intensity
+    mutate(variant_emergence_day = as_factor(variant_emergence_day)) %>% 
+    group_by(variant_emergence_day, vax_coverage, npi_intensity) %>% 
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
 
-#Outbreak size isoclines ----
+# Isoclines ----
+# Outbreak size ====
 outbreak_size_isocline <- ggplot(outbreak_size_isocline_df, 
                                  aes(x = vax_coverage, 
                                      y = min_speed, 
-                                     color = as.factor(variant_emergence_day)
+                                     color = variant_emergence_day
                                      )) + 
     geom_line(size = 1, show.legend = TRUE) + 
     scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
@@ -135,9 +137,11 @@ peak_incidence_isocline_df <- controlled_epidemic_rescaled %>%
     filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            peak_cases <= 300
-           ) %>% 
-    group_by(variant_emergence_day, vax_coverage) %>% # add npi_intensity
-    mutate(min_speed = min(vax_speed))
+    ) %>% 
+    group_by(variant_emergence_day, vax_coverage, npi_intensity) %>% 
+    mutate(variant_emergence_day = as_factor(variant_emergence_day)) %>% 
+    mutate(min_speed = min(vax_speed)) %>% 
+    ungroup()
 
 peak_incidence_isocline <- ggplot(peak_incidence_isocline_df %>% 
                                      filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time)), 
