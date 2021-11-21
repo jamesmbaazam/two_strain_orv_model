@@ -108,7 +108,7 @@ peak_incidence_no_control_line_plot <- ggplot(data = no_control_epidemic_summari
                   ) +
     labs(#title = 'Peak incidence for the uncontrolled epidemic', 
          x = 'Variant emergence day', 
-         y = 'Peak incidence (log-transformed)'
+         y = 'Peak prevalence (log-transformed)'
     ) +
     theme_minimal(base_size = 18)
 
