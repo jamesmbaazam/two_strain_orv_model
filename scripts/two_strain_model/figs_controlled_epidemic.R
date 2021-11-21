@@ -83,7 +83,7 @@ ggsave(outbreak_size_isocline,
 
 # Peak prevalence ====
 
-peak_incidence_isocline_df <- controlled_epidemic_rescaled %>% 
+peak_prevalence_isocline_df <- controlled_epidemic_rescaled %>% 
     filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            peak_cases <= 300
@@ -93,7 +93,7 @@ peak_incidence_isocline_df <- controlled_epidemic_rescaled %>%
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
 
-peak_incidence_isocline <- ggplot(peak_incidence_isocline_df, 
+peak_prevalence_isocline <- ggplot(peak_prevalence_isocline_df, 
                                   aes(x = vax_coverage, 
                                       y = min_speed, 
                                       color = variant_emergence_day
@@ -112,19 +112,19 @@ peak_incidence_isocline <- ggplot(peak_incidence_isocline_df,
     theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
 
 
-print(peak_incidence_isocline)
+print(peak_prevalence_isocline)
 
 
 #Save the files 
-ggsave(peak_incidence_isocline,
-       filename = 'peak_incidence_isocline.png',
+ggsave(peak_prevalence_isocline,
+       filename = 'peak_prevalence_isocline.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
        units = 'cm')
 
-ggsave(peak_incidence_isocline,
-       filename = 'peak_incidence_isocline.eps',
+ggsave(peak_prevalence_isocline,
+       filename = 'peak_prevalence_isocline.eps',
        path = thesis_plot_path,
        width = 23.76,
        height = 17.86,
