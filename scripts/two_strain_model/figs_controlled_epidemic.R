@@ -22,17 +22,9 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
     mutate(across(.cols = c(total_cases, peak_cases, total_vaccinated), 
                   .fns = ~ .x*target_pop #rescale the population proportions to total sizes
                   ),
-           across(.cols = c(total_cases, peak_cases, total_vaccinated), 
-                  .fns = ~ log10(.x),
-                  .names = "{.col}_log10" #put the population sizes on log-scale
-           ),
-           across(.cols = c(total_cases_log10, peak_cases_log10), 
-                  .fns = ~ cut(.x, breaks = 0:8),
-                  .names = "{.col}_target"
-           ),
            variant_emerges = ifelse(variant_emergence_day < max_time, 'yes', 'no')
            ) %>% 
-    select(-c(npi_duration, total_vaccinated, total_vaccinated_log10))
+    select(-c(npi_duration, total_vaccinated))
 
 
 
