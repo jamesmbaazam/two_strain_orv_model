@@ -1,8 +1,8 @@
 # Run the model for this number of days
 max_time <- 365
 
-# Evaluate the model at these time points
-eval_times <- seq(0, max_time, 1) # Simulate a 2-year epidemic
+# Show the model results at these time points
+eval_times <- seq(0, max_time, 1) 
 
 # When the variant will emerge
 #variant_emergence_day <- 60
@@ -31,17 +31,15 @@ pop_inits <- c(S = 1 - Iw_index_cases/target_pop,
 # ===============================
 # Parameters for dynamics
 # ===============================
-R0_w <- 2.0 #R0 of the wild type
-R0_m <- R0_w*1.3 #30% more infectious
-IP_w <- 7 #Infectious period (wild type)
-IP_m <- 7 #Infectious period (variant)
-RP_w <- 14 #recovery period (wild type)
-RP_m <- 14 #recovery period (variant)
+R0_w <- 2.0 #R0 (wild type)
+R0_m <- R0_w*1.3 #R0 (variant) 30% more infectious
+IP_w <- 14 #infectious period (wild type)
+IP_m <- 14 #infectious period (variant)
 
-dynamics_params <- data.frame(beta_w = R0_w/RP_w, 
-                        beta_m = R0_m/RP_m,
-                        gamma_w = 1/RP_w, 
-                        gamma_m = 1/RP_m, 
+dynamics_params <- data.frame(beta_w = R0_w/IP_w, 
+                        beta_m = R0_m/IP_m,
+                        gamma_w = 1/IP_w, 
+                        gamma_m = 1/IP_m, 
                         sigma_w = 1, #cross-protection provided by wildtype
                         sigma_m = 1 #cross-protection provided by variant
                         ) 
