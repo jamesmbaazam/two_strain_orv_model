@@ -1,4 +1,4 @@
-#' two strain model A model of two co-existing strains of the same virus
+#' Two strain model A model of two co-existing strains of the same virus
 #' @param t 
 #' @param y 
 #' @param parms 
@@ -57,6 +57,76 @@ two_strain_model <- function(t, y, parms, browse = FALSE) {
     return(mod_result)
   })
 }
+
+
+
+#' A modification of the above two strain model to include vaccine escape
+#' @param t 
+#' @param y 
+#' @param parms 
+#' @param browse 
+
+
+ts_model_vax_escape <- function(t, y, parms, browse = FALSE) {
+    
+    if(browse) browser()
+    
+    with(c(as.list(y), parms), {
+        
+        
+        # Force of infection of the wild-type strain ####
+        
+        FOI_Iw <- beta_w * (Iw + Imw + VIw)
+        
+        # Force of infection of the variant strain ####
+        FOI_Im <- beta_m * (Im + Iwm + VIm)
+        
+        
+        # NPIs control #### 
+        
+        npi_intensity <- ifelse(t < npi_start | t > npi_start + npi_duration | npi_intensity == 0, 0, npi_intensity)
+        
+        
+        # Vaccination coverage to a rate ####
+        #coverage_correction <- 0.9909 #Use this to prevent the epsilon conversion from going to infinity when coverage = 1
+        
+        epsilon <- ifelse(t < vax_start | t > vax_start + campaign_duration | vax_coverage == 0, 0, vax_rate)
+        
+        # Model equations ####
+        
+        dSdt <- -(1 - npi_intensity) * FOI_Iw * S - (1 - npi_intensity) * FOI_Im * S - epsilon * S
+        dIwdt <- (1 - npi_intensity) * FOI_Iw * S - gamma_w * Iw
+        dImdt <- (1 - npi_intensity) * FOI_Im * S - gamma_m * Im
+        dIwmdt <- (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm - gamma_m * Iwm
+        dImwdt <- (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw - gamma_w * Imw
+        dRwSmdt <- gamma_w * Iw - epsilon * RwSm - (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm
+        dRmSwdt <- gamma_m * Im - epsilon * RmSw - (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw
+        dRdt <- gamma_m * Iwm + gamma_w * Imw - epsilon * R
+        dVdt <- epsilon * S - (1 - vax_efficacy_w)*(1 - npi_intensity) * FOI_Iw * V - (1 - vax_efficacy_m)*(1 - npi_intensity) * FOI_Im * V
+        dVIwdt <- (1 - vax_efficacy_w)*(1 - npi_intensity) * FOI_Iw * V - gamma_m * VIw
+        dVImdt <- (1 - vax_efficacy_m)*(1 - npi_intensity) * FOI_Im * V - gamma_m * VIm
+        dVRwSmdt <- epsilon * RwSm + gamma_m * VIw
+        dVRmSwdt <- epsilon * RmSw + gamma_m * VIm
+        
+        
+        #Determine infection outflows to calculate cumulative incidence
+        Iw_incidence <- (1 - npi_intensity) * FOI_Iw * S
+        Im_incidence <- (1 - npi_intensity) * FOI_Im * S
+        RwSm_incidence <- (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm
+        RmSw_incidence <- (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw
+        VIw_incidence <- (1 - vax_efficacy_w)*(1 - npi_intensity) * FOI_Iw * V
+        VIm_incidence <- (1 - vax_efficacy_m)*(1 - npi_intensity) * FOI_Im * V
+        
+        
+        
+        #Cumulative incidence
+        dKdt <- Iw_incidence + Im_incidence + RwSm_incidence + RmSw_incidence + VIw_incidence + VIm_incidence 
+        
+        mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, dRwSmdt, dRmSwdt, dRdt, dVdt, dKdt))
+        return(mod_result)
+    })
+}
+
 
 
 #' Extract certain summaries from the two strain SIR model output
