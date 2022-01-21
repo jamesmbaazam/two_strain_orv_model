@@ -107,8 +107,13 @@ end_time <- Sys.time()
 run_time <- end_time - start_time
 print(run_time)
 
+
+orv_npi_all_scenarios_dynamics_final <- orv_npi_all_scenarios_dynamics %>% 
+    mutate(R0m = R0_m)
+
+
 #save the simulation
-saveRDS(object = orv_npi_all_scenarios_dynamics, file = './model_output/orv_npi_all_scenarios_dynamics_parallel.rds')
+saveRDS(object = orv_npi_all_scenarios_dynamics_final, file = './model_output/model_dynamics_R0m_60_percent.rds')
 
 
 beepr::beep(3)
