@@ -60,7 +60,7 @@ two_strain_model <- function(t, y, parms, browse = FALSE) {
 
 
 
-#' A modification of the above two strain model to include vaccine escape
+#' Two strain model with vaccine escape
 #' @param t 
 #' @param y 
 #' @param parms 
@@ -101,15 +101,15 @@ ts_model_vax_escape <- function(t, y, parms, browse = FALSE) {
         dImwdt <- (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw - gamma_w * Imw
         dRwSmdt <- gamma_w * Iw - epsilon * RwSm - (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm
         dRmSwdt <- gamma_m * Im - epsilon * RmSw - (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw
-        dRdt <- gamma_m * Iwm + gamma_w * Imw - epsilon * R
-        dVdt <- epsilon * S - (1 - vax_efficacy_w)*(1 - npi_intensity) * FOI_Iw * V - (1 - vax_efficacy_m)*(1 - npi_intensity) * FOI_Im * V
+        dRdt <- gamma_m * Iwm + gamma_w * Imw #those who have recovered from both infections are fully protected
+        dVdt <- epsilon * S - (1 - vax_efficacy_w)*(1 - npi_intensity) * FOI_Iw * V - (1 - vax_efficacy_m)*(1 - npi_intensity) * FOI_Im * V #Vaccinated individuals can still catch either infections but at a reduced rate
         dVIwdt <- (1 - vax_efficacy_w)*(1 - npi_intensity) * FOI_Iw * V - gamma_m * VIw
         dVImdt <- (1 - vax_efficacy_m)*(1 - npi_intensity) * FOI_Im * V - gamma_m * VIm
-        dVRwSmdt <- epsilon * RwSm + gamma_m * VIw
-        dVRmSwdt <- epsilon * RmSw + gamma_m * VIm
+        dRwSmVdt <- epsilon * RwSm + gamma_m * VIw #those vax'd and also recovered from one infection are fully protected
+        dRmSwVdt <- epsilon * RmSw + gamma_m * VIm #those vax'd and also recovered from one infection are fully protected
         
         
-        #Determine infection outflows to calculate cumulative incidence
+        #Track infection outflows to calculate cumulative incidence
         Iw_incidence <- (1 - npi_intensity) * FOI_Iw * S
         Im_incidence <- (1 - npi_intensity) * FOI_Im * S
         RwSm_incidence <- (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm
@@ -122,14 +122,14 @@ ts_model_vax_escape <- function(t, y, parms, browse = FALSE) {
         #Cumulative incidence
         dKdt <- Iw_incidence + Im_incidence + RwSm_incidence + RmSw_incidence + VIw_incidence + VIm_incidence 
         
-        mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, dRwSmdt, dRmSwdt, dRdt, dVdt, dKdt))
+        mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, dRwSmdt, dRmSwdt, dRdt, dVdt, dVIwdt, dVImdt, dRwSmVdt, dRmSwVdt, dKdt))
         return(mod_result)
     })
 }
 
 
 
-#' Extract certain summaries from the two strain SIR model output
+#' Extract certain summaries from the two strain no vax escape 
 #'
 #' @param dynamics_df 
 #'
@@ -139,7 +139,7 @@ ts_model_vax_escape <- function(t, y, parms, browse = FALSE) {
 #' @examples
 extract_model_summaries <- function(dynamics_df) {
   
-  incidence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw
+  prevalence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw
   
   #The final summaries
   results_df <- data.frame(variant_emergence_day = unique(dynamics_df$variant_emergence_day),
@@ -149,11 +149,43 @@ extract_model_summaries <- function(dynamics_df) {
                            npi_intensity = unique(dynamics_df$npi_intensity),
                            npi_duration = unique(dynamics_df$npi_duration),
                            total_cases = max(dynamics_df$K), 
-                           peak_cases = max(incidence), 
+                           peak_cases = max(prevalence), 
                            total_vaccinated = max(dynamics_df$V)
   )
   return(results_df)
 }
+
+
+
+#' Extract certain summaries from the two strain with vax escape
+#'
+#' @param dynamics_df 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+extract_vax_escape_mod_summaries <- function(dynamics_df) {
+    
+    prevalence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw + dynamics_df$VIw + dynamics_df$VIm
+    
+    dynamics_df$all_vaxed <- dynamics_df$V + dynamics_df$RwSmV + dynamics_df$RmSwV 
+    
+    #The final summaries
+    results_df <- data.frame(variant_emergence_day = unique(dynamics_df$variant_emergence_day),
+                             vax_coverage = unique(dynamics_df$vax_coverage), 
+                             vax_rate = unique(dynamics_df$vax_rate), 
+                             vax_speed = unique(dynamics_df$vax_speed),
+                             npi_intensity = unique(dynamics_df$npi_intensity),
+                             npi_duration = unique(dynamics_df$npi_duration),
+                             total_cases = max(dynamics_df$K), 
+                             peak_cases = max(prevalence), 
+                             total_vaccinated = max(dynamics_df$all_vaxed)
+    )
+    return(results_df)
+}
+
+
 
 
 #' Function to run one instance of the two strain model ====
@@ -167,8 +199,9 @@ extract_model_summaries <- function(dynamics_df) {
 #' @param return_dynamics 
 #' @param browse 
 
-simulate_raw_dynamics <- function(pop_inits, dynamics_parms, 
-                           control_parms, max_time, 
+simulate_raw_dynamics <- function(model_func = two_strain_model, 
+                                  pop_inits, dynamics_parms, 
+                                  control_parms, max_time, 
                            dt, events_table, 
                            get_summaries,
                            browse = FALSE
