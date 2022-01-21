@@ -3,7 +3,7 @@ library(dplyr)
 library(purrr)
 
 # Helper scripts ----
-source('./scripts/two_strain_model/sim_config_global_params.R')
+source('./scripts/two_strain_model/sensitivity_analyses/sim_config_global_params_sensitivity.R')
 source('./scripts/two_strain_model/two_strain_model.R')
 
 # Event times ====
