@@ -24,6 +24,10 @@ pop_inits <- c(S = 1 - Iw_index_cases/target_pop,
            RmSw = 0,
            R = 0,
            V = 0,
+           VIw = 0, 
+           VIm = 0, 
+           RwSmV = 0,
+           RmSwV = 0,
            K = 0
            )
 
