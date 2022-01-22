@@ -44,8 +44,10 @@ dynamics_params <- data.frame(beta_w = R0_w/IP_w,
                         beta_m = R0_m/IP_m,
                         gamma_w = 1/IP_w, 
                         gamma_m = 1/IP_m, 
-                        sigma_w = 1, #cross-protection provided by wildtype
-                        sigma_m = 1 #cross-protection provided by variant
+                        vax_efficacy_w = 0.95, #Vaccine efficacy against the wild-type
+                        vax_efficacy_m = 0.75, #Vaccine efficacy against the variant
+                        sigma_w = 0.85, #Cross-protection provided by wildtype
+                        sigma_m = 0.85 #Cross-protection provided by variant
                         ) 
 
 
@@ -53,7 +55,7 @@ dynamics_params <- data.frame(beta_w = R0_w/IP_w,
 # ===============================
 # Parameters for control dynamics
 # ===============================
-coverage_correction <- 0.9991
+coverage_correction <- 0.9999
 
 
 
@@ -62,7 +64,7 @@ coverage_correction <- 0.9991
 #' 
 
 # Variant emergence times ===
-variant_emergence_times <- c(seq(1, 151, 15), max_time)
+variant_emergence_times <- c(1, 61, 121, 151, max_time)
 
 event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
                        value = c(-Im_index_cases/target_pop, Im_index_cases/target_pop), #introduce 10 variant cases
