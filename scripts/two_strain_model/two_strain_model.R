@@ -169,6 +169,11 @@ extract_vax_escape_mod_summaries <- function(dynamics_df) {
     
     prevalence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw + dynamics_df$VIw + dynamics_df$VIm
     
+    # prevalence_wildtype <- dynamics_df$Iw + dynamics_df$Imw + dynamics_df$VIw
+    # 
+    # prevalence_variant <- dynamics_df$Im + dynamics_df$Iwm + dynamics_df$VIm
+    
+    
     dynamics_df$all_vaxed <- dynamics_df$V + dynamics_df$RwSmV + dynamics_df$RmSwV 
     
     #The final summaries
