@@ -227,7 +227,7 @@ simulate_raw_dynamics <- function(model_func = two_strain_model,
   sim_parms <- bind_cols(dynamics_parms, control_parms)
   # Model run ####
   sim_results <- as.data.frame(lsoda(pop_inits, dt, 
-                                     two_strain_model, 
+                                     model_func, 
                                     parms = sim_parms,
                                     events = list(data = events_table)
                                     )
