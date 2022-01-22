@@ -36,7 +36,7 @@ pop_inits <- c(S = 1 - Iw_index_cases/target_pop,
 # Parameters for dynamics
 # ===============================
 R0_w <- 2.0 #R0 (wild type)
-R0_m <- R0_w*1.3 #R0 (variant) 30% more infectious
+R0_m <- R0_w*1.5 #R0 (variant) 30% more infectious
 IP_w <- 14 #infectious period (wild type)
 IP_m <- 14 #infectious period (variant)
 
