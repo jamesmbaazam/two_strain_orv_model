@@ -260,11 +260,12 @@ simulate_raw_dynamics <- function(model_func = two_strain_model,
 #' @export
 #'
 #' @examples
-run_sim_all <- function(sim_table, get_summaries = TRUE){
+run_sim_all <- function(sim_table, model_func, get_summaries = TRUE){
     res <- sim_table %>% 
         rowwise() %>% 
         do({with(.,
-                 simulate_raw_dynamics(pop_inits = pop_inits, 
+                 simulate_raw_dynamics(model_func = model_func, 
+                                       pop_inits = pop_inits, 
                                        dynamics_parms = dynamics_params,
                                        control_parms = .,
                                        max_time = max_time, 
