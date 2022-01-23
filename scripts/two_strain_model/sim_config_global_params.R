@@ -36,7 +36,7 @@ pop_inits <- c(S = 1 - Iw_index_cases/target_pop,
 # Parameters for dynamics
 # ===============================
 R0_w <- 2.0 #R0 (wild type)
-R0_m <- R0_w*1.5 #R0 (variant) 30% more infectious
+R0_m <- R0_w*1.3 #R0 (variant) 30% more infectious
 IP_w <- 14 #infectious period (wild type)
 IP_m <- 14 #infectious period (variant)
 
@@ -44,10 +44,10 @@ dynamics_params <- data.frame(beta_w = R0_w/IP_w,
                         beta_m = R0_m/IP_m,
                         gamma_w = 1/IP_w, 
                         gamma_m = 1/IP_m, 
-                        vax_efficacy_w = 0.95, #Vaccine efficacy against the wild-type
-                        vax_efficacy_m = 0.75, #Vaccine efficacy against the variant
-                        sigma_w = 0.85, #Cross-protection provided by wildtype
-                        sigma_m = 0.85 #Cross-protection provided by variant
+                        vax_efficacy_w = 1, #Vaccine efficacy against the wild-type
+                        vax_efficacy_m = 1, #Vaccine efficacy against the variant
+                        sigma_w = 1, #Cross-protection provided by wildtype
+                        sigma_m = 1 #Cross-protection provided by variant
                         ) 
 
 
@@ -55,7 +55,7 @@ dynamics_params <- data.frame(beta_w = R0_w/IP_w,
 # ===============================
 # Parameters for control dynamics
 # ===============================
-coverage_correction <- 0.9999
+coverage_correction <- 0.9991
 
 
 
