@@ -8,11 +8,11 @@ library(patchwork)
 library(tidyverse)
 library(beepr)
 
-# Helper scripts ----
+# Helper scripts (load in that order) ----
 source('./scripts/two_strain_model/two_strain_model.R')
-source('./scripts/two_strain_model/sensitivity_analyses/sim_config_global_params_sensitivity.R')
+source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
-source('./scripts/two_strain_model/simulation_functions.R')
+#source('./scripts/two_strain_model/simulation_functions.R')
 
 
 #Increase memory before running in parallel
@@ -28,7 +28,8 @@ run_sim_all <- function(sim_table){
     res <- sim_table %>% 
         rowwise() %>% 
         do({with(.,
-                 simulate_raw_dynamics(pop_inits = pop_inits, 
+                 simulate_raw_dynamics(model_func = two_strain_model, 
+                                       pop_inits = pop_inits, 
                                 dynamics_parms = dynamics_params,
                                 control_parms = .,
                                 max_time = max_time, 
@@ -108,8 +109,7 @@ run_time <- end_time - start_time
 print(run_time)
 
 
-orv_npi_all_scenarios_dynamics_final <- orv_npi_all_scenarios_dynamics %>% 
-    mutate(R0m = R0_m)
+orv_npi_all_scenarios_dynamics_final <- orv_npi_all_scenarios_dynamics 
 
 
 #save the simulation
