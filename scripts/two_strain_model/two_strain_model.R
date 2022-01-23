@@ -171,28 +171,33 @@ extract_model_summaries <- function(dynamics_df) {
 #'
 #' @examples
 extract_vax_escape_mod_summaries <- function(dynamics_df) {
-    
-    prevalence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw + dynamics_df$VIw + dynamics_df$VIm
-    
-    # prevalence_wildtype <- dynamics_df$Iw + dynamics_df$Imw + dynamics_df$VIw
-    # 
-    # prevalence_variant <- dynamics_df$Im + dynamics_df$Iwm + dynamics_df$VIm
-    
-    
-    dynamics_df$all_vaxed <- dynamics_df$V + dynamics_df$RwSmV + dynamics_df$RmSwV 
-    
-    #The final summaries
-    results_df <- data.frame(variant_emergence_day = unique(dynamics_df$variant_emergence_day),
-                             vax_coverage = unique(dynamics_df$vax_coverage), 
-                             vax_rate = unique(dynamics_df$vax_rate), 
-                             vax_speed = unique(dynamics_df$vax_speed),
-                             npi_intensity = unique(dynamics_df$npi_intensity),
-                             npi_duration = unique(dynamics_df$npi_duration),
-                             total_cases = max(dynamics_df$K), 
-                             peak_cases = max(prevalence), 
-                             total_vaccinated = max(dynamics_df$all_vaxed)
-    )
-    return(results_df)
+  prevalence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw + dynamics_df$VIw + dynamics_df$VIm
+
+  # prevalence_wildtype <- dynamics_df$Iw + dynamics_df$Imw + dynamics_df$VIw
+  #
+  # prevalence_variant <- dynamics_df$Im + dynamics_df$Iwm + dynamics_df$VIm
+
+
+  dynamics_df$all_vaxed <- dynamics_df$V + dynamics_df$RwSmV + dynamics_df$RmSwV
+
+  # The final summaries
+  results_df <- data.frame(
+    variant_emergence_day = unique(dynamics_df$variant_emergence_day),
+    vax_coverage = unique(dynamics_df$vax_coverage),
+    vax_rate = unique(dynamics_df$vax_rate),
+    vax_speed = unique(dynamics_df$vax_speed),
+    npi_intensity = unique(dynamics_df$npi_intensity),
+    npi_duration = unique(dynamics_df$npi_duration),
+    R0m = unique(dynamics_df$R0_m),
+    vax_efficacy_w = unique(dynamics_df$vax_efficacy_w),
+    vax_efficacy_m = unique(dynamics_df$vax_efficacy_m),
+    cross_protection_w = unique(dynamics_df$sigma_w),
+    cross_protection_m = unique(dynamics_df$sigma_m),
+    total_cases = max(dynamics_df$K),
+    peak_cases = max(prevalence),
+    total_vaccinated = max(dynamics_df$all_vaxed)
+  )
+  return(results_df)
 }
 
 
@@ -201,7 +206,7 @@ extract_vax_escape_mod_summaries <- function(dynamics_df) {
 #' Function to run one instance of the two strain model ====
 #'
 #' @param pop_inits 
-#' @param dynamics_parms 
+#' @param dynamics_parms could be NULL or have elements which are binded to control_parms_df along the way
 #' @param control_parms 
 #' @param max_time 
 #' @param dt 
