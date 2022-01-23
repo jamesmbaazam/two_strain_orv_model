@@ -118,7 +118,7 @@ vax_escape_dynamics_final <- vax_escape_dynamics %>%
 
 
 #save the simulation
-saveRDS(object = vax_escape_dynamics_final, file = './model_output/vax_escape_dynamics.rds')
+saveRDS(object = vax_escape_dynamics_final, file = './model_output/vax_escape_analyses/vax_escape_dynamics.rds')
 
 
 beepr::beep(3)
