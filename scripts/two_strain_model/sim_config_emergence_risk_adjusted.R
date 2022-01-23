@@ -3,20 +3,20 @@ library(dplyr)
 library(purrr)
 
 # Helper scripts ----
-source('./scripts/two_strain_model/sensitivity_analyses/sim_config_global_params_sensitivity.R')
-source('./scripts/two_strain_model/two_strain_model.R')
+#source('./scripts/two_strain_model/sensitivity_analyses/sim_config_global_params_sensitivity.R')
+#source('./scripts/two_strain_model/two_strain_model.R')
 
 # Event times ====
 # NPI ####
 # Best case scenario ####
 # npi_start <- 1:max_time
 # npi_duration <- max_time - npi_start
-# npi_intensity <- seq(0.2, 1, 0.2) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
+# npi_intensity <- seq(0.2, 1, 0.2) #Five levels of npi intensity 
 
-#Simple case: No NPI 
+#Non-pharma interventions (NPIs)
 npi_start <- 1
 npi_duration <- max_time - npi_start
-npi_intensity <- seq(0, 0.3, by = 0.02) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
+npi_intensity <- seq(0, 0.3, by = 0.02) #Various levels of npi intensity 
 
 
 # Vaccination ====
