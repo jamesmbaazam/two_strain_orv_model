@@ -148,8 +148,13 @@ extract_model_summaries <- function(dynamics_df) {
                            vax_speed = unique(dynamics_df$vax_speed),
                            npi_intensity = unique(dynamics_df$npi_intensity),
                            npi_duration = unique(dynamics_df$npi_duration),
+                           R0m = unique(dynamics_df$R0_m), 
+                           vax_efficacy_w = unique(dynamics_params$vax_efficacy_w), 
+                           vax_efficacy_m = unique(dynamics_params$vax_efficacy_m), 
+                           cross_protection_w = unique(dynamics_params$sigma_w),
+                           cross_protection_m = unique(dynamics_params$sigma_m),
                            total_cases = max(dynamics_df$K), 
-                           peak_cases = max(prevalence), 
+                           peak_prevalence = max(prevalence), 
                            total_vaccinated = max(dynamics_df$V)
   )
   return(results_df)
@@ -157,7 +162,7 @@ extract_model_summaries <- function(dynamics_df) {
 
 
 
-#' Extract certain summaries from the two strain with vax escape
+#' Extract certain summaries from the full time series of dynamics from the two strain with vax escape
 #'
 #' @param dynamics_df 
 #'
