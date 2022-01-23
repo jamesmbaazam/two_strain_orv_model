@@ -214,52 +214,56 @@ extract_vax_escape_mod_summaries <- function(dynamics_df) {
 #' @param return_dynamics 
 #' @param browse 
 
-simulate_raw_dynamics <- function(model_func = two_strain_model, 
-                                  pop_inits, dynamics_parms, 
-                                  control_parms, max_time, 
-                           dt, events_table, 
-                           get_summaries,
-                           browse = FALSE
-                           ){
-  
-  if(browse)browser()
+simulate_raw_dynamics <- function(model_func = model,
+                                  get_summaries_func = NULL,
+                                  pop_inits, dynamics_parms,
+                                  control_parms, max_time,
+                                  dt, events_table,
+                                  get_summaries,
+                                  browse = FALSE) {
+  if (browse) browser()
 
-  
+
   # Simulation time ####
- # model_time <- 1:max_time
-  
-  events_table <- events_table %>% 
-    mutate(time = rep(control_parms$variant_emergence_day, 
-                      nrow(events_table)
-                      )
-           )
-  
+  # model_time <- 1:max_time
+
+  events_table <- events_table %>%
+    mutate(time = rep(
+      control_parms$variant_emergence_day,
+      nrow(events_table)
+    ))
+
   sim_parms <- bind_cols(dynamics_parms, control_parms)
   # Model run ####
-  sim_results <- as.data.frame(lsoda(pop_inits, dt, 
-                                     model_func, 
-                                    parms = sim_parms,
-                                    events = list(data = events_table)
-                                    )
-                              )
-  
-  #Add the controls as id cols to the dynamics 
-  sim_results_with_controls <- sim_results %>% 
-    mutate(variant_emergence_day = control_parms$variant_emergence_day, 
-           vax_coverage = control_parms$vax_cov, 
-           vax_rate = control_parms$vax_rate, 
-           vax_speed = control_parms$vax_speed,
-           npi_intensity = control_parms$npi_intensity,
-           npi_duration = control_parms$npi_duration
-           )
-  
-  if(get_summaries){
-    model_summaries <- extract_model_summaries(sim_results_with_controls)
+  sim_results <- as.data.frame(lsoda(pop_inits, dt,
+    model_func,
+    parms = sim_parms,
+    events = list(data = events_table)
+  ))
+
+  # Add the controls as id cols to the dynamics
+  sim_results_with_controls <- sim_results %>%
+    mutate(
+      variant_emergence_day = control_parms$variant_emergence_day,
+      vax_coverage = control_parms$vax_cov,
+      vax_rate = control_parms$vax_rate,
+      vax_speed = control_parms$vax_speed,
+      npi_intensity = control_parms$npi_intensity,
+      npi_duration = control_parms$npi_duration,
+      R0m = control_parms$R0_m, 
+      vax_efficacy_w = control_parms$vax_efficacy_w, 
+      vax_efficacy_m = control_parms$vax_efficacy_m, 
+      cross_protection_w = control_parms$sigma_w,
+      cross_protection_m = control_parms$sigma_m
+    )
+
+  if (get_summaries) {
+    model_summaries <- get_summaries_func(sim_results_with_controls)
     return(model_summaries)
-  }else{
+  } else {
     return(sim_results_with_controls)
   }
-  }
+}
 
 
 #' Function to run all the scenarios provided in a df ====
@@ -270,11 +274,12 @@ simulate_raw_dynamics <- function(model_func = two_strain_model,
 #' @export
 #'
 #' @examples
-run_sim_all <- function(sim_table, model_func, get_summaries = TRUE){
+#function to run simulations
+run_sim_all <- function(sim_table, model, get_summaries){
     res <- sim_table %>% 
         rowwise() %>% 
         do({with(.,
-                 simulate_raw_dynamics(model_func = model_func, 
+                 simulate_raw_dynamics(model_func = model, 
                                        pop_inits = pop_inits, 
                                        dynamics_parms = dynamics_params,
                                        control_parms = .,
@@ -290,6 +295,7 @@ run_sim_all <- function(sim_table, model_func, get_summaries = TRUE){
         as_tibble()
     return(res)
 }
+
 
 #' Calculate vaccination hazards from coverage and campaign duration 
 #'
