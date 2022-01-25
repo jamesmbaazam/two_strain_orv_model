@@ -40,8 +40,8 @@ dynamics_params <- data.frame(beta_w = R0_w/IP_w,
                         beta_m = R0_m/IP_m,
                         gamma_w = 1/IP_w, 
                         gamma_m = 1/IP_m, 
-                        sigma_w = 1, #cross-protection provided by wildtype
-                        sigma_m = 1 #cross-protection provided by variant
+                        sigma_w = 0.85, #cross-protection provided by wildtype
+                        sigma_m = 0.85 #cross-protection provided by variant
                         ) 
 
 
