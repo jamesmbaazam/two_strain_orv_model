@@ -111,7 +111,9 @@ print(run_time)
 #add more identifiers
 
 orv_npi_all_scenarios_dynamics <- orv_npi_all_scenarios_dynamics %>% 
-    mutate(sigma_w = dynamics_params$sigma_w, sigma_m = dynamics_params$sigma_m)
+    mutate(sigma_w = dynamics_params$sigma_w, 
+           sigma_m = dynamics_params$sigma_m,
+           R0m = R0_m, vax_efficacy_w = 1, vax_efficacy_m = 1)
 
 
 #save the simulation
