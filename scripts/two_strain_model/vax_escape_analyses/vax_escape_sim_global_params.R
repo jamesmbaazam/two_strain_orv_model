@@ -62,7 +62,7 @@ coverage_correction <- 0.9991
 #'
 
 # Variant emergence times ===
-variant_emergence_times <- c(seq(1, 61, 121, 151), max_time)
+variant_emergence_times <- c(c(1, 61, 121, 151), max_time)
 
 event_df <- data.frame(
   var = c("S", "Im"), # Compartments to change at a set time
