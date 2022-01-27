@@ -20,27 +20,6 @@ source('./scripts/two_strain_model/vax_escape_analyses/vax_escape_sim_table_setu
 #All scenarios
 simulation_table <- vax_escape_mod_sim_table 
 
-#function to run simulations
-run_sim_all <- function(sim_table){
-    res <- sim_table %>% 
-        rowwise() %>% 
-        do({with(.,
-                 simulate_raw_dynamics(pop_inits = pop_inits, 
-                                       dynamics_parms = dynamics_params,
-                                       control_parms = .,
-                                       max_time = max_time, 
-                                       dt = eval_times,
-                                       events_table = event_df,
-                                       get_summaries = TRUE,
-                                       browse = FALSE
-                 )
-        )
-        }) %>% 
-        ungroup() %>% 
-        as_tibble()
-    return(res)
-}
-
 # Set up parallelization ----
 # how many cores to use in the cluster? #
 num_cores <- parallel::detectCores() - 1 
@@ -58,13 +37,6 @@ sims_per_job <- ceiling(n_sims/num_cores)
 
 num_of_jobs <- ceiling(n_sims/sims_per_job)
 
-#pb <- txtProgressBar(min = 1, max = 1533000, style = 3)
-
-#progress <- function(n){setTxtProgressBar(pb, n)}
-
-#opts <- list(progress = progress)
-
-
 start_time <- Sys.time()
 
 vax_escape_sim_output <- foreach(i = 1:num_of_jobs, 
@@ -81,13 +53,11 @@ vax_escape_sim_output <- foreach(i = 1:num_of_jobs,
             slice(start_index:end_index)
         
         
-        subset_run <- run_sim_all(sim_subset) 
+        subset_run <- run_batch_sims_vax_escape_model(sim_subset, get_summaries = TRUE) 
         
         return(subset_run)
     }
 
-## Shut down the timer and cluster 
-#close(pb)
 stopCluster(cl)
 
 
