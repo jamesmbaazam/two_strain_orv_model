@@ -5,9 +5,9 @@ library(tidyverse)
 library(beepr)
 
 # Helper scripts ----
-source("./scripts/two_strain_model/two_strain_model.R")
-source("./scripts/two_strain_model/sim_config_global_params.R")
-source("./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R")
+source("./scripts/two_strain_model/two_strain_model_functions.R")
+# source("./scripts/two_strain_model/sim_config_global_params.R")
+# source("./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R")
 
 
 #' Calculate vaccination hazards from coverage and campaign duration
