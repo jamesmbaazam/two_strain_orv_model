@@ -51,7 +51,7 @@ outbreak_size_isocline <- ggplot(outbreak_size_isocline_df,
     scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
-    labs(title = paste('Scenarios with cumulative cases <= 1000'), 
+    labs(title = 'Scenarios with cumulative cases <= 1000', 
          subtitle = 'Vaccine escape model with perfect efficacy',
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
@@ -102,7 +102,7 @@ peak_prevalence_isocline <- ggplot(peak_prevalence_isocline_df,
     scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
-    labs(title = paste('Scenarios with peak prevalence <= 300'), 
+    labs(title = 'Scenarios with peak prevalence <= 300', 
          subtitle = 'Vaccine escape model with perfect efficacy',
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
