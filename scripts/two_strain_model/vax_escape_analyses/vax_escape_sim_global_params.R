@@ -23,6 +23,10 @@ pop_inits <- c(
   Imw = 0,
   RwSm = 0,
   RmSw = 0,
+  RwSmV = 0,
+  RmSwV = 0,
+  VIw = 0,
+  VIm = 0,
   R = 0,
   V = 0,
   K = 0
