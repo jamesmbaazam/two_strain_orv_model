@@ -38,14 +38,16 @@ IP_w <- 14 # infectious period (wild type)
 IP_m <- 14 # infectious period (variant)
 
 dynamics_params <- data.frame(
+  R0w = R0_w,
+  R0m = R0_m,
   beta_w = R0_w / IP_w,
   beta_m = R0_m / IP_m,
   gamma_w = 1 / IP_w,
   gamma_m = 1 / IP_m,
   sigma_w = 1, # cross-protection provided by wild-type
   sigma_m = 1, # cross-protection provided by variant
-  vax_efficacy_w = 1, #perfect vaccine efficacy against wild-type
-  vax_efficacy_m = 1 #perfect vaccine efficacy against variant
+  vax_efficacy_w = 1, # perfect vaccine efficacy against wild-type
+  vax_efficacy_m = 1 # perfect vaccine efficacy against variant
 )
 
 
