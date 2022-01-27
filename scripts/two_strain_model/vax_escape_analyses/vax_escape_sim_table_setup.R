@@ -4,7 +4,7 @@ library(purrr)
 
 # Helper scripts ----
 source('./scripts/two_strain_model/vax_escape_analyses/vax_escape_sim_global_params.R')
-source('./scripts/two_strain_model/two_strain_model.R')
+source('./scripts/two_strain_model/two_strain_model_functions.R')
 
 # Event times ====
 # NPI ####
