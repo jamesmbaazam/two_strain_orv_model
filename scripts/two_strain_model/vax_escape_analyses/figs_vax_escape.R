@@ -14,7 +14,7 @@ source('./scripts/two_strain_model/vax_escape_analyses/vax_escape_sim_table_setu
 
 #plot paths for thesis and git
 git_plot_path <- './figures/'
-thesis_plot_path <- "C:/Users/JAMESAZAM/Dropbox/My Academic Repository/_SACEMA/Academic/_PhD/__PhD_Thesis/_Thesis_LaTeX/figs/chapter_5/"
+thesis_plot_path <- 'C:/Users/James Azam/Dropbox/My Academic Repository/_Degrees/PhD/__PhD_Thesis/_Thesis_LaTeX/figs/chapter_5/'
 
 #Load the model output
 vax_escape_model_perfect_efficacy <- readRDS('./model_output/vax_escape_analyses/vax_escape_perfect_efficacy_summaries.rds')
@@ -40,6 +40,7 @@ outbreak_size_isocline_df <- output_rescaled %>%
     group_by(variant_emergence_day, vax_coverage, npi_intensity) %>% 
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
+
 
 # Isoclines ----
 # Outbreak size ====
@@ -74,12 +75,12 @@ ggsave(outbreak_size_isocline,
        units = 'cm')
 
 #thesis directory (path on my laptop)
-# ggsave(outbreak_size_isocline,
-#        filename = 'outbreak_size_isocline_vax_escape_perfect_efficacy.eps',
-#        path = thesis_plot_path,
-#        width = 23.76,
-#        height = 17.86,
-#        units = 'cm')
+ggsave(outbreak_size_isocline,
+       filename = 'outbreak_size_isocline_vax_escape_perfect_efficacy.eps',
+       path = thesis_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm')
 
 
 
@@ -126,9 +127,9 @@ ggsave(peak_prevalence_isocline,
        units = 'cm')
 
 #thesis directory (path on my laptop)
-# ggsave(peak_prevalence_isocline,
-#        filename = 'peak_prevalence_isocline_vax_escape_perfect_efficacy.eps',
-#        path = thesis_plot_path,
-#        width = 23.76,
-#        height = 17.86,
-#        units = 'cm')
+ggsave(peak_prevalence_isocline,
+       filename = 'peak_prevalence_isocline_vax_escape_perfect_efficacy.eps',
+       path = thesis_plot_path,
+       width = 23.76,
+       height = 17.86,
+       units = 'cm')
