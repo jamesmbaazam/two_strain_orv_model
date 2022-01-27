@@ -152,11 +152,32 @@ simulate_raw_dynamics <- function(pop_inits, dynamics_parms,
 #' @export
 #'
 #' @examples
-run_sim_all <- function(sim_table, get_summaries = TRUE){
+run_ts_mod_sim_all <- function(sim_table, get_summaries = TRUE){
     res <- sim_table %>% 
         rowwise() %>% 
         do({with(.,
                  simulate_raw_dynamics(pop_inits = pop_inits, 
+                                       dynamics_parms = dynamics_params,
+                                       control_parms = .,
+                                       max_time = max_time, 
+                                       dt = eval_times,
+                                       events_table = event_df,
+                                       get_summaries = get_summaries,
+                                       browse = FALSE
+                 )
+        )
+        }) %>% 
+        ungroup() %>% 
+        as_tibble()
+    return(res)
+}
+
+
+run_vax_escape_mod_sim_all <- function(sim_table, get_summaries = TRUE){
+    res <- sim_table %>% 
+        rowwise() %>% 
+        do({with(.,
+                 simulate_vax_escape_dynamics(pop_inits = pop_inits, 
                                        dynamics_parms = dynamics_params,
                                        control_parms = .,
                                        max_time = max_time, 
