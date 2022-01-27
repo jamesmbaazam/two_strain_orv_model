@@ -24,25 +24,25 @@ source('./scripts/two_strain_model/partial_cross_protection/sim_table_config.R')
 # memory.limit(size = 56000)
 
 #function to run simulations
-run_sim_all <- function(sim_table){
-    res <- sim_table %>% 
-        rowwise() %>% 
-        do({with(.,
-                 simulate_raw_dynamics(pop_inits = pop_inits, 
-                                       dynamics_parms = dynamics_params,
-                                       control_parms = .,
-                                       max_time = max_time, 
-                                       dt = eval_times,
-                                       events_table = event_df,
-                                       get_summaries = TRUE,
-                                       browse = FALSE
-                 )
-        )
-        }) %>% 
-        ungroup() %>% 
-        as_tibble()
-    return(res)
-}
+# run_sim_all <- function(sim_table){
+#     res <- sim_table %>% 
+#         rowwise() %>% 
+#         do({with(.,
+#                  simulate_raw_dynamics(pop_inits = pop_inits, 
+#                                        dynamics_parms = dynamics_params,
+#                                        control_parms = .,
+#                                        max_time = max_time, 
+#                                        dt = eval_times,
+#                                        events_table = event_df,
+#                                        get_summaries = TRUE,
+#                                        browse = FALSE
+#                  )
+#         )
+#         }) %>% 
+#         ungroup() %>% 
+#         as_tibble()
+#     return(res)
+# }
 
 
 #The simulation table
