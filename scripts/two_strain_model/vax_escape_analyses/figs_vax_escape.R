@@ -25,7 +25,8 @@ output_rescaled <- vax_escape_model_perfect_efficacy %>%
                   .fns = ~ .x*target_pop #rescale the population proportions to total sizes
     )
     ) %>% 
-    select(-c(npi_duration, total_vaccinated))
+    select(-c(npi_duration, total_vaccinated)) %>% 
+    rename(peak_prevalence = peak_cases)
 
 
 
