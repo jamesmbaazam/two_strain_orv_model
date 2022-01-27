@@ -24,10 +24,6 @@ pop_inits <- c(S = 1 - Iw_index_cases/target_pop,
            RmSw = 0,
            R = 0,
            V = 0,
-           VIw = 0, 
-           VIm = 0, 
-           RwSmV = 0,
-           RmSwV = 0,
            K = 0
            )
 
@@ -44,10 +40,8 @@ dynamics_params <- data.frame(beta_w = R0_w/IP_w,
                         beta_m = R0_m/IP_m,
                         gamma_w = 1/IP_w, 
                         gamma_m = 1/IP_m, 
-                        vax_efficacy_w = 1, #Vaccine efficacy against the wild-type
-                        vax_efficacy_m = 1, #Vaccine efficacy against the variant
-                        sigma_w = 1, #Cross-protection provided by wildtype
-                        sigma_m = 1 #Cross-protection provided by variant
+                        sigma_w = 1, #cross-protection provided by wildtype
+                        sigma_m = 1 #cross-protection provided by variant
                         ) 
 
 
@@ -64,7 +58,7 @@ coverage_correction <- 0.9991
 #' 
 
 # Variant emergence times ===
-variant_emergence_times <- c(1, 61, 121, 151, max_time)
+variant_emergence_times <- c(seq(1, 151, 15), max_time)
 
 event_df <- data.frame(var = c('S', 'Im'), #Compartments to change at a set time
                        value = c(-Im_index_cases/target_pop, Im_index_cases/target_pop), #introduce 10 variant cases

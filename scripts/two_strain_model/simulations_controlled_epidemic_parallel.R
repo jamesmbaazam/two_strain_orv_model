@@ -8,11 +8,11 @@ library(patchwork)
 library(tidyverse)
 library(beepr)
 
-# Helper scripts (load in that order) ----
+# Helper scripts ----
 source('./scripts/two_strain_model/two_strain_model.R')
 source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
-#source('./scripts/two_strain_model/simulation_functions.R')
+source('./scripts/two_strain_model/simulation_functions.R')
 
 
 #Increase memory before running in parallel
@@ -28,8 +28,7 @@ run_sim_all <- function(sim_table){
     res <- sim_table %>% 
         rowwise() %>% 
         do({with(.,
-                 simulate_raw_dynamics(model_func = two_strain_model, 
-                                       pop_inits = pop_inits, 
+                 simulate_raw_dynamics(pop_inits = pop_inits, 
                                 dynamics_parms = dynamics_params,
                                 control_parms = .,
                                 max_time = max_time, 
@@ -108,12 +107,8 @@ end_time <- Sys.time()
 run_time <- end_time - start_time
 print(run_time)
 
-
-orv_npi_all_scenarios_dynamics_final <- orv_npi_all_scenarios_dynamics 
-
-
 #save the simulation
-saveRDS(object = orv_npi_all_scenarios_dynamics_final, file = './model_output/model_dynamics_R0m_60_percent.rds')
+saveRDS(object = orv_npi_all_scenarios_dynamics, file = './model_output/orv_npi_all_scenarios_dynamics_parallel.rds')
 
 
 beepr::beep(3)

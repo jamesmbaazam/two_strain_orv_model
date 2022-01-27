@@ -97,27 +97,27 @@ ggsave(plot = outbreak_size_no_control_line_plot,
 
 
 #Plot the peak cases
-peak_prevalence_no_control_line_plot <- ggplot(data = no_control_epidemic_summaries) + 
+peak_incidence_no_control_line_plot <- ggplot(data = no_control_epidemic_summaries) + 
     geom_line(aes(x = variant_emergence_day, 
-                  y = peak_prevalence
+                  y = peak_cases
     ),
     size = 1.2
     ) +
     scale_y_log10(labels = unit_format(unit = 'M', scale = 1E-6), 
                   breaks = seq(6.5E6, 13E6, 5E5)
                   ) +
-    labs(#title = 'Peak prevalence for the uncontrolled epidemic', 
+    labs(#title = 'Peak incidence for the uncontrolled epidemic', 
          x = 'Variant emergence day', 
          y = 'Peak prevalence (log-transformed)'
     ) +
     theme_minimal(base_size = 18)
 
-print(peak_prevalence_no_control_line_plot)
+print(peak_incidence_no_control_line_plot)
 
 
 #Save the plot to the git folder
-ggsave(plot = peak_prevalence_no_control_line_plot,
-       filename = 'peak_prevalence_no_control_line_plot.png',
+ggsave(plot = peak_incidence_no_control_line_plot,
+       filename = 'peak_incidence_no_control_line_plot.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
@@ -125,8 +125,8 @@ ggsave(plot = peak_prevalence_no_control_line_plot,
 )
 
 #Save the plot to the thesis folder
-ggsave(plot = peak_prevalence_no_control_line_plot,
-       filename = 'peak_prevalence_no_control_line_plot.png',
+ggsave(plot = peak_incidence_no_control_line_plot,
+       filename = 'peak_incidence_no_control_line_plot.png',
        path = thesis_plot_path,
        width = 23.76,
        height = 17.86,
