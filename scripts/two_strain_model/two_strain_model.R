@@ -173,7 +173,7 @@ run_ts_mod_sim_all <- function(sim_table, get_summaries = TRUE){
 }
 
 
-run_vax_escape_mod_sim_all <- function(sim_table, get_summaries = TRUE){
+run_batch_sims_vax_escape_mod <- function(sim_table, get_summaries = TRUE){
     res <- sim_table %>% 
         rowwise() %>% 
         do({with(.,

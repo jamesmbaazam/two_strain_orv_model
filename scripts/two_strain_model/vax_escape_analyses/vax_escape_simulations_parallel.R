@@ -63,7 +63,7 @@ vax_escape_sim_output <- foreach(i = 1:num_of_jobs,
             slice(start_index:end_index)
         
         
-        subset_run <- run_sim_all(sim_subset) 
+        subset_run <- run_batch_sims_vax_escape_mod(sim_subset) 
         
         return(subset_run)
     }
