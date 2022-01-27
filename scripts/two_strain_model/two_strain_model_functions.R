@@ -168,7 +168,9 @@ extract_summaries_ts_model <- function(dynamics_df) {
 #' @export
 #'
 #' @examples
-extract_summaries_vax_escape_ts_model <- function(dynamics_df) {
+extract_summaries_vax_escape_ts_model <- function(dynamics_df, browse = FALSE) {
+    if(browse) browser()
+    
   prevalence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw + dynamics_df$VIw + dynamics_df$VIm
 
   # prevalence_wildtype <- dynamics_df$Iw + dynamics_df$Imw + dynamics_df$VIw
@@ -186,11 +188,11 @@ extract_summaries_vax_escape_ts_model <- function(dynamics_df) {
     vax_speed = unique(dynamics_df$vax_speed),
     npi_intensity = unique(dynamics_df$npi_intensity),
     npi_duration = unique(dynamics_df$npi_duration),
-    R0m = unique(dynamics_df$R0_m),
+    R0m = unique(dynamics_df$R0m),
     vax_efficacy_w = unique(dynamics_df$vax_efficacy_w),
     vax_efficacy_m = unique(dynamics_df$vax_efficacy_m),
-    cross_protection_w = unique(dynamics_df$sigma_w),
-    cross_protection_m = unique(dynamics_df$sigma_m),
+    cross_protection_w = unique(dynamics_df$cross_protection_w),
+    cross_protection_m = unique(dynamics_df$cross_protection_m),
     total_cases = max(dynamics_df$K),
     peak_cases = max(prevalence),
     total_vaccinated = max(dynamics_df$all_vaxed)
@@ -244,15 +246,15 @@ simulate_dynamics_ts_model <- function(pop_inits, dynamics_parms,
       vax_speed = control_parms$vax_speed,
       npi_intensity = control_parms$npi_intensity,
       npi_duration = control_parms$npi_duration,
-      R0m = control_parms$R0_m,
-      vax_efficacy_w = control_parms$vax_efficacy_w,
-      vax_efficacy_m = control_parms$vax_efficacy_m,
-      cross_protection_w = control_parms$sigma_w,
-      cross_protection_m = control_parms$sigma_m
+      R0m = dynamics_parms$R0m,
+      vax_efficacy_w = dynamics_parms$vax_efficacy_w,
+      vax_efficacy_m = dynamics_parms$vax_efficacy_m,
+      cross_protection_w = dynamics_parms$sigma_w,
+      cross_protection_m = dynamics_parms$sigma_m
     )
 
   if (get_summaries) {
-    model_summaries <- extract_summaries_ts_model(sim_results_with_controls)
+    model_summaries <- extract_summaries_ts_model(sim_results_with_controls, dynamics_parms = dynamics_params)
     return(model_summaries)
   } else {
     return(sim_results_with_controls)
@@ -298,17 +300,17 @@ simulate_dynamics_vax_escape_ts_model <- function(pop_inits, dynamics_parms,
   # Add the controls as id cols to the dynamics
   sim_results_with_controls <- sim_results %>%
     mutate(
-      variant_emergence_day = control_parms$variant_emergence_day,
-      vax_coverage = control_parms$vax_cov,
-      vax_rate = control_parms$vax_rate,
-      vax_speed = control_parms$vax_speed,
-      npi_intensity = control_parms$npi_intensity,
-      npi_duration = control_parms$npi_duration,
-      R0m = control_parms$R0_m,
-      vax_efficacy_w = control_parms$vax_efficacy_w,
-      vax_efficacy_m = control_parms$vax_efficacy_m,
-      cross_protection_w = control_parms$sigma_w,
-      cross_protection_m = control_parms$sigma_m
+      variant_emergence_day = sim_parms$variant_emergence_day,
+      vax_coverage = sim_parms$vax_coverage,
+      vax_rate = sim_parms$vax_rate,
+      vax_speed = sim_parms$vax_speed,
+      npi_intensity = sim_parms$npi_intensity,
+      npi_duration = sim_parms$npi_duration,
+      R0m = sim_parms$R0m,
+      vax_efficacy_w = sim_parms$vax_efficacy_w,
+      vax_efficacy_m = sim_parms$vax_efficacy_m,
+      cross_protection_w = sim_parms$sigma_w,
+      cross_protection_m = sim_parms$sigma_m
     )
 
   if (get_summaries) {
