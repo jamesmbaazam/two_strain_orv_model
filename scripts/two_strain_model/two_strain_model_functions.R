@@ -194,7 +194,7 @@ extract_summaries_vax_escape_ts_model <- function(dynamics_df, browse = FALSE) {
     cross_protection_w = unique(dynamics_df$cross_protection_w),
     cross_protection_m = unique(dynamics_df$cross_protection_m),
     total_cases = max(dynamics_df$K),
-    peak_cases = max(prevalence),
+    peak_prevalence = max(prevalence),
     total_vaccinated = max(dynamics_df$all_vaxed)
   )
   return(results_df)
