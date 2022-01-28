@@ -31,8 +31,7 @@ cp_dynamics_parameters <- dynamics_params_cp_sensitivity
 #' Attach the one row dynamics params df to each row of the MxN intervention 
 #' params df to form the simulation table specific for this simulation
 cp_simulation_table <- intervention_params_global %>%
-  mutate(cp_dynamics_parameters) %>% 
-    slice(1:5)
+  mutate(cp_dynamics_parameters) 
 
 
 # Set up parallelization ----
