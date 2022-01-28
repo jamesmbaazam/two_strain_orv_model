@@ -3,33 +3,19 @@ library(dplyr)
 library(purrr)
 
 # Helper scripts ----
-source('./scripts/two_strain_model/partial_cross_protection/sim_config_global_params_R0_sigma.R')
-source('./scripts/two_strain_model/two_strain_model.R')
+source('./scripts/two_strain_model/vax_escape_analyses/sensitivity_analyses/global_inputs/global_params.R')
+source('./scripts/two_strain_model/simulation_functions.R')
 
-# Event times ====
-# NPI ####
-# Best case scenario ####
-# npi_start <- 1:max_time
-# npi_duration <- max_time - npi_start
-# npi_intensity <- seq(0.2, 1, 0.2) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
-
-#Simple case: No NPI 
+#NPI params ====
 npi_start <- 1
 npi_duration <- max_time - npi_start
 npi_intensity <- seq(0, 0.3, by = 0.02) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
 
 
-# Vaccination ====
-# Best case scenario ####
-# vax_start <- 1:max_time
-# campaign_duration <- max_time/2 - vax_start
-# vax_cov <- seq(0.2, 1, 0.20)
-
-# Simple case: vaccination starts on day 1 and can achieve 100% coverage but at different rates
+# Vaccination params ====
 vax_start <- 1
 vax_cov <- seq(0.1, 1, by = 0.025) #various levels of coverage
 vax_speed_scenarios <- seq(1, 10, by = 0.25) #how many times faster than the daily vaccination rate
-#daily_vax_rate <- as.vector(sapply(as.list(vax_cov/(max_time - vax_start)), function(x) {x*vax_speed_scenarios})) #daily rate of achieving the same coverage by the end of the period
 
 #Find the time it will take to achieve the assumed coverage with the given rates
 campaign_controls_df <- pmap_dfr(list(vax_cov, max_time, vax_start), 
@@ -64,7 +50,7 @@ campaign_controls_scenarios_df <- campaign_controls_scenarios_df %>%
 
 
 # Full simulation table with variant emergence times appended ====
-orv_npi_control_config_table <- campaign_controls_scenarios_df %>%
+simulation_table <- campaign_controls_scenarios_df %>%
     slice(rep(1:n(), times = length(variant_emergence_times))) %>% 
     mutate(variant_emergence_day = rep(variant_emergence_times, 
                                        each = nrow(campaign_controls_scenarios_df)
