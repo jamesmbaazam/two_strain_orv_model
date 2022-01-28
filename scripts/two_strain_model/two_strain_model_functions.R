@@ -273,8 +273,7 @@ simulate_dynamics_ts_model <- function(pop_inits, dynamics_parms,
 #' @param get_summaries # True or False. If False, raw time series is returned
 #' @param browse #If True, opens the browser for debugging
 
-simulate_dynamics_vax_escape_ts_model <- function(pop_inits, dynamics_parms,
-                                                  control_parms, max_time,
+simulate_dynamics_vax_escape_ts_model <- function(pop_inits, all_parms, max_time,
                                                   dt, events_table,
                                                   get_summaries, browse = FALSE) {
   if (browse) browser()
@@ -284,33 +283,25 @@ simulate_dynamics_vax_escape_ts_model <- function(pop_inits, dynamics_parms,
   # model_time <- 1:max_time
 
   events_table <- events_table %>%
-    mutate(time = rep(
-      control_parms$variant_emergence_day,
-      nrow(events_table)
-    ))
-
-  sim_parms <- bind_cols(dynamics_parms, control_parms)
+    mutate(time = rep(all_parms$variant_emergence_day, nrow(events_table)))
+  
   # Model run ####
-  sim_results <- as.data.frame(lsoda(pop_inits, dt,
-    ts_model_vax_escape,
-    parms = sim_parms,
-    events = list(data = events_table)
-  ))
+  sim_results <- as.data.frame(lsoda(pop_inits, dt, ts_model_vax_escape, parms = all_parms, events = list(data = events_table)))
 
   # Add the controls as id cols to the dynamics
   sim_results_with_controls <- sim_results %>%
     mutate(
-      variant_emergence_day = sim_parms$variant_emergence_day,
-      vax_coverage = sim_parms$vax_coverage,
-      vax_rate = sim_parms$vax_rate,
-      vax_speed = sim_parms$vax_speed,
-      npi_intensity = sim_parms$npi_intensity,
-      npi_duration = sim_parms$npi_duration,
-      R0m = sim_parms$R0m,
-      vax_efficacy_w = sim_parms$vax_efficacy_w,
-      vax_efficacy_m = sim_parms$vax_efficacy_m,
-      cross_protection_w = sim_parms$sigma_w,
-      cross_protection_m = sim_parms$sigma_m
+      variant_emergence_day = all_parms$variant_emergence_day,
+      vax_coverage = all_parms$vax_coverage,
+      vax_rate = all_parms$vax_rate,
+      vax_speed = all_parms$vax_speed,
+      npi_intensity = all_parms$npi_intensity,
+      npi_duration = all_parms$npi_duration,
+      R0m = all_parms$R0m,
+      vax_efficacy_w = all_parms$vax_efficacy_w,
+      vax_efficacy_m = all_parms$vax_efficacy_m,
+      cross_protection_w = all_parms$sigma_w,
+      cross_protection_m = all_parms$sigma_m
     )
 
   if (get_summaries) {
@@ -373,8 +364,7 @@ run_batch_sims_vax_escape_model <- function(sim_table, get_summaries) {
         .,
         simulate_dynamics_vax_escape_ts_model(
           pop_inits = pop_inits,
-          dynamics_parms = dynamics_params,
-          control_parms = .,
+          all_parms = .,
           max_time = max_time,
           dt = eval_times,
           events_table = event_df,
