@@ -67,7 +67,7 @@ run_time <- end_time - start_time
 print(run_time)
 
 #save the simulation
-saveRDS(object = vax_escape_sim_output, file = './model_output/vax_escape_analyses/vax_escape_perfect_efficacy_summaries.rds')
+saveRDS(object = vax_escape_sim_output, file = './model_output/vax_escape_analyses/vax_escape_perfect_efficacy_summaries_vR0_30.rds')
 
 
 beepr::beep(3)
