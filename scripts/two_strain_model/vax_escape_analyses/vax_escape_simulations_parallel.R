@@ -16,9 +16,17 @@ source('./scripts/two_strain_model/vax_escape_analyses/vax_escape_sim_table_setu
 
 
 
-#The simulation table
-#All scenarios
-simulation_table <- vax_escape_mod_sim_table 
+#The simulation parameters
+intervention_params_table <- vax_escape_mod_sim_table 
+
+baseline_dynamics_params <- dynamics_params
+
+
+#' Attach the one row dynamics params df to each row of the MxN intervention 
+#' params df to form the simulation table specific for this simulation
+baseline_analysis_simulation_table <- intervention_params_table %>%
+    mutate(baseline_dynamics_params) 
+
 
 # Set up parallelization ----
 # how many cores to use in the cluster? #
@@ -31,7 +39,7 @@ cl = makeSOCKcluster(num_cores)
 registerDoSNOW(cl)
 
 ## do some parallel computations with foreach
-n_sims <- nrow(simulation_table)
+n_sims <- nrow(baseline_analysis_simulation_table)
 
 sims_per_job <- ceiling(n_sims/num_cores)
 
@@ -39,7 +47,7 @@ num_of_jobs <- ceiling(n_sims/sims_per_job)
 
 start_time <- Sys.time()
 
-vax_escape_sim_output <- foreach(i = 1:num_of_jobs, 
+baseline_analysis_summaries <- foreach(i = 1:num_of_jobs, 
                                           .combine = rbind,
                                           .packages = c('tidyverse', 'foreach', 'deSolve'), 
                                           .errorhandling = 'remove') %dopar% 
@@ -49,7 +57,7 @@ vax_escape_sim_output <- foreach(i = 1:num_of_jobs,
         
         end_index <- min(start_index + sims_per_job - 1, n_sims)
         
-        sim_subset <- simulation_table %>% 
+        sim_subset <- baseline_analysis_simulation_table %>% 
             slice(start_index:end_index)
         
         
@@ -67,7 +75,7 @@ run_time <- end_time - start_time
 print(run_time)
 
 #save the simulation
-saveRDS(object = vax_escape_sim_output, file = './model_output/vax_escape_analyses/vax_escape_perfect_efficacy_summaries_vR0_30.rds')
+saveRDS(object = baseline_analysis_summaries, file = './model_output/vax_escape_analyses/vR0_30_percent_baseline_analysis_summaries.rds')
 
 
 beepr::beep(3)
