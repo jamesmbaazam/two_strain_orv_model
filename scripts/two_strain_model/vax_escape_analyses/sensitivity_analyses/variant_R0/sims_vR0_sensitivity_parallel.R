@@ -26,6 +26,7 @@ source("./scripts/two_strain_model/vax_escape_analyses/sensitivity_analyses/glob
 # The simulation table
 intervention_params_global <- simulation_table
 
+# The dynamics parameters
 vR0_dynamics_parameters <- dynamics_params_vR0_sensitivity
 
 #' Attach the one row dynamics params df to each row of the MxN intervention 
