@@ -19,36 +19,47 @@ thesis_plot_path <- "C:/Users/JAMESAZAM/Dropbox/My Academic Repository/_SACEMA/A
 #' The baseline analysis assumes perfect vaccine efficacy against the wild-type 
 #' and variant and perfect cross protection between the strains. The variant is
 #' assumed to be 30% more transmissible than the wild-type (R0w = 1.3R0m)
-baseline_analysis_results <- readRDS('./model_output/vax_escape_analyses/vax_escape_perfect_efficacy_summaries_vR0_30.rds')
+baseline_analysis_results <- readRDS('./model_output/sensitivity_analyses/baseline_analysis_vR0_30_percent/vR0_30_percent_baseline_analysis_summaries.rds') %>% 
+    rename(peak_prevalence = peak_cases)
 
 #Cross protection sensitivity analysis results
-vR0_sensitivity_results <- readRDS('./model_output/sensitivity_analyses/variant_R0/vR0_sensitivity_summaries.rds')
+vR0_60_percent_sensitivity_analysis_results <- readRDS('./model_output/sensitivity_analyses/variant_R0/vR0_60_percent_sensitivity_analysis_summaries.rds')
 
 
-#combine the two model outputs
-vR0_sensitivity_analysis_df <- bind_rows(baseline_analysis_results, vR0_sensitivity_results) 
+#Combine the two model outputs
+vR0_sensitivity_analysis_all_results <- bind_rows(baseline_analysis_results, vR0_60_percent_sensitivity_analysis_results) 
+
+#Remove redundant columns
+vR0_sensitivity_analysis_df <- vR0_sensitivity_analysis_all_results %>% 
+    select(-c(vax_rate, 
+              npi_duration, 
+              starts_with('vax_efficacy'), 
+              starts_with('cross_protection'),
+              total_vaccinated
+              )
+           )
 
 
 
 #Rescale the population proportions to total sizes
 vR0_sensitivity_analysis_pop_rescaled <- vR0_sensitivity_analysis_df %>%
-    mutate(across(.cols = c(total_cases, peak_cases, total_vaccinated), 
-                  .fns = ~ .x*target_pop)
-    ) %>%  #rescale the population proportions to total sizes
-    select(-c(npi_duration, total_vaccinated))
+    mutate(across(.cols = c(total_cases, peak_prevalence), 
+                  .fns = ~ .x*target_pop
+                  )
+           ) 
 
 
-
-
-
-#' Towards the outbreak size isoclines
-
+#' Determine the subset of scenarios that meet the threshold outbreak size
+#' and the minimum speed required 
 outbreak_size_vR0_isocline_df <- vR0_sensitivity_analysis_pop_rescaled %>% 
-    filter(npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
+    filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
+           npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            total_cases <= 1000
-    ) %>% 
-    mutate(variant_emergence_day = as_factor(variant_emergence_day)) %>% 
-    group_by(variant_emergence_day, vax_coverage, npi_intensity) %>% 
+           ) %>% 
+    mutate(variant_emergence_day = as_factor(variant_emergence_day),
+           R0m = as_factor(R0m)
+           ) %>% 
+    group_by(variant_emergence_day, vax_coverage, npi_intensity, R0m) %>% 
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
 
