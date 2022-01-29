@@ -111,7 +111,7 @@ print(run_time)
 
 
 # save the simulation
-saveRDS(object = efficacy_loss_sensitivity_analysis_summaries, file = "./model_output/sensitivity_analyses/efficacy_loss/efficacy_loss_sensitivity_analysis_summaries")
+saveRDS(object = efficacy_loss_sensitivity_analysis_summaries, file = "./model_output/sensitivity_analyses/efficacy_loss/efficacy_loss_sensitivity_analysis_summaries.rds")
 
 
 beepr::beep(3)
