@@ -30,7 +30,7 @@ vR0_dynamics_parameters <- dynamics_params_vR0_sensitivity
 
 #' Attach the one row dynamics params df to each row of the MxN intervention 
 #' params df to form the simulation table specific for this simulation
-vR0_simulation_table <- intervention_params_global %>%
+vR0_60_percent_sensitivity_simulation_table <- intervention_params_global %>%
     mutate(vR0_dynamics_parameters) 
 
 
@@ -45,7 +45,7 @@ cl <- makeSOCKcluster(num_cores)
 registerDoSNOW(cl)
 
 ## do some parallel computations with foreach
-n_sims <- nrow(vR0_simulation_table)
+n_sims <- nrow(vR0_60_percent_sensitivity_simulation_table)
 
 sims_per_job <- ceiling(n_sims / num_cores)
 
@@ -60,7 +60,7 @@ num_of_jobs <- ceiling(n_sims / sims_per_job)
 
 start_time <- Sys.time()
 
-vR0_sensitivity_summaries <- foreach(
+vR0_60_percent_sensitivity_analysis_summaries <- foreach(
     i = 1:num_of_jobs,
     .combine = rbind,
     .packages = c("tidyverse", "foreach", "deSolve"),
@@ -70,7 +70,7 @@ vR0_sensitivity_summaries <- foreach(
     
     end_index <- min(start_index + sims_per_job - 1, n_sims)
     
-    sim_subset <- vR0_simulation_table %>%
+    sim_subset <- vR0_60_percent_sensitivity_simulation_table %>%
         slice(start_index:end_index)
     
     # run the model over the subset of rows
@@ -91,7 +91,7 @@ print(run_time)
 
 
 # save the simulation
-saveRDS(object = vR0_sensitivity_summaries, file = "./model_output/sensitivity_analyses/variant_R0/vR0_sensitivity_summaries.rds")
+saveRDS(object = vR0_60_percent_sensitivity_analysis_summaries, file = "./model_output/sensitivity_analyses/variant_R0/vR0_60_percent_sensitivity_analysis_summaries.rds")
 
 
 beepr::beep(3)
