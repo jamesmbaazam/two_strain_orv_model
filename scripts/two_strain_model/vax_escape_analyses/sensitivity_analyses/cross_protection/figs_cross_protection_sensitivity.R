@@ -42,23 +42,21 @@ cp_sensitivity_analysis_df <- cp_sensitivity_analysis_all_results %>%
 
 #Rescale the population proportions to total sizes
 cp_sensitivity_analysis_pop_rescaled <- cp_sensitivity_analysis_df %>%
-    mutate(across(.cols = c(total_cases, peak_cases, total_vaccinated), 
-                  .fns = ~ .x*target_pop)
-           ) %>%  #rescale the population proportions to total sizes
-    select(-c(npi_duration, total_vaccinated))
+    mutate(across(.cols = c(total_cases, peak_prevalence), 
+                  .fns = ~ .x*target_pop
+                  ),
+           variant_emergence_day = as_factor(variant_emergence_day), 
+           cross_protection_w = as_factor(cross_protection_w)
+           ) 
 
-
-
-
-
-#' Towards the outbreak size isoclines
-
+#' Determine the subset of scenarios that meet the threshold outbreak size
+#' and the minimum speed required 
 outbreak_size_cp_isocline_df <- cp_sensitivity_analysis_pop_rescaled %>% 
-    filter(npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
-           total_cases <= 1000
+    filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
+           npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
+           total_cases <= 1000 #only keep scenarios with 1000 total cases or less
            ) %>% 
-    mutate(variant_emergence_day = as_factor(variant_emergence_day)) %>% 
-    group_by(variant_emergence_day, vax_coverage, npi_intensity) %>% 
+    group_by(variant_emergence_day, vax_coverage, npi_intensity, cross_protection_w) %>% 
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
 
