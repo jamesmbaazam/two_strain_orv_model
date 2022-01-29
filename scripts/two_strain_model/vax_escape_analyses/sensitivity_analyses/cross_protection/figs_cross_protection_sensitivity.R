@@ -29,7 +29,16 @@ cp_sensitivity_results <- readRDS('./model_output/sensitivity_analyses/cross_pro
 #combine the two model outputs
 cp_sensitivity_analysis_df <- bind_rows(baseline_analysis_results, cp_sensitivity_results) 
 
-
+#Remove redundant columns
+cp_sensitivity_analysis_df <- cp_sensitivity_analysis_all_results %>% 
+    select(-c(vax_rate, 
+              npi_duration, 
+              starts_with('vax_efficacy'), 
+              cross_protection_m,
+              R0m,
+              total_vaccinated
+              )
+           )
 
 #Rescale the population proportions to total sizes
 cp_sensitivity_analysis_pop_rescaled <- cp_sensitivity_analysis_df %>%
