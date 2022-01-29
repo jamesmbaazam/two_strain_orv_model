@@ -70,7 +70,7 @@ outbreak_size_vR0_isocline_sensitivity <- ggplot(outbreak_size_vR0_isocline_df,
                                                     y = min_speed, 
                                                     color = variant_emergence_day
                                                 )) + 
-    geom_line(aes(linetype = factor(R0m)), 
+    geom_line(aes(linetype = R0m), 
               size = 1, 
               show.legend = TRUE
     ) + 
@@ -80,7 +80,8 @@ outbreak_size_vR0_isocline_sensitivity <- ggplot(outbreak_size_vR0_isocline_df,
     labs(#title = paste('Cumulative cases threshold <= 1000 at various NPI intensity levels'), 
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
-        color = 'Variant emergence day'
+        color = 'Variant emergence day',
+        linetype = 'Variant R0'
     ) +
     facet_wrap('npi_intensity', labeller = 'label_both') +
     theme_bw(base_size = 14) +
@@ -121,7 +122,7 @@ peak_prevalence_vR0_isocline <- ggplot(peak_prevalence_vR0_isocline_df,
                                           y = min_speed, 
                                           color = variant_emergence_day
                                       )) + 
-    geom_line(size = 1, show.legend = TRUE) + 
+    geom_line(aes(linetype = R0m), size = 1, show.legend = TRUE) + 
     scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
