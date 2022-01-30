@@ -93,18 +93,18 @@ print(outbreak_size_cp_isocline_sensitivity)
 
 #Save the files 
 ggsave(outbreak_size_cp_isocline_sensitivity,
-       filename = 'outbreak_size_cp_isocline_sensitivity.png',
+       filename = 'sensitivity_analyses/outbreak_size_isocline_cp_sensitivity_analysis.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
        units = 'cm')
 
-ggsave(outbreak_size_cp_isocline_sensitivity,
-       filename = 'outbreak_size_cp_isocline_sensitivity.eps',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm')
+# ggsave(outbreak_size_cp_isocline_sensitivity,
+#        filename = 'outbreak_size_isocline_cp_sensitivity_analysis.eps',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm')
 
 
 
@@ -143,18 +143,18 @@ print(peak_prevalence_cp_isocline)
 
 #Save the files 
 ggsave(peak_prevalence_cp_isocline,
-       filename = 'peak_prevalence_cp_isocline.png',
+       filename = '/sensitivity_analyses/peak_prevalence_cp_isocline.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
        units = 'cm')
 
-ggsave(peak_prevalence_cp_isocline,
-       filename = 'peak_prevalence_cp_isocline.eps',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm')
+# ggsave(peak_prevalence_cp_isocline,
+#        filename = 'peak_prevalence_cp_isocline.eps',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm')
 
 
 
