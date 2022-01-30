@@ -11,7 +11,7 @@ source('./scripts/two_strain_model/vax_escape_analyses/sensitivity_analyses/glob
 
 #plot paths for thesis and git
 git_plot_path <- './figures/'
-thesis_plot_path <- "C:/Users/JAMESAZAM/Dropbox/My Academic Repository/_SACEMA/Academic/_PhD/__PhD_Thesis/_Thesis_LaTeX/figs/chapter_5/"
+thesis_plot_path <- 'C:/Users/James Azam/Dropbox/My Academic Repository/_Degrees/PhD/__PhD_Thesis/_Thesis_LaTeX/figs/chapter_5/'
 
 
 #Change how large numbers are printed
@@ -83,7 +83,8 @@ outbreak_size_vR0_isocline_sensitivity <- ggplot(outbreak_size_vR0_isocline_df,
     scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
-    labs(#title = paste('Cumulative cases threshold <= 1000 at various NPI intensity levels'), 
+    labs(title = 'Sensitivity to variant transmissibility assumptions', 
+         subtitle = 'Strategies with cumulative cases <= 1000', 
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
         color = 'Variant emergence day',
@@ -98,14 +99,14 @@ print(outbreak_size_vR0_isocline_sensitivity)
 
 #Save the files 
 ggsave(outbreak_size_vR0_isocline_sensitivity,
-       filename = 'outbreak_size_vR0_isocline_sensitivity.png',
+       filename = '/sensitivity_analyses/outbreak_size_isocline_vR0_sensitivity_analysis.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
        units = 'cm')
 
 # ggsave(outbreak_size_vR0_isocline_sensitivity,
-#        filename = 'outbreak_size_vR0_isocline_sensitivity.eps',
+#        filename = 'outbreak_size_isocline_vR0_sensitivity_analysis.eps',
 #        path = thesis_plot_path,
 #        width = 23.76,
 #        height = 17.86,
@@ -136,7 +137,8 @@ peak_prevalence_vR0_isocline <- ggplot(peak_prevalence_vR0_isocline_df,
     scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
-    labs(#title = paste('Peak prevalence <= 300 at various NPI intensity levels'), 
+    labs(title = 'Sensitivity to variant transmissibility assumptions', 
+         subtitle = 'Strategies with cumulative cases <= 1000', 
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
         color = 'Variant emergence day'
@@ -151,14 +153,14 @@ print(peak_prevalence_vR0_isocline)
 
 #Save the files 
 ggsave(peak_prevalence_vR0_isocline,
-       filename = 'peak_prevalence_vR0_isocline.png',
+       filename = '/sensitivity_analyses/peak_prevalence_isocline_vR0_sensitivity_analysis.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
        units = 'cm')
 
 # ggsave(peak_prevalence_vR0_isocline,
-#        filename = 'peak_prevalence_vR0_isocline.eps',
+#        filename = 'peak_prevalence_isocline_vR0_sensitivity_analysis.eps',
 #        path = thesis_plot_path,
 #        width = 23.76,
 #        height = 17.86,
