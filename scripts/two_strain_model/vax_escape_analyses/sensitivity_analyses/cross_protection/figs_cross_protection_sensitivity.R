@@ -60,7 +60,7 @@ outbreak_size_cp_isocline_df <- cp_sensitivity_analysis_pop_rescaled %>%
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            total_cases <= 1000 #only keep scenarios with 1000 total cases or less
            ) %>% 
-    group_by(variant_emergence_day, vax_coverage, npi_intensity, cross_protection_w) %>% 
+    group_by(variant_emergence_day, vax_coverage, npi_intensity,  cross_protection_m, cross_protection_w) %>% 
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
 
