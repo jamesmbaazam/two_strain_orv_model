@@ -38,7 +38,7 @@ cp_sensitivity_analysis_df <- cp_sensitivity_analysis_all_results %>%
     select(-c(vax_rate, 
               npi_duration, 
               starts_with('vax_efficacy'), 
-              cross_protection_m,
+            #  cross_protection_m,
               R0m,
               total_vaccinated
               )
