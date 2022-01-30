@@ -13,6 +13,12 @@ source('./scripts/two_strain_model/vax_escape_analyses/sensitivity_analyses/glob
 git_plot_path <- './figures/'
 thesis_plot_path <- "C:/Users/JAMESAZAM/Dropbox/My Academic Repository/_SACEMA/Academic/_PhD/__PhD_Thesis/_Thesis_LaTeX/figs/chapter_5/"
 
+
+#Change how large numbers are printed
+options(scipen = 10000)
+
+
+
 #Load the model output
 
 # Original analysis
