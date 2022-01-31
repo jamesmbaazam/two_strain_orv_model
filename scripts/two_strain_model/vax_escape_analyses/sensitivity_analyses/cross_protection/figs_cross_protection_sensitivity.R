@@ -31,7 +31,7 @@ cp_05_085_sensitivity_analysis_results <- readRDS('./model_output/sensitivity_an
 cp_0_sensitivity_analysis_results <- readRDS('./model_output/sensitivity_analyses/cross_protection/cp_0_sensitivity_analysis_summaries.rds')
 
 #combine the two model outputs
-cp_sensitivity_analysis_all_results <- bind_rows(baseline_analysis_results, cp_0_sensitivity_analysis_results, cp_sensitivity_analysis_results) 
+cp_sensitivity_analysis_all_results <- bind_rows(cp_0_sensitivity_analysis_results, cp_05_085_sensitivity_analysis_results, baseline_analysis_results) 
 
 #Remove redundant columns
 cp_sensitivity_analysis_df <- cp_sensitivity_analysis_all_results %>% 
