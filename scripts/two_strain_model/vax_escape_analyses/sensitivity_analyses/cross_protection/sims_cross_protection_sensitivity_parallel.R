@@ -45,7 +45,7 @@ cp_dynamics_parameters_expanded <- dynamics_params_table_cp %>%
 #' simulation table specific for this simulation. Represents various scenarios
 #' of vaccine efficacy loss against the variant
 cp_simulation_table <- bind_cols(intervention_params_expanded, cp_dynamics_parameters_expanded) %>% 
-    relocate(variant_emergence_day, .before = vax_rate)
+    relocate(variant_emergence_day, .before = vax_rate) 
 
 
 # Set up parallelization ----
