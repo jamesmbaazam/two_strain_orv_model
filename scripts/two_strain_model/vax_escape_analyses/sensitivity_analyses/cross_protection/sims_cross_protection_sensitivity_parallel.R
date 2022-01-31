@@ -50,7 +50,7 @@ cp_simulation_table <- bind_cols(intervention_params_expanded, cp_dynamics_param
 
 # Set up parallelization ----
 # how many cores to use in the cluster? #
-num_cores <- parallel::detectCores() - 1
+num_cores <- parallel::detectCores() - 2
 
 # set up a cluster called 'cl'
 cl <- makeSOCKcluster(num_cores)
