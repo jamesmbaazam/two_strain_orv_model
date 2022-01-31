@@ -23,15 +23,29 @@ source("./scripts/two_strain_model/vax_escape_analyses/sensitivity_analyses/cros
 #Global intervention params
 source("./scripts/two_strain_model/vax_escape_analyses/sensitivity_analyses/global_inputs/intervention_params_table_setup_global.R")
 
-# The simulation table
-intervention_params_global <- simulation_table
+#' Towards the final simulation table
+intervention_params_table <- simulation_table
 
-cp_dynamics_parameters <- dynamics_params_cp_sensitivity
+dynamics_params_table_cp <- dynamics_params_cp_sensitivity
 
-#' Attach the one row dynamics params df to each row of the MxN intervention 
-#' params df to form the simulation table specific for this simulation
-cp_simulation_table <- intervention_params_global %>%
-  mutate(cp_dynamics_parameters) 
+#'Bind the original intervention params df to itself as many times as the number
+#'of rows in the original dynamics params df. We want to bind the two dfs together to
+#'represent the various scenarios in the original dynamics df
+intervention_params_expanded <- intervention_params_table %>%
+    slice(rep(row_number(), times = nrow(dynamics_params_table_cp)))
+
+
+#'Expand the original dynamics df so that each row is as many as the number 
+#'of rows in the intervention controls df. We want to bind the two resulting 
+#'data frames
+cp_dynamics_parameters_expanded <- dynamics_params_table_cp %>% 
+    slice(rep(row_number(), each = nrow(intervention_params_table)))
+
+#' Attach the new dynamics params df to the new interventions df to form the 
+#' simulation table specific for this simulation. Represents various scenarios
+#' of vaccine efficacy loss against the variant
+cp_simulation_table <- bind_cols(intervention_params_expanded, cp_dynamics_parameters_expanded) %>% 
+    relocate(variant_emergence_day, .before = vax_rate)
 
 
 # Set up parallelization ----
@@ -91,7 +105,7 @@ print(run_time)
 
 
 # save the simulation
-saveRDS(object = cp_sensitivity_summaries, file = "./model_output/sensitivity_analyses/cross_protection/cp_sensitivity_summaries.rds")
+saveRDS(object = cp_sensitivity_summaries, file = "./model_output/sensitivity_analyses/cross_protection/cp_05_to_085_sensitivity_analysis_summaries.rds")
 
 
 beepr::beep(3)

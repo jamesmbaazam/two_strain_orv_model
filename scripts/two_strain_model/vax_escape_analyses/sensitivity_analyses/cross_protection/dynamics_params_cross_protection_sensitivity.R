@@ -20,8 +20,8 @@ dynamics_params_cp_sensitivity <- data.frame(
     beta_m = R0_m_original / IP_m,
     gamma_w = 1 / IP_w,
     gamma_m = 1 / IP_m,
-    sigma_w = 0.85, # cross-protection provided by wild-type
-    sigma_m = 0.85, # cross-protection provided by variant
+    sigma_w = seq(0.50, 0.85, 0.05), # cross-protection provided by wild-type
+    sigma_m = seq(0.50, 0.85, 0.05), # cross-protection provided by variant
     vax_efficacy_w = 1, # perfect vaccine efficacy against wild-type
     vax_efficacy_m = 1 # perfect vaccine efficacy against variant
 )
