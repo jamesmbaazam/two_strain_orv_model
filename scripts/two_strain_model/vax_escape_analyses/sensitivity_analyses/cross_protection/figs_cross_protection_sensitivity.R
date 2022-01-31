@@ -88,7 +88,7 @@ outbreak_size_cp_isocline_sensitivity <- ggplot(outbreak_size_cp_isocline_df,
     ) +
     facet_wrap('npi_intensity', labeller = 'label_both') +
     theme_bw(base_size = 14) +
-    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'right') 
 
 
 print(outbreak_size_cp_isocline_sensitivity)
