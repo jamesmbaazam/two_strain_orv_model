@@ -109,6 +109,39 @@ ggsave(outbreak_size_cp_isocline_sensitivity,
 #        units = 'cm')
 
 
+# Outbreak size isocline for extreme assumptions of no or perfect cross protection
+
+outbreak_size_cp_isocline_extremes_df <- outbreak_size_cp_isocline_df %>% 
+filter(cross_protection_w %in% c(0, 1))
+
+
+outbreak_size_cp_isocline_sensitivity_extremes <- ggplot(outbreak_size_cp_isocline_extremes_df, 
+                                                aes(x = vax_coverage, 
+                                                    y = min_speed, 
+                                                    color = variant_emergence_day
+                                                )) + 
+    geom_line(aes(linetype = cross_protection_w), 
+              size = 1, 
+              show.legend = TRUE
+    ) + 
+    scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
+    scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
+    scale_color_viridis_d(option = 'viridis') +
+    labs(title = paste('Sensitivity to cross protection assumptions'),
+         subtitle = 'Strategies with cumulative cases <= 1000',
+         x = 'Vaccination coverage', 
+         y = 'Vaccination speed', 
+         color = 'Variant emergence day',
+         linetype = 'Cross protection'
+    ) +
+    facet_wrap('npi_intensity', labeller = 'label_both') +
+    theme_bw(base_size = 14) +
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'right') 
+
+
+print(outbreak_size_cp_isocline_sensitivity_extremes)
+
+
 
 # Peak prevalence ====
 
