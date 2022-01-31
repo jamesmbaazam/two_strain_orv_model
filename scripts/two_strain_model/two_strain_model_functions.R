@@ -103,7 +103,7 @@ ts_model_vax_escape <- function(t, y, parms, browse = FALSE) {
     dVdt <- epsilon * S - (1 - vax_efficacy_w) * (1 - npi_intensity) * FOI_Iw * V - (1 - vax_efficacy_m) * (1 - npi_intensity) * FOI_Im * V # Vaccinated individuals can still catch either infections but at a reduced rate
     dVIwdt <- (1 - vax_efficacy_w) * (1 - npi_intensity) * FOI_Iw * V - gamma_w * VIw
     dVImdt <- (1 - vax_efficacy_m) * (1 - npi_intensity) * FOI_Im * V - gamma_m * VIm
-    dRwSmVdt <- epsilon * RwSm + gamma_m * VIw # those vax'd and also recovered from one infection are fully protected
+    dRwSmVdt <- epsilon * RwSm + gamma_w * VIw # those vax'd and also recovered from one infection are fully protected
     dRmSwVdt <- epsilon * RmSw + gamma_m * VIm # those vax'd and also recovered from one infection are fully protected
 
 
