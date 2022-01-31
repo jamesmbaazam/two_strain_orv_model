@@ -112,15 +112,19 @@ ts_model_vax_escape <- function(t, y, parms, browse = FALSE) {
     Im_incidence <- (1 - npi_intensity) * FOI_Im * S
     RwSm_incidence <- (1 - npi_intensity) * (1 - sigma_w) * FOI_Im * RwSm
     RmSw_incidence <- (1 - npi_intensity) * (1 - sigma_m) * FOI_Iw * RmSw
-    VIw_incidence <- (1 - vax_efficacy_w) * (1 - npi_intensity) * FOI_Iw * V
-    VIm_incidence <- (1 - vax_efficacy_m) * (1 - npi_intensity) * FOI_Im * V
+    VIw_incidence <- (1 - npi_intensity) * (1 - vax_efficacy_w) * FOI_Iw * V
+    VIm_incidence <- (1 - npi_intensity) * (1 - vax_efficacy_m) * FOI_Im * V
 
 
 
     # Cumulative incidence
     dKdt <- Iw_incidence + Im_incidence + RwSm_incidence + RmSw_incidence + VIw_incidence + VIm_incidence
 
-    mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, dRwSmdt, dRmSwdt, dRdt, dVdt, dVIwdt, dVImdt, dRwSmVdt, dRmSwVdt, dKdt))
+    mod_result <- list(c(dSdt, dIwdt, dImdt, dIwmdt, dImwdt, 
+                         dRwSmdt, dRmSwdt, dRdt, dVdt, dVIwdt, 
+                         dVImdt, dRwSmVdt, dRmSwVdt, dKdt
+                         )
+                       )
     return(mod_result)
   })
 }
