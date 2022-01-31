@@ -105,7 +105,7 @@ print(run_time)
 
 
 # save the simulation
-saveRDS(object = cp_sensitivity_summaries, file = "./model_output/sensitivity_analyses/cross_protection/cp_05_to_085_sensitivity_analysis_summaries.rds")
+saveRDS(object = cp_sensitivity_summaries, file = "./model_output/sensitivity_analyses/cross_protection/cp_sensitivity_analysis_summaries.rds")
 
 
 beepr::beep(3)
