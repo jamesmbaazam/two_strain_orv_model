@@ -27,7 +27,7 @@ baseline_analysis_results <- readRDS('./model_output/sensitivity_analyses/baseli
     rename(peak_prevalence = peak_cases)
 
 #Cross protection sensitivity analysis results
-cp_sensitivity_analysis_results <- readRDS('./model_output/sensitivity_analyses/cross_protection/cp_sensitivity_summaries.rds')
+cp_sensitivity_analysis_results <- readRDS('./model_output/sensitivity_analyses/cross_protection/cp_05_to_085_sensitivity_analysis_summaries.rds') 
 
 
 #combine the two model outputs
