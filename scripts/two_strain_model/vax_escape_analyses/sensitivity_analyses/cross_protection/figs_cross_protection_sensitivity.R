@@ -45,19 +45,23 @@ cp_sensitivity_analysis_df <- cp_sensitivity_analysis_all_results %>%
            )
 
 #Rescale the population proportions to total sizes
-cp_sensitivity_analysis_pop_rescaled <- cp_sensitivity_analysis_df %>%
-    mutate(across(.cols = c(total_cases, peak_prevalence), 
-                  .fns = ~ .x*target_pop
-                  )
-           ) 
+# cp_sensitivity_analysis_pop_rescaled <- cp_sensitivity_analysis_df %>%
+#     mutate(across(.cols = c(total_cases, peak_prevalence), 
+#                   .fns = ~ .x*target_pop
+#                   )
+#            ) 
 
 #' Determine the subset of scenarios that meet the threshold outbreak size
 #' and the minimum speed required 
-outbreak_size_cp_isocline_df <- cp_sensitivity_analysis_pop_rescaled %>% 
-    filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
-           npi_intensity %in% c(0.00, 0.10, 0.20, 0.30), 
-           total_cases <= 1000
-           ) %>% #only keep scenarios with 1000 total cases or less
+
+total_cases_thresholds <- c(0.00002, 0.01, 0.1, 0.15, 0.2)
+
+outbreak_size_cp_isocline_df <- cp_sensitivity_analysis_df %>% 
+    filter(cross_protection_w %in% c(0, 0.5, 1), 
+           variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
+           npi_intensity %in% c(0.00, 0.10, 0.20, 0.30)
+           ) %>% 
+    filter(total_cases <= total_cases_threshold) %>%  #keep scenarios with this level of total cases
     mutate(variant_emergence_day = as_factor(variant_emergence_day), 
            cross_protection_w = as_factor(cross_protection_w)
            ) %>% 
@@ -107,39 +111,6 @@ ggsave(outbreak_size_cp_isocline_sensitivity,
 #        width = 23.76,
 #        height = 17.86,
 #        units = 'cm')
-
-
-# Outbreak size isocline for extreme assumptions of no or perfect cross protection
-
-outbreak_size_cp_isocline_extremes_df <- outbreak_size_cp_isocline_df %>% 
-filter(cross_protection_w %in% c(0, 1))
-
-
-outbreak_size_cp_isocline_sensitivity_extremes <- ggplot(outbreak_size_cp_isocline_extremes_df, 
-                                                aes(x = vax_coverage, 
-                                                    y = min_speed, 
-                                                    color = variant_emergence_day
-                                                )) + 
-    geom_line(aes(linetype = cross_protection_w), 
-              size = 1, 
-              show.legend = TRUE
-    ) + 
-    scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
-    scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    scale_color_viridis_d(option = 'viridis') +
-    labs(title = paste('Sensitivity to cross protection assumptions'),
-         subtitle = 'Strategies with cumulative cases <= 1000',
-         x = 'Vaccination coverage', 
-         y = 'Vaccination speed', 
-         color = 'Variant emergence day',
-         linetype = 'Cross protection'
-    ) +
-    facet_wrap('npi_intensity', labeller = 'label_both') +
-    theme_bw(base_size = 14) +
-    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'right') 
-
-
-print(outbreak_size_cp_isocline_sensitivity_extremes)
 
 
 
