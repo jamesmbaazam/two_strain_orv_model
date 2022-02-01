@@ -1,5 +1,6 @@
 #Packages ----
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 library(scales)
 library(patchwork)
 library(mdthemes)
@@ -27,11 +28,7 @@ baseline_analysis_results <- readRDS('./model_output/sensitivity_analyses/baseli
     rename(peak_prevalence = peak_cases)
 
 #Cross protection sensitivity analysis results
-cp_05_085_sensitivity_analysis_results <- readRDS('./model_output/sensitivity_analyses/cross_protection/cp_05_to_085_sensitivity_analysis_summaries.rds') 
-cp_0_sensitivity_analysis_results <- readRDS('./model_output/sensitivity_analyses/cross_protection/cp_0_sensitivity_analysis_summaries.rds')
-
-#combine the two model outputs
-cp_sensitivity_analysis_all_results <- bind_rows(cp_0_sensitivity_analysis_results, cp_05_085_sensitivity_analysis_results, baseline_analysis_results) 
+cp_sensitivity_analysis_all_results <- readRDS('./model_output/sensitivity_analyses/cross_protection/cp_all_scenarios_sensitivity_analysis_summaries.rds')
 
 #Remove redundant columns
 cp_sensitivity_analysis_df <- cp_sensitivity_analysis_all_results %>% 
@@ -51,21 +48,25 @@ cp_sensitivity_analysis_df <- cp_sensitivity_analysis_all_results %>%
 #                   )
 #            ) 
 
+
 #' Determine the subset of scenarios that meet the threshold outbreak size
 #' and the minimum speed required 
+total_cases_thresholds <- c(0.01, 0.1, 0.15, 0.2)
 
-total_cases_thresholds <- c(0.00002, 0.01, 0.1, 0.15, 0.2)
 
+cases_isocline_plot_list <- list()
+
+for (cases_threhold in seq_along(total_cases_thresholds)) {
 outbreak_size_cp_isocline_df <- cp_sensitivity_analysis_df %>% 
-    filter(cross_protection_w %in% c(0, 0.5, 1), 
+    filter(cross_protection_w %in% c(0.5, 1), 
            variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
            npi_intensity %in% c(0.00, 0.10, 0.20, 0.30)
            ) %>% 
-    filter(total_cases <= total_cases_threshold) %>%  #keep scenarios with this level of total cases
+    filter(total_cases <= total_cases_thresholds[[cases_threhold]]) %>%  #keep scenarios with this level of total cases
     mutate(variant_emergence_day = as_factor(variant_emergence_day), 
            cross_protection_w = as_factor(cross_protection_w)
            ) %>% 
-    group_by(variant_emergence_day, vax_coverage, npi_intensity,  cross_protection_m, cross_protection_w) %>% 
+    group_by(variant_emergence_day, vax_coverage, npi_intensity, cross_protection_m, cross_protection_w) %>% 
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
 
@@ -77,33 +78,47 @@ outbreak_size_cp_isocline_sensitivity <- ggplot(outbreak_size_cp_isocline_df,
                                      color = variant_emergence_day
                                  )) + 
     geom_line(aes(linetype = cross_protection_w), 
-              size = 1, 
+              size = 0.5, 
               show.legend = TRUE
               ) + 
-    scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
+    scale_x_continuous(labels = percent_format(), breaks = seq(0.10, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
     labs(title = paste('Sensitivity to cross protection assumptions'),
-         subtitle = paste('Strategies with cumulative cases up to', total_cases_threshold*100, "% of total population"),
+         subtitle = paste('Strategies with cumulative cases up to', 
+                          total_cases_thresholds[[cases_threhold]]*100, 
+                          "% of total population"
+                          ),
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
         color = 'Variant emergence day',
         linetype = 'Cross protection'
     ) +
     facet_wrap('npi_intensity', labeller = 'label_both') +
-    theme_bw(base_size = 14) +
-    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'right') 
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'right') +
+    theme_bw(base_size = 14) 
 
 
-print(outbreak_size_cp_isocline_sensitivity)
+cases_isocline_plot_list[[cases_threhold]] <- outbreak_size_cp_isocline_sensitivity
 
-#Save the files 
-ggsave(outbreak_size_cp_isocline_sensitivity,
-       filename = 'sensitivity_analyses/outbreak_size_isocline_cp_sensitivity_analysis.png',
-       path = git_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm')
+file_name <-  paste0('./figures/sensitivity_analyses/cross_protection/cp_sensitivity_isocline_outbreak_size', total_cases_thresholds[cases_threhold]*100,'.png')
+}
+
+#Save the files to a pdf
+pdf(width = 12, file = "./figures/sensitivity_analyses/cross_protection/cp_isoclines_outbreak_size.pdf")
+
+for (cases_threhold in seq_along(total_cases_thresholds)) {
+    print(cases_isocline_plot_list[[cases_threhold]])
+}
+
+dev.off()
+
+# ggsave(outbreak_size_cp_isocline_sensitivity,
+#        filename = 'sensitivity_analyses/outbreak_size_isocline_cp_sensitivity_analysis.png',
+#        path = git_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm')
 
 # ggsave(outbreak_size_cp_isocline_sensitivity,
 #        filename = 'outbreak_size_isocline_cp_sensitivity_analysis.eps',
@@ -115,17 +130,21 @@ ggsave(outbreak_size_cp_isocline_sensitivity,
 
 
 # Peak prevalence ====
+peak_prevalence_thresholds <- total_cases_thresholds/100
 
-peak_prevalence_cp_isocline_df <- cp_sensitivity_analysis_pop_rescaled %>% 
-    filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time),
-           npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
-           peak_prevalence <= 300) %>% 
-     mutate(variant_emergence_day = as_factor(variant_emergence_day), 
-           vax_coverage = as.factor(vax_coverage), 
-           npi_intensity = as.factor(npi_intensity),
-           cross_protection_w = as_factor(cross_protection_w)
+peak_prevalence_isocline_plot_list <- list()
+
+for (peak_prevalence_threhold in seq_along(peak_prevalence_thresholds)) {
+peak_prevalence_cp_isocline_df <- cp_sensitivity_analysis_df %>% 
+    filter(cross_protection_w %in% c(0.5, 1), 
+           variant_emergence_day %in% c(1, 61, 121, 151, max_time),
+           npi_intensity %in% c(0.0, 0.1, 0.2, 0.3)
            ) %>% 
-    group_by(variant_emergence_day, vax_coverage, npi_intensity, cross_protection_w) %>% 
+    filter(peak_prevalence <= peak_prevalence_thresholds[[peak_prevalence_threhold]]) %>%  #keep scenarios with this level of total cases
+    mutate(variant_emergence_day = as_factor(variant_emergence_day), 
+           cross_protection_w = as_factor(cross_protection_w)
+    ) %>% 
+    group_by(variant_emergence_day, vax_coverage, npi_intensity, cross_protection_m, cross_protection_w) %>% 
     mutate(min_speed = min(vax_speed)) %>% 
     ungroup()
 
@@ -134,12 +153,15 @@ peak_prevalence_cp_isocline <- ggplot(peak_prevalence_cp_isocline_df,
                                        y = min_speed, 
                                        color = variant_emergence_day
                                    )) + 
-    geom_line(aes(linetype = cross_protection_w), size = 1, show.legend = TRUE) + 
-    scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
+    geom_line(aes(linetype = cross_protection_w), size = 0.5, show.legend = TRUE) + 
+    scale_x_continuous(labels = percent_format(), breaks = seq(0.10, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
     labs(title = 'Sensitivity to cross protection assumptions', 
-         subtitle = 'Strategies with cumulative cases <= 1000',  
+         subtitle = paste('Strategies with peak prevalence up to', 
+                          peak_prevalence_thresholds[[peak_prevalence_threhold]]*100, 
+                          '% of total population'
+                          ), 
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
         color = 'Variant emergence day',
@@ -147,19 +169,33 @@ peak_prevalence_cp_isocline <- ggplot(peak_prevalence_cp_isocline_df,
     ) +
     facet_wrap('npi_intensity', labeller = 'label_both') +
     theme_bw(base_size = 14) +
-    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'right') 
 
 
-print(peak_prevalence_cp_isocline)
+peak_prevalence_isocline_plot_list[[peak_prevalence_threhold]] <- peak_prevalence_cp_isocline
 
+file_name <-  paste0('./figures/sensitivity_analyses/cross_protection/cp_sensitivity_peak_prevalence_isocline_', 
+                     peak_prevalence_thresholds[[peak_prevalence_threhold]]*100,
+                     '.png'
+                     )
+}
+
+#Save the files to a pdf
+pdf(width = 12, file = "./figures/sensitivity_analyses/cross_protection/cp_isoclines_peak_prevalence.pdf")
+
+for (peak_prevalence_threhold in seq_along(peak_prevalence_thresholds)) {
+    print(peak_prevalence_isocline_plot_list[[peak_prevalence_threhold]])
+}
+
+dev.off()
 
 #Save the files 
-ggsave(peak_prevalence_cp_isocline,
-       filename = '/sensitivity_analyses/peak_prevalence_cp_isocline.png',
-       path = git_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm')
+# ggsave(peak_prevalence_cp_isocline,
+#        filename = '/sensitivity_analyses/peak_prevalence_cp_isocline.png',
+#        path = git_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm')
 
 # ggsave(peak_prevalence_cp_isocline,
 #        filename = 'peak_prevalence_cp_isocline.eps',
