@@ -64,7 +64,7 @@ start_time <- Sys.time()
 vR0_60_percent_sensitivity_analysis_summaries <- foreach(
     i = 1:num_of_jobs,
     .combine = rbind,
-    .packages = c("tidyverse", "foreach", "deSolve"),
+    .packages = c("dplyr", "foreach", "deSolve"),
     .errorhandling = "remove"
 ) %dopar% {
     start_index <- 1 + (i - 1) * sims_per_job

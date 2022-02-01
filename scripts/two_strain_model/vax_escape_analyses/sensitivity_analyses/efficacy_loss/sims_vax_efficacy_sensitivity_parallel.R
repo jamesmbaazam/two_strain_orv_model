@@ -83,7 +83,7 @@ start_time <- Sys.time()
 efficacy_loss_sensitivity_analysis_summaries <- foreach(
     i = 1:num_of_jobs,
     .combine = rbind,
-    .packages = c("tidyverse", "foreach", "deSolve"),
+    .packages = c("dplyr", "foreach", "deSolve"),
     .errorhandling = "remove"
 ) %dopar% {
     start_index <- 1 + (i - 1) * sims_per_job

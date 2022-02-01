@@ -49,7 +49,7 @@ start_time <- Sys.time()
 
 baseline_analysis_summaries <- foreach(i = 1:num_of_jobs, 
                                           .combine = rbind,
-                                          .packages = c('tidyverse', 'foreach', 'deSolve'), 
+                                          .packages = c('dplyr', 'foreach', 'deSolve'), 
                                           .errorhandling = 'remove') %dopar% 
     {
         
