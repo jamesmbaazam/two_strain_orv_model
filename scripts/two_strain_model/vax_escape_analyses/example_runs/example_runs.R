@@ -49,6 +49,5 @@ output_example_run_mod <- output_example_run %>%
 example_run_plot <- ggplot(output_example_run_mod) + 
     geom_line(aes(x = time, y = prevalence, linetype=as.factor(variant_emergence_day)
                   ), size = 1
-              ) + 
-    scale_y_log10() 
+              )  
 print(example_run_plot)
