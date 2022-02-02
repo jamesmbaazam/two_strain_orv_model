@@ -16,7 +16,7 @@ Im_index_cases <- 50 # Initial/Index variant cases
 
 
 # Population initial conditions ----
-pop_inits <- c(
+pop_inits_vax_escape <- c(
     S = 1 - Iw_index_cases / target_pop,
     Iw = Iw_index_cases / target_pop,
     Im = 0,
