@@ -80,11 +80,14 @@ outbreak_size_vR0_isocline_sensitivity <- ggplot(outbreak_size_vR0_isocline_df,
               size = 1, 
               show.legend = TRUE
     ) + 
-    scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
+    scale_x_continuous(labels = percent_format(), breaks = seq(0.10, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
     labs(title = 'Sensitivity to variant transmissibility assumptions', 
-         subtitle = 'Strategies with cumulative cases <= 1000', 
+         subtitle = paste('Strategies with cumulative cases up to', 
+                          vR0_cases_threshold*100, 
+                          "% of total population"
+                          ), 
         x = 'Vaccination coverage', 
         y = 'Vaccination speed', 
         color = 'Variant emergence day',
@@ -92,7 +95,7 @@ outbreak_size_vR0_isocline_sensitivity <- ggplot(outbreak_size_vR0_isocline_df,
     ) +
     facet_wrap('npi_intensity', labeller = 'label_both') +
     theme_bw(base_size = 14) +
-    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'right') 
 
 
 print(outbreak_size_vR0_isocline_sensitivity)
