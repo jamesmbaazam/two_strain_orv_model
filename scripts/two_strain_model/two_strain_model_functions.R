@@ -181,8 +181,8 @@ extract_summaries_vax_escape_ts_model <- function(dynamics_df, browse = FALSE) {
   #
   # prevalence_variant <- dynamics_df$Im + dynamics_df$Iwm + dynamics_df$VIm
 
-
-  dynamics_df$all_vaxed <- dynamics_df$V + dynamics_df$RwSmV + dynamics_df$RmSwV
+  #Collapse all the vaccinated classes
+  dynamics_df$all_vaxed <- dynamics_df$V +  dynamics_df$VIw + dynamics_df$VIm + dynamics_df$RwSmV + dynamics_df$RmSwV
 
   # The final summaries
   results_df <- data.frame(
