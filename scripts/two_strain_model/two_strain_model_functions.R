@@ -367,7 +367,7 @@ run_batch_sims_vax_escape_model <- function(sim_table, get_summaries) {
       with(
         .,
         simulate_dynamics_vax_escape_ts_model(
-          pop_inits = pop_inits,
+          pop_inits = pop_inits_vax_escape,
           all_parms = .,
           max_time = max_time,
           dt = eval_times,
