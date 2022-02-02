@@ -8,7 +8,7 @@ source('./scripts/two_strain_model/simulation_functions.R')
 
 #NPI params ====
 npi_start <- 1
-npi_duration <- max_time - npi_start
+npi_duration <- 365 - npi_start
 npi_intensity <- seq(0, 0.3, by = 0.02) #Five levels of npi intensity (could correspond to the five stages in South Africa, for e.g)
 
 
@@ -22,7 +22,7 @@ campaign_controls_df <- pmap_dfr(list(vax_cov, max_time, vax_start),
                                  function(vax_cov, max_time, vax_start){
                                      calc_vax_rate(vax_coverage = vax_cov, 
                                                    coverage_correction = coverage_correction, 
-                                                   max_time = max_time, 
+                                                   max_time = 365, # a campaign for one year
                                                    campaign_start = vax_start
                                      )
                                  }
