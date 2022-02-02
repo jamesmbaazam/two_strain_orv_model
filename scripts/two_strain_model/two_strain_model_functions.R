@@ -277,9 +277,12 @@ simulate_dynamics_ts_model <- function(pop_inits, dynamics_parms,
 #' @param get_summaries # True or False. If False, raw time series is returned
 #' @param browse #If True, opens the browser for debugging
 
-simulate_dynamics_vax_escape_ts_model <- function(pop_inits, all_parms, max_time,
-                                                  dt, events_table,
-                                                  get_summaries, browse = FALSE) {
+simulate_dynamics_vax_escape_ts_model <- function(pop_inits, all_parms, 
+                                                  max_time, dt, 
+                                                  events_table,
+                                                  get_summaries, 
+                                                  browse = FALSE
+                                                  ) {
   if (browse) browser()
 
 
@@ -309,7 +312,7 @@ simulate_dynamics_vax_escape_ts_model <- function(pop_inits, all_parms, max_time
     )
 
   if (get_summaries) {
-    model_summaries <- extract_summaries_vax_escape_ts_model(sim_results_with_controls)
+    model_summaries <- extract_summaries_vax_escape_ts_model(dynamics_df = sim_results_with_controls)
     return(model_summaries)
   } else {
     return(sim_results_with_controls)
