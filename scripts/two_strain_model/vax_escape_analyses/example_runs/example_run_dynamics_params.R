@@ -7,7 +7,7 @@ control_parms_df_example_run <- data.frame(vax_coverage = 0,
                                vax_speed = 0, 
                                vax_start = max_time, 
                                campaign_duration = 0, 
-                               npi_intensity = 0.3, 
+                               npi_intensity = 0.1, 
                                npi_start = 1, 
                                npi_duration = max_time
                                )
