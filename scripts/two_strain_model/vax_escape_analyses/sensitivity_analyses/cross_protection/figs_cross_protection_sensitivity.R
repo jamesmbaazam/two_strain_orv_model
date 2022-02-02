@@ -84,7 +84,7 @@ outbreak_size_cp_isocline_sensitivity <- ggplot(outbreak_size_cp_isocline_df,
     scale_x_continuous(labels = percent_format(), breaks = seq(0.10, 1, 0.1)) +
     scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
     scale_color_viridis_d(option = 'viridis') +
-    labs(title = paste('Sensitivity to cross protection assumptions'),
+    labs(title = 'Sensitivity to cross protection assumptions',
          subtitle = paste('Strategies with cumulative cases up to', 
                           total_cases_thresholds[[cases_threhold]]*100, 
                           "% of total population"
