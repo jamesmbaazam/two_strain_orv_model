@@ -48,20 +48,23 @@ vR0_sensitivity_analysis_df <- vR0_sensitivity_analysis_all_results %>%
 
 
 #Rescale the population proportions to total sizes
-vR0_sensitivity_analysis_pop_rescaled <- vR0_sensitivity_analysis_df %>%
-    mutate(across(.cols = c(total_cases, peak_prevalence), 
-                  .fns = ~ .x*target_pop
-                  )
-           ) 
+# vR0_sensitivity_analysis_pop_rescaled <- vR0_sensitivity_analysis_df %>%
+#     mutate(across(.cols = c(total_cases, peak_prevalence), 
+#                   .fns = ~ .x*target_pop
+#                   )
+#            ) 
 
 
 #' Determine the subset of scenarios that meet the threshold outbreak size
 #' and the minimum speed required 
-outbreak_size_vR0_isocline_df <- vR0_sensitivity_analysis_pop_rescaled %>% 
+
+vR0_cases_threshold <- 10000/target_pop
+
+outbreak_size_vR0_isocline_df <- vR0_sensitivity_analysis_df %>% 
     filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
-           npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
-           total_cases <= 1000
+           npi_intensity %in% c(0.0, 0.1, 0.2, 0.3)
            ) %>% 
+    filter(total_cases <= vR0_cases_threshold) %>% 
     mutate(variant_emergence_day = as_factor(variant_emergence_day),
            R0m = as_factor(R0m)
            ) %>% 
@@ -118,12 +121,13 @@ ggsave(outbreak_size_vR0_isocline_sensitivity,
 
 
 # Peak prevalence ====
+vR0_peak_prevalence_threshold <- 300/target_pop
 
-peak_prevalence_vR0_isocline_df <- vR0_sensitivity_analysis_pop_rescaled %>% 
+peak_prevalence_vR0_isocline_df <- vR0_sensitivity_analysis_df %>% 
     filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
-           npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
-           peak_prevalence <= 300
+           npi_intensity %in% c(0.0, 0.1, 0.2, 0.3)
            ) %>% 
+    filter(peak_prevalence <= vR0_peak_prevalence_threshold) %>% 
     mutate(variant_emergence_day = as_factor(variant_emergence_day), 
            R0m = as_factor(R0m)
            ) %>% 
