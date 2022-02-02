@@ -1,6 +1,6 @@
 #Model evaluation params ----
 # Run the model for this number of days
-max_time <- 365
+max_time <- 365*5
 
 # Show the model results at these time points
 eval_times <- seq(0, max_time, 1)
