@@ -53,6 +53,7 @@ vR0_sensitivity_analysis_df <- vR0_sensitivity_analysis_all_results %>%
 vR0_outbreak_size_thresholds <- c(1E3, 5E5, 5E6, 10E6)
 
 for (i in seq_along(vR0_outbreak_size_thresholds)) {
+    
   vR0_cases_threshold <- vR0_outbreak_size_thresholds[i] / target_pop
 
   outbreak_size_vR0_isocline_df <- vR0_sensitivity_analysis_df %>%
@@ -154,6 +155,7 @@ vR0_peak_prevalence_thresholds <- c(300, 500, 1000, 10000)
 
 
 for (i in seq_along(vR0_peak_prevalence_thresholds)) {
+    
   vR0_peak_prevalence_threshold <- vR0_peak_prevalence_thresholds[i] / target_pop
 
   peak_prevalence_vR0_isocline_df <- vR0_sensitivity_analysis_df %>%
