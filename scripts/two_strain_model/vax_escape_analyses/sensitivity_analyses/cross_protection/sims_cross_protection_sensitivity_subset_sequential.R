@@ -41,24 +41,27 @@ cp_dynamics_parameters_expanded <- dynamics_params_table_cp %>%
 #' Attach the new dynamics params df to the new interventions df to form the
 #' simulation table specific for this simulation. Represents various scenarios
 #' of vaccine efficacy loss against the variant
+#' 
+#' Full simulation table for all cross protection scenarios
 cp_simulation_table <- bind_cols(intervention_params_expanded, cp_dynamics_parameters_expanded) %>%
   relocate(variant_emergence_day, .before = vax_rate)
 
 
-
-cp_simulation_table_subset <- cp_simulation_table %>%
-  filter(variant_emergence_day %in% c(61, 121), sigma_w %in% c(0.5, 1))
+# 
+# cp_simulation_table_subset <- cp_simulation_table 
+# # %>%
+# #   filter(variant_emergence_day %in% c(1, max_time), sigma_w %in% c(0.5, 1))
 
 # Controlled epidemic ----
 
 #############################
 
-# Simulate the vax escape model with perfect vax efficacy to mimic old model
+# Simulate the cross protection sensitivity analysis
 #############################
-vax_escape_perfect_vax_simulations <- run_batch_sims_vax_escape_model(sim_table = cp_simulation_table_subset, get_summaries = TRUE)
+cp_sensitivity_analysis_summaries <- run_batch_sims_vax_escape_model(sim_table = cp_simulation_table, get_summaries = TRUE)
 
 
 # save the results
-saveRDS(object = vax_escape_perfect_vax_simulations, file = "./model_output/vax_escape_perfect_efficacy_summaries.rds")
+saveRDS(object = cp_sensitivity_analysis_summaries, file = "./model_output/sensitivity_analyses/cross_protection/cp_sensitivity_analysis_d1_dmaxtime_summaries")
 
 beep(sound = 3)
