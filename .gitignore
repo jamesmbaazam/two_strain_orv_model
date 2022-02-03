@@ -45,3 +45,5 @@ vignettes/*.pdf
 *.pdf
 
 *.xlsx
+
+*.eps
