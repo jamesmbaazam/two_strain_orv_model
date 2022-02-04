@@ -27,7 +27,7 @@ options(scipen = 10000)
 #'
 #'
 # Cross protection sensitivity analysis results
-cp_sensitivity_analysis_all_results <- readRDS("./model_output/sensitivity_analyses/cross_protection/cp_subset_sensitivity_analysis_summaries.rds")
+cp_sensitivity_analysis_all_results <- readRDS("./model_output/sensitivity_analyses/cross_protection/cp_sensitivity_analysis_d1_d61_d121_d1825.rds")
 
 # Remove redundant columns
 cp_sensitivity_analysis_df <- cp_sensitivity_analysis_all_results %>%
