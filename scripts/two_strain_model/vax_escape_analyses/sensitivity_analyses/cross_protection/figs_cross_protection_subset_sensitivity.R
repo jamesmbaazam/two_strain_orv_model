@@ -134,6 +134,7 @@ for (cases_threhold in seq_along(total_cases_thresholds)) {
     filename = filename_png,
     path = git_plot_path,
     width = 9.5,
+    height = 6.5,
     units = "in"
   )
 
@@ -141,6 +142,7 @@ for (cases_threhold in seq_along(total_cases_thresholds)) {
     filename = filename_eps,
     path = git_plot_path,
     width = 9.5,
+    height = 6.5,
     units = "in"
   )
 }
