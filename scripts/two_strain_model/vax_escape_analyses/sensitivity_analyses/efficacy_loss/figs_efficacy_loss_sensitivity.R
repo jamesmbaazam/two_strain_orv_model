@@ -176,39 +176,73 @@ peak_prevalence_efficacy_loss_isocline <- ggplot(peak_prevalence_efficacy_loss_i
                                        y = min_speed, 
                                        color = variant_emergence_day
                                    )) + 
-    geom_line(aes(linetype = cross_protection_w), size = 1, show.legend = TRUE) + 
-    scale_x_continuous(labels = percent_format(), breaks = seq(0.30, 1, 0.1)) +
-    scale_y_continuous(breaks = seq(1, 10, 1), labels = seq(1, 10, 1)) +
-    scale_color_viridis_d(option = 'viridis') +
-    labs(#title = paste('Peak prevalence <= 300 at various NPI intensity levels'), 
-        x = 'Vaccination coverage', 
-        y = 'Vaccination speed', 
-        color = 'Variant emergence day',
-        linetype = 'Cross protection'
+    geom_line(aes(linetype = vax_efficacy_m), 
+              size = 1, 
+              show.legend = TRUE
+              ) +
+    scale_x_continuous(labels = percent_format(
+        accuracy = 1,
+        suffix = ""
+    ), breaks = seq(0.10, 1, 0.1)) +
+    scale_y_continuous(
+        breaks = seq(1, 10, 1),
+        labels = seq(1, 10, 1),
+        limits = c(1, 10)
     ) +
-    facet_wrap('npi_intensity', labeller = 'label_both') +
+    scale_color_viridis_d(option = "viridis") +
+    labs(
+        title = "Sensitivity to vaccine efficacy against variant assumptions",
+        subtitle = paste0(
+            "Strategies with peak prevalence up to ",
+            efficacy_loss_peak_prevalence_threshold * 100,
+            "% of total population"
+        ),
+        x = "Vaccination coverage (%)",
+        y = "Vaccination speed",
+        color = "Variant emergence day",
+        linetype = "Efficacy against variant"
+    ) +
+    facet_wrap("npi_intensity", labeller = "label_both") +
     theme_bw(base_size = 14) +
-    theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
+    theme(
+        strip.text.x = element_text(size = 12, face = "bold"),
+        legend.position = "right"
+    ) +
+    guides(color = guide_legend(ncol = 1, byrow = TRUE)) 
+
+# Automate filenames
+filename_png <- paste0(
+    "/sensitivity_analyses/efficacy_loss/efficacy_loss_peak_prevalence_",
+    efficacy_loss_peak_prevalence_threshold * 100,
+    "_perc_pop_isocline_sensitivity_analysis.png"
+)
+
+filename_eps <- paste0(
+    "/sensitivity_analyses/efficacy_loss/efficacy_loss_peak_prevalence_",
+    efficacy_loss_peak_prevalence_threshold * 100,
+    "_perc_pop_isocline_sensitivity_analysis.eps"
+)
 
 
 print(peak_prevalence_efficacy_loss_isocline)
 
 
-#Save the files 
+# Save the files
 ggsave(peak_prevalence_efficacy_loss_isocline,
-       filename = 'peak_prevalence_efficacy_loss_isocline.png',
+       filename = filename_png,
        path = git_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm')
+       width = 9.5,
+       units = "in"
+)
 
 ggsave(peak_prevalence_efficacy_loss_isocline,
-       filename = 'peak_prevalence_efficacy_loss_isocline.eps',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm')
+       filename = filename_eps,
+       path = git_plot_path,
+       width = 9.5,
+       units = "in"
+)
 
+}
 
 
 
