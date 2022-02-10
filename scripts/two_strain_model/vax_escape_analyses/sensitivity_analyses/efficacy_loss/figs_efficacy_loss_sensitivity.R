@@ -28,19 +28,11 @@ options(scipen = 10000)
 #     rename(peak_prevalence = peak_cases)
 
 # Cross protection sensitivity analysis results
-efficacy_loss_sensitivity_analysis_results <- readRDS("./model_output/sensitivity_analyses/efficacy_loss/efficacy_loss_sensitivity_analysis_summaries.rds")
+efficacy_loss_sensitivity_analysis_summaries <- readRDS('./model_output/sensitivity_analyses/efficacy_loss/efficacy_loss_sensitivity_analysis_summaries.rds')
 
-df1 <- readRDS("./model_output/sensitivity_analyses/efficacy_loss/efficacy_loss_sensitivity_analysis_d1_d61_summaries.rds")
-df2 <- readRDS("./model_output/sensitivity_analyses/efficacy_loss/efficacy_loss_sensitivity_analysis_d121_summaries.rds")
-df3 <- readRDS("./model_output/sensitivity_analyses/efficacy_loss/efficacy_loss_sensitivity_analysis_dmaxtime_summaries.rds")
-
-
-
-# combine the two model outputs
-efficacy_loss_sensitivity_analysis_all_results <- bind_rows(df1, df2)
 
 # Remove redundant columns
-efficacy_loss_sensitivity_analysis_df <- efficacy_loss_sensitivity_analysis_all_results %>%
+efficacy_loss_sensitivity_analysis_df <- efficacy_loss_sensitivity_analysis_summaries %>%
   select(-c(
     vax_rate,
     npi_duration,
