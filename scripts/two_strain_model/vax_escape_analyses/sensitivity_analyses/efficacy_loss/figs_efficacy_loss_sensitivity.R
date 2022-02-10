@@ -64,7 +64,17 @@ for (i in seq_along(outbreak_size_thresholds)) {
     ) %>%
     group_by(variant_emergence_day, vax_coverage, npi_intensity, vax_efficacy_m) %>%
     mutate(min_speed = min(vax_speed)) %>%
-    ungroup()
+    ungroup() 
+      # mutate(min_speed = min(vax_speed),  
+      #        max_speed = 10
+      #        ) %>% 
+      # ungroup() %>%
+    # group_by(variant_emergence_day, vax_efficacy_m) %>% 
+    # mutate(min_coverage = min(vax_coverage), 
+    #        max_min_speed = max(min_speed)
+    #        ) %>% 
+    # ungroup() %>% 
+    # relocate(c(min_speed, max_min_speed, max_speed), .after = vax_speed)
 
   # Isoclines ----
   # Outbreak size ====
@@ -77,9 +87,19 @@ for (i in seq_along(outbreak_size_thresholds)) {
     )
   ) +
     geom_line(aes(linetype = vax_efficacy_m),
-      size = 1,
+      size = 1.3,
       show.legend = TRUE
     ) +
+      # geom_segment(data = outbreak_size_efficacy_loss_isocline_df, 
+      #              aes(x = min_coverage, 
+      #                  y = max_min_speed,
+      #                  xend = min_coverage,
+      #                  yend = max_speed,
+      #                  linetype = vax_efficacy_m
+      #              ),
+      #              size = 1.3,
+      #              show.legend = TRUE
+      # ) +
     scale_x_continuous(labels = percent_format(
       accuracy = 1,
       suffix = ""
@@ -160,8 +180,15 @@ peak_prevalence_efficacy_loss_isocline_df <- efficacy_loss_sensitivity_analysis_
         vax_efficacy_m = as_factor(vax_efficacy_m)
         ) %>%
     group_by(variant_emergence_day, vax_coverage, npi_intensity, vax_efficacy_m) %>% 
-    mutate(min_speed = min(vax_speed)) %>% 
+    mutate(min_speed = min(vax_speed)) %>%
     ungroup()
+    # ungroup(vax_coverage, npi_intensity, vax_efficacy_m) %>% 
+    # mutate(min_coverage = min(vax_coverage), 
+    #        max_min_speed = max(min_speed), 
+    #        max_speed = 10
+    # ) %>% 
+    # ungroup() %>% 
+    # relocate(c(min_speed, max_min_speed, max_speed), .after = vax_speed)
 
 peak_prevalence_efficacy_loss_isocline <- ggplot(peak_prevalence_efficacy_loss_isocline_df, 
                                    aes(x = vax_coverage, 
@@ -169,9 +196,19 @@ peak_prevalence_efficacy_loss_isocline <- ggplot(peak_prevalence_efficacy_loss_i
                                        color = variant_emergence_day
                                    )) + 
     geom_line(aes(linetype = vax_efficacy_m), 
-              size = 1, 
+              size = 1.3, 
               show.legend = TRUE
               ) +
+    # geom_segment(data = peak_prevalence_efficacy_loss_isocline_df, 
+    #              aes(x = min_coverage, 
+    #                  y = max_min_speed,
+    #                  xend = min_coverage,
+    #                  yend = max_speed,
+    #                  linetype = vax_efficacy_m
+    #              ),
+    #              size = 1.3,
+    #              show.legend = TRUE
+    # ) +
     scale_x_continuous(labels = percent_format(
         accuracy = 1,
         suffix = ""
@@ -236,6 +273,82 @@ ggsave(peak_prevalence_efficacy_loss_isocline,
 
 }
 
+#trial
 
-
-
+# efficacy_loss_cases_threshold <- 1E3/target_pop
+# 
+# outbreak_size_efficacy_loss_isocline_df_trial <- efficacy_loss_sensitivity_analysis_df %>%
+#     filter(
+#         variant_emergence_day %in% c(1, 61, 121, 151, max_time),
+#         npi_intensity %in% c(0)
+#     ) %>%
+#     filter(total_cases <= efficacy_loss_cases_threshold) %>%
+#     mutate(
+#         variant_emergence_day = as_factor(variant_emergence_day),
+#         vax_efficacy_m = as_factor(vax_efficacy_m)
+#     ) %>%
+#     group_by(variant_emergence_day, vax_coverage, npi_intensity, vax_efficacy_m) %>%
+#     mutate(min_speed = min(vax_speed)) %>%
+#     ungroup(vax_coverage, npi_intensity, vax_efficacy_m) %>% 
+#     mutate(min_coverage = min(vax_coverage),
+#            max_min_speed = max(min_speed),
+#            max_speed = 10
+#            ) %>% 
+#     ungroup() %>% 
+#     relocate(c(min_speed, max_min_speed, max_speed), .after = vax_speed)
+# 
+# 
+# 
+# trial_plot <- ggplot(
+#     outbreak_size_efficacy_loss_isocline_df_trial,
+#     aes(
+#         x = vax_coverage,
+#         y = min_speed,
+#         color = variant_emergence_day
+#     )
+# ) +
+#     geom_line(aes(linetype = vax_efficacy_m),
+#               size = 1.3,
+#               show.legend = TRUE
+#     ) +
+#     geom_segment(data = outbreak_size_efficacy_loss_isocline_df_trial, 
+#               aes(x = min_coverage, 
+#                   y = max_min_speed,
+#                   xend = min_coverage,
+#                   yend = max_speed,
+#                   linetype = vax_efficacy_m
+#                   ),
+#               size = 1.3,
+#               show.legend = TRUE
+#     ) +
+#     scale_x_continuous(labels = percent_format(
+#         accuracy = 1,
+#         suffix = ""
+#     ), breaks = seq(0.10, 1, 0.1)) +
+#     scale_y_continuous(
+#         breaks = seq(1, 10, 1),
+#         labels = seq(1, 10, 1),
+#         limits = c(1, 10)
+#     ) +
+#     scale_color_viridis_d(option = "viridis") +
+#     labs(
+#         title = "Sensitivity to vaccine efficacy against variant assumptions",
+#         subtitle = paste0(
+#             "Strategies with cumulative cases up to ",
+#             efficacy_loss_cases_threshold * 100,
+#             "% of total population"
+#         ),
+#         x = "Vaccination coverage (%)",
+#         y = "Vaccination speed",
+#         color = "Variant emergence day",
+#         linetype = "Efficacy against variant"
+#     ) +
+#     facet_wrap("npi_intensity", labeller = "label_both") +
+#     theme_bw(base_size = 14) +
+#     theme(
+#         strip.text.x = element_text(size = 12, face = "bold"),
+#         legend.position = "right"
+#     ) +
+#     guides(color = guide_legend(ncol = 1, byrow = TRUE))
+# 
+# print(trial_plot)
