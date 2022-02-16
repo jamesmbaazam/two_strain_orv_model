@@ -73,7 +73,7 @@ run_time <- end_time - start_time
 print(run_time)
 
 #save the simulation
-saveRDS(object = baseline_analysis_summaries, file = './model_output/vax_escape_analyses/vR0_30_percent_baseline_analysis_summaries.rds')
+saveRDS(object = baseline_analysis_summaries, file = './model_output/sensitivity_analyses/baseline_analysis_vR0_30_percent/vR0_30_percent_baseline_analysis_summaries.rds')
 
 
 beepr::beep(3)
