@@ -26,8 +26,7 @@ options(scipen = 10000)
 #' The baseline analysis assumes perfect vaccine efficacy against the wild-type
 #' and variant and perfect cross protection between the strains. The variant is
 #' assumed to be 30% more transmissible than the wild-type (R0w = 1.3R0m)
-baseline_analysis_results <- readRDS("./model_output/sensitivity_analyses/baseline_analysis_vR0_30_percent/vR0_30_percent_baseline_analysis_summaries.rds") %>%
-  rename(peak_prevalence = peak_cases)
+baseline_analysis_results <- readRDS("./model_output/sensitivity_analyses/baseline_analysis_vR0_30_percent/vR0_30_percent_sensitivity_analysis_summaries.rds")
 
 # Cross protection sensitivity analysis results
 vR0_60_percent_sensitivity_analysis_results <- readRDS("./model_output/sensitivity_analyses/variant_R0/vR0_60_percent_sensitivity_analysis_summaries.rds")
