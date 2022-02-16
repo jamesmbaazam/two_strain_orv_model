@@ -3,9 +3,7 @@
 library(doParallel)
 library(doSNOW)
 library(deSolve)
-library(scales)
-library(patchwork)
-library(tidyverse)
+library(dplyr)
 library(beepr)
 
 # Helper scripts ----
