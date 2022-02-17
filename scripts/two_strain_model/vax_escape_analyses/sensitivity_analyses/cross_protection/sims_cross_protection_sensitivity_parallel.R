@@ -46,7 +46,7 @@ cp_dynamics_parameters_expanded <- dynamics_params_table_cp %>%
 #' of vaccine efficacy loss against the variant
 cp_simulation_table <- bind_cols(intervention_params_expanded, cp_dynamics_parameters_expanded) %>% 
     relocate(variant_emergence_day, .before = vax_rate) %>% 
-    filter(variant_emergence_day %in% c(1, max_time), sigma_w %in% c(0.5, 1))
+    filter(sigma_w %in% c(0.5, 1))
 
 
 # Set up parallelization ----
