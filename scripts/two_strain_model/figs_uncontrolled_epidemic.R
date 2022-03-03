@@ -1,7 +1,9 @@
 #Packages ----
+library(dplyr)
+library(purrr)
+library(ggplot2)
 library(scales)
 library(patchwork)
-library(tidyverse)
 
 #helper scripts
 source('./scripts/two_strain_model/sim_config_global_params.R')
