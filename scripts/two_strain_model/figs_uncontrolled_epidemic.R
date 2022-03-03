@@ -6,7 +6,8 @@ library(tidyverse)
 #helper scripts
 source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/sim_config_uncontrolled_epidemic.R')
-source('./scripts/two_strain_model/two_strain_model.R')
+source('./scripts/two_strain_model/two_strain_model_functions.R')
+source('./scripts/two_strain_model/simulation_functions.R')
 
 #Read the model output
 no_control_epidemic_dynamics <- readRDS('./model_output/uncontrolled_epidemic_dynamics.rds')
@@ -26,7 +27,7 @@ no_control_epidemic_rescaled <- no_control_epidemic_dynamics %>%
 #Extract the summaries
 no_control_epidemic_summaries <- no_control_epidemic_rescaled %>% 
     group_split(variant_emergence_day) %>% 
-    purrr::map_dfr(function(df){extract_model_summaries(df)}) %>% 
+    purrr::map_dfr(function(df){extract_summaries_ts_model(df)}) %>% 
     relocate(variant_emergence_day, .before = npi_intensity) %>% 
     as_tibble()
 
