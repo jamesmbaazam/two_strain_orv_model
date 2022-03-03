@@ -29,7 +29,11 @@ no_control_epidemic_rescaled <- no_control_epidemic_dynamics %>%
 #Extract the summaries
 no_control_epidemic_summaries <- no_control_epidemic_rescaled %>% 
     group_split(variant_emergence_day) %>% 
-    purrr::map_dfr(function(df){extract_summaries_ts_model(df)}) %>% 
+    purrr::map_dfr(function(df){extract_summaries_ts_model(dynamics_df = df, 
+                                                           browse = FALSE
+                                                           )
+        }
+        ) %>% 
     relocate(variant_emergence_day, .before = npi_intensity) %>% 
     as_tibble()
 
