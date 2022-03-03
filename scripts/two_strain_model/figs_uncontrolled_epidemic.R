@@ -63,7 +63,9 @@ no_control_epidemic_summaries <- no_control_epidemic_rescaled %>%
 #        )
 
 #Plot the outbreak size
-outbreak_size_no_control_line_plot <- ggplot(data = no_control_epidemic_summaries) + 
+outbreak_size_no_control_line_plot <- ggplot(data = no_control_epidemic_summaries %>% 
+                                                 filter(variant_emergence_day <= 365)
+                                             ) + 
     geom_line(aes(x = variant_emergence_day, 
                   y = total_cases
     ),
