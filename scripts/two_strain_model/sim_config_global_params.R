@@ -56,7 +56,10 @@ R0_m <- R0_w * 1.3 # R0 (variant) 30% more infectious
 IP_w <- 14 # infectious period (wild type)
 IP_m <- 14 # infectious period (variant)
 
+#Parameters for controlling the dynamics in the no vaccine escape model
 dynamics_params <- data.frame(
+  R0w = R0_w,
+  R0m = R0_m,
   beta_w = R0_w / IP_w,
   beta_m = R0_m / IP_m,
   gamma_w = 1 / IP_w,
@@ -65,7 +68,11 @@ dynamics_params <- data.frame(
   sigma_m = 1 # cross-protection provided by variant
 )
 
+
+#Parameters for controlling the dynamics in the vaccine escape model
 dynamics_params_vax_escape <- data.frame(
+    R0w = R0_w,
+    R0m = R0_m,
     beta_w = R0_w / IP_w,
     beta_m = R0_m / IP_m,
     gamma_w = 1 / IP_w,
