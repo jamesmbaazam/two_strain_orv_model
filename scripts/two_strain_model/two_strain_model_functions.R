@@ -139,7 +139,9 @@ ts_model_vax_escape <- function(t, y, parms, browse = FALSE) {
 #' @export
 #'
 #' @examples
-extract_summaries_ts_model <- function(dynamics_df) {
+extract_summaries_ts_model <- function(dynamics_df, browse = FALSE) {
+    if(browse) browser()
+    
   prevalence <- dynamics_df$Iw + dynamics_df$Im + dynamics_df$Iwm + dynamics_df$Imw
 
   # The final summaries
