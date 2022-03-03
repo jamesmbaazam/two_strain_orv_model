@@ -100,7 +100,9 @@ ggsave(plot = outbreak_size_no_control_line_plot,
 
 
 #Plot the peak cases
-peak_incidence_no_control_line_plot <- ggplot(data = no_control_epidemic_summaries) + 
+peak_incidence_no_control_line_plot <- ggplot(data = no_control_epidemic_summaries %>% 
+                                                  filter(variant_emergence_day <= 365)
+                                              ) + 
     geom_line(aes(x = variant_emergence_day, 
                   y = peak_cases
     ),
