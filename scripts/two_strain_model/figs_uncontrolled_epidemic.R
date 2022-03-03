@@ -76,7 +76,7 @@ outbreak_size_no_control_line_plot <- ggplot(data = no_control_epidemic_summarie
                   ) +
     labs(#title = 'Outbreak sizes for the uncontrolled epidemic',
          x = 'Variant emergence day', 
-         y = 'Outbreak size (log-transformed)'
+         y = 'Outbreak size'
     ) +
     theme_minimal(base_size = 18)
 
@@ -100,7 +100,7 @@ ggsave(plot = outbreak_size_no_control_line_plot,
        width = 23.76,
        height = 17.86,
        units = 'cm'
-)
+       )
 
 
 
@@ -110,7 +110,7 @@ peak_incidence_no_control_line_plot <- ggplot(data = no_control_epidemic_summari
                                                   filter(variant_emergence_day <= 365)
                                               ) + 
     geom_line(aes(x = variant_emergence_day, 
-                  y = peak_cases
+                  y = peak_prevalence
     ),
     size = 1.2
     ) +
@@ -119,7 +119,7 @@ peak_incidence_no_control_line_plot <- ggplot(data = no_control_epidemic_summari
                   ) +
     labs(#title = 'Peak incidence for the uncontrolled epidemic', 
          x = 'Variant emergence day', 
-         y = 'Peak prevalence (log-transformed)'
+         y = 'Peak prevalence'
     ) +
     theme_minimal(base_size = 18)
 
