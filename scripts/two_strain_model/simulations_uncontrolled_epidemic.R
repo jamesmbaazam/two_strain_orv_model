@@ -3,7 +3,7 @@ library(deSolve)
 library(dplyr)
 
 # Helper scripts ----
-source('./scripts/two_strain_model/two_strain_model.R')
+source('./scripts/two_strain_model/two_strain_model_functions.R')
 source('./scripts/two_strain_model/sim_config_global_params.R')
 source('./scripts/two_strain_model/sim_config_uncontrolled_epidemic.R')
 
@@ -13,7 +13,7 @@ variant_emergence_days <- seq(1, max_time, by = 1) #variant can emerge any day o
 
 
 no_control_epidemic_dynamics <- variant_emergence_days %>% 
-    purrr::map_df(function(x){simulate_raw_dynamics(pop_inits = pop_inits, 
+    purrr::map_df(function(x){simulate_dynamics_ts_model(pop_inits = pop_inits, 
                                              dynamics_parms = dynamics_params,
                                              control_parms = cbind(no_control_parms_df, data.frame(variant_emergence_day = x)),
                                              max_time = max_time, 
