@@ -88,13 +88,13 @@ ggsave(plot = incidence_curves_vax_only,
 
 
 #Save the plot to thesis folder
-ggsave(plot = incidence_curves_vax_only,
-       filename = 'incidence_curves_vax_only.png',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-       )
+# ggsave(plot = incidence_curves_vax_only,
+#        filename = 'incidence_curves_vax_only.png',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+#        )
 
 
 #Get the vax + NPI control and no control dynamics data
@@ -145,13 +145,13 @@ ggsave(plot = incidence_curves_vax_and_npi,
 
 
 #Save the plot to thesis folder
-ggsave(plot = incidence_curves_vax_and_npi,
-       filename = 'incidence_curves_vax_and_npi.png',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-       )
+# ggsave(plot = incidence_curves_vax_and_npi,
+#        filename = 'incidence_curves_vax_and_npi.png',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+#        )
 
 
 
@@ -190,13 +190,13 @@ ggsave(plot = incidence_curve_unmitigated,
 
 
 #Save the plot to thesis folder
-ggsave(plot = incidence_curve_unmitigated,
-       filename = 'incidence_curve_unmitigated.png',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-       )
+# ggsave(plot = incidence_curve_unmitigated,
+#        filename = 'incidence_curve_unmitigated.png',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+#        )
 
 
 #Peak timing versus variant emergence day (no control) ----
@@ -226,13 +226,13 @@ ggsave(plot = peak_timing_vs_emergence_unmitigated,
 
 
 #Save the plot to thesis folder
-ggsave(plot = peak_timing_vs_emergence_unmitigated,
-       filename = 'peak_timing_vs_emergence_unmitigated.png',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-       )
+# ggsave(plot = peak_timing_vs_emergence_unmitigated,
+#        filename = 'peak_timing_vs_emergence_unmitigated.png',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+#        )
 
 
 #combine the incidence curve and peak timing curves
@@ -249,12 +249,12 @@ ggsave(plot = incidence_curve_and_peak_timing,
 
 
 #Save the plot to thesis folder
-ggsave(plot = incidence_curve_and_peak_timing,
-       filename = 'incidence_curve_and_peak_timing.png',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-       )
+# ggsave(plot = incidence_curve_and_peak_timing,
+#        filename = 'incidence_curve_and_peak_timing.png',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+#        )
 
 
