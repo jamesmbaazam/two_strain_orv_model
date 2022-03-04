@@ -71,7 +71,7 @@ prevalence_curves_vax_only <- ggplot(data = vax_vs_unmitigated_dynamics_df) +
                ) +
     labs(color = 'Variant emergence',
          x = 'Days',
-         y = 'Prevalence',
+         y = 'Prevalence (log-tranformed)',
          ) +
     theme_minimal(base_size = 14) +
     theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
@@ -128,7 +128,7 @@ prevalence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) +
     ) +
     labs(color = 'Variant emergence',
          x = 'Days',
-         y = 'Prevalence',
+         y = 'Prevalence (log-tranformed)',
     ) +
     theme_minimal(base_size = 14) +
     theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
