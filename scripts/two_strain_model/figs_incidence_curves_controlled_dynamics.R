@@ -239,7 +239,13 @@ ggsave(plot = peak_timing_vs_emergence_unmitigated,
 
 
 #combine the prevalence curve and peak timing curves
-prevalence_curve_and_peak_timing <- prevalence_curve_unmitigated + peak_timing_vs_emergence_unmitigated + plot_layout(guides = "collect") & theme(legend.position = 'bottom') #this operation is possible using the patchworks package
+prevalence_curve_and_peak_timing <- prevalence_curve_unmitigated + 
+    peak_timing_vs_emergence_unmitigated + 
+    plot_annotation(tag_levels = 'A') + #add capitalized alphabetical labellings (patchworks package)
+    plot_layout(guides = "collect") & theme(legend.position = 'bottom') 
+
+    
+print(prevalence_curve_and_peak_timing)
 
 #Save the plot to git folder
 ggsave(plot = prevalence_curve_and_peak_timing,
