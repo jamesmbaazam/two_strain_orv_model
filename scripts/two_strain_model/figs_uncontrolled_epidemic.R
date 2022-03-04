@@ -94,13 +94,13 @@ ggsave(plot = outbreak_size_no_control_line_plot,
 
 
 #Save the plot to thesis folder
-ggsave(plot = outbreak_size_no_control_line_plot,
-       filename = 'outbreak_size_no_control_line_plot.png',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-       )
+# ggsave(plot = outbreak_size_no_control_line_plot,
+#        filename = 'outbreak_size_no_control_line_plot.png',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+#        )
 
 
 
@@ -136,10 +136,10 @@ ggsave(plot = peak_prevalence_plot,
 )
 
 #Save the plot to the thesis folder
-ggsave(plot = peak_incidence_no_control_line_plot,
-       filename = 'peak_incidence_no_control_line_plot.png',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm'
-)
+# ggsave(plot = peak_prevalence_plot,
+#        filename = 'peak_prevalence_plot.png',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm'
+# )
