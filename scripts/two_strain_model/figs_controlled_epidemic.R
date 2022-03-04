@@ -32,7 +32,7 @@ controlled_epidemic_rescaled <- controlled_epidemic %>%
 #' Towards the outbreak size isoclines
 
 outbreak_size_isocline_df <- controlled_epidemic_rescaled %>% 
-    filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
+    filter(variant_emergence_day %in% c(1, 61, 121, 151, 365), 
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            total_cases <= 1000
            ) %>% 
@@ -84,7 +84,8 @@ ggsave(outbreak_size_isocline,
 # Peak prevalence ====
 
 peak_prevalence_isocline_df <- controlled_epidemic_rescaled %>% 
-    filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time), 
+    rename(peak_prevalence = peak_cases) %>% 
+    filter(variant_emergence_day %in% c(1, 61, 121, 151, 365), 
            npi_intensity %in% c(0.0, 0.1, 0.2, 0.3), 
            peak_prevalence <= 300
     ) %>% 
