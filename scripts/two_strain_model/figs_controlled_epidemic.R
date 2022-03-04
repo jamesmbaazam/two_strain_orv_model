@@ -1,13 +1,13 @@
 #Packages ----
+library(tidyverse)
 library(scales)
 library(patchwork)
 library(mdthemes)
-library(tidyverse)
-library(metR)
 
 #helper scripts
 source('./scripts/two_strain_model/sim_config_global_params.R')
-source('./scripts/two_strain_model/two_strain_model.R')
+source('./scripts/two_strain_model/two_strain_model_functions.R')
+source('./scripts/two_strain_model/simulation_functions.R')
 source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
 
 #plot paths for thesis and git
@@ -72,12 +72,12 @@ ggsave(outbreak_size_isocline,
        height = 17.86,
        units = 'cm')
 
-ggsave(outbreak_size_isocline,
-       filename = 'outbreak_size_isocline.eps',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm')
+# ggsave(outbreak_size_isocline,
+#        filename = 'outbreak_size_isocline.eps',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm')
 
 
 
@@ -123,12 +123,12 @@ ggsave(peak_prevalence_isocline,
        height = 17.86,
        units = 'cm')
 
-ggsave(peak_prevalence_isocline,
-       filename = 'peak_prevalence_isocline.eps',
-       path = thesis_plot_path,
-       width = 23.76,
-       height = 17.86,
-       units = 'cm')
+# ggsave(peak_prevalence_isocline,
+#        filename = 'peak_prevalence_isocline.eps',
+#        path = thesis_plot_path,
+#        width = 23.76,
+#        height = 17.86,
+#        units = 'cm')
 
 
 #' Loop through the npi levels and facet by total cases target
