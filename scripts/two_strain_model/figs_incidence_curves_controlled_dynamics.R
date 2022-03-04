@@ -22,11 +22,11 @@ case_studies_dynamics_df <- readRDS('./model_output/dynamics_case_studies_contro
 #Rescale the population proportions to total sizes
 case_studies_dynamics_rescaled <- case_studies_dynamics_df %>%
     group_by(variant_emergence_day, npi_intensity, vax_speed) %>% 
-    mutate(incidence = Iw + Iwm + Im + Imw, 
+    mutate(prevalence = Iw + Iwm + Im + Imw, 
            outbreak_size = max(K), #what is the outbreak size for each emergence day and when does it occur
-           peak_time = which.max(incidence)
+           peak_time = which.max(prevalence)
            ) %>% 
-    mutate(across(.cols = c(incidence, outbreak_size), .fns = ~ .x*target_pop)) %>%  
+    mutate(across(.cols = c(prevalence, outbreak_size), .fns = ~ .x*target_pop)) %>%  
     select(!starts_with(c('S', 'R', 'V', 'K'), ignore.case = FALSE)) %>% 
     ungroup()
 
@@ -42,7 +42,7 @@ case_studies_dynamics <- case_studies_dynamics_rescaled %>%
            )
 
 
-#Incidence curves ----
+#prevalence curves ----
 #Get the vax only and no control dynamics data
 vax_vs_unmitigated_dynamics_df <- case_studies_dynamics %>% 
     filter(control_type %in% c('vax_only', 'no_control'),
@@ -52,9 +52,9 @@ vax_vs_unmitigated_dynamics_df <- case_studies_dynamics %>%
 
 
 #Vax only vs no control (log scaled) #### 
-incidence_curves_vax_only <- ggplot(data = vax_vs_unmitigated_dynamics_df) + 
+prevalence_curves_vax_only <- ggplot(data = vax_vs_unmitigated_dynamics_df) + 
     geom_line(aes(x = time, 
-                  y = incidence,
+                  y = prevalence,
                   color = as.factor(variant_emergence_day)
                   ), 
               size = 1
@@ -68,18 +68,18 @@ incidence_curves_vax_only <- ggplot(data = vax_vs_unmitigated_dynamics_df) +
                ) +
     labs(color = 'Variant emergence',
          x = 'Days',
-         y = 'Incidence',
+         y = 'Prevalence',
          ) +
     theme_minimal(base_size = 14) +
     theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
 
 
-print(incidence_curves_vax_only)
+print(prevalence_curves_vax_only)
 
 
 #Save the plot to git folder
-ggsave(plot = incidence_curves_vax_only,
-       filename = 'incidence_curves_vax_only.png',
+ggsave(plot = prevalence_curves_vax_only,
+       filename = 'prevalence_curves_vax_only.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
@@ -88,8 +88,8 @@ ggsave(plot = incidence_curves_vax_only,
 
 
 #Save the plot to thesis folder
-# ggsave(plot = incidence_curves_vax_only,
-#        filename = 'incidence_curves_vax_only.png',
+# ggsave(plot = prevalence_curves_vax_only,
+#        filename = 'prevalence_curves_vax_only.png',
 #        path = thesis_plot_path,
 #        width = 23.76,
 #        height = 17.86,
@@ -108,9 +108,9 @@ vax_and_npi_dynamics <- case_studies_dynamics %>%
 
 
 #Vax + NPI vs no control (log scaled) ####
-incidence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) + 
+prevalence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) + 
     geom_line(aes(x = time, 
-                  y = incidence,
+                  y = prevalence,
                   color = as.factor(variant_emergence_day)
     ), 
     size = 1
@@ -125,18 +125,18 @@ incidence_curves_vax_and_npi <- ggplot(data = vax_and_npi_dynamics) +
     ) +
     labs(color = 'Variant emergence',
          x = 'Days',
-         y = 'Incidence',
+         y = 'Prevalence',
     ) +
     theme_minimal(base_size = 14) +
     theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
 
 
-print(incidence_curves_vax_and_npi)
+print(prevalence_curves_vax_and_npi)
 
 
 #Save the plot to git folder
-ggsave(plot = incidence_curves_vax_and_npi,
-       filename = 'incidence_curves_vax_and_npi.png',
+ggsave(plot = prevalence_curves_vax_and_npi,
+       filename = 'prevalence_curves_vax_and_npi.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
@@ -145,8 +145,8 @@ ggsave(plot = incidence_curves_vax_and_npi,
 
 
 #Save the plot to thesis folder
-# ggsave(plot = incidence_curves_vax_and_npi,
-#        filename = 'incidence_curves_vax_and_npi.png',
+# ggsave(plot = prevalence_curves_vax_and_npi,
+#        filename = 'prevalence_curves_vax_and_npi.png',
 #        path = thesis_plot_path,
 #        width = 23.76,
 #        height = 17.86,
@@ -161,27 +161,27 @@ dynamics_no_control <- case_studies_dynamics %>%
     filter(control_type == 'no_control')
 
 
-#Incidence curves (no control) ----
-incidence_curve_unmitigated <- ggplot(data = dynamics_no_control %>% 
+#prevalence curves (no control) ----
+prevalence_curve_unmitigated <- ggplot(data = dynamics_no_control %>% 
                                           filter(variant_emergence_day %in% c(1, 61, 121, 151, max_time))
                                       ) +
     geom_line(aes(x = time, 
-                  y = incidence,
+                  y = prevalence,
                   color = as.factor(variant_emergence_day)
                   ),
               size = 1
     ) +
     scale_y_continuous(labels = comma) +
-    labs(x = 'Time (days)', y = 'Incidence', color = 'Variant emergence day') +
+    labs(x = 'Time (days)', y = 'Prevalence', color = 'Variant emergence day') +
     theme_bw(base_size = 14) +
     theme(strip.text.x = element_text(size = 12, face = 'bold'), legend.position = 'bottom') 
 
 
-print(incidence_curve_unmitigated)
+print(prevalence_curve_unmitigated)
 
 #Save the plot to git folder
-ggsave(plot = incidence_curve_unmitigated,
-       filename = 'incidence_curve_unmitigated.png',
+ggsave(plot = prevalence_curve_unmitigated,
+       filename = 'prevalence_curve_unmitigated.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
@@ -190,8 +190,8 @@ ggsave(plot = incidence_curve_unmitigated,
 
 
 #Save the plot to thesis folder
-# ggsave(plot = incidence_curve_unmitigated,
-#        filename = 'incidence_curve_unmitigated.png',
+# ggsave(plot = prevalence_curve_unmitigated,
+#        filename = 'prevalence_curve_unmitigated.png',
 #        path = thesis_plot_path,
 #        width = 23.76,
 #        height = 17.86,
@@ -235,12 +235,12 @@ ggsave(plot = peak_timing_vs_emergence_unmitigated,
 #        )
 
 
-#combine the incidence curve and peak timing curves
-incidence_curve_and_peak_timing <- incidence_curve_unmitigated + peak_timing_vs_emergence_unmitigated + plot_layout(guides = "collect") & theme(legend.position = 'bottom') #this operation is possible using the patchworks package
+#combine the prevalence curve and peak timing curves
+prevalence_curve_and_peak_timing <- prevalence_curve_unmitigated + peak_timing_vs_emergence_unmitigated + plot_layout(guides = "collect") & theme(legend.position = 'bottom') #this operation is possible using the patchworks package
 
 #Save the plot to git folder
-ggsave(plot = incidence_curve_and_peak_timing,
-       filename = 'incidence_curve_and_peak_timing.png',
+ggsave(plot = prevalence_curve_and_peak_timing,
+       filename = 'prevalence_curve_and_peak_timing.png',
        path = git_plot_path,
        width = 23.76,
        height = 17.86,
@@ -249,8 +249,8 @@ ggsave(plot = incidence_curve_and_peak_timing,
 
 
 #Save the plot to thesis folder
-# ggsave(plot = incidence_curve_and_peak_timing,
-#        filename = 'incidence_curve_and_peak_timing.png',
+# ggsave(plot = prevalence_curve_and_peak_timing,
+#        filename = 'prevalence_curve_and_peak_timing.png',
 #        path = thesis_plot_path,
 #        width = 23.76,
 #        height = 17.86,
