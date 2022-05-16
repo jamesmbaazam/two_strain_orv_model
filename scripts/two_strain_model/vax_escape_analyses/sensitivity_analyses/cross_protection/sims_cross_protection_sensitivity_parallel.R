@@ -1,12 +1,9 @@
 
 # Packages ----
+library(doMPI)
 library(doParallel)
-library(doSNOW)
 library(deSolve)
-library(scales)
-library(patchwork)
 library(tidyverse)
-library(beepr)
 
 # Helper scripts ----
 source("./scripts/two_strain_model/simulation_functions.R")
@@ -45,19 +42,18 @@ cp_dynamics_parameters_expanded <- dynamics_params_table_cp %>%
 #' simulation table specific for this simulation. Represents various scenarios
 #' of vaccine efficacy loss against the variant
 cp_simulation_table <- bind_cols(intervention_params_expanded, cp_dynamics_parameters_expanded) %>% 
-    relocate(variant_emergence_day, .before = vax_rate) %>% 
-    filter(sigma_w %in% c(0.5, 1))
-
+    relocate(variant_emergence_day, .before = vax_rate) 
 
 # Set up parallelization ----
 # how many cores to use in the cluster? #
 num_cores <- parallel::detectCores() - 1
 
 # set up a cluster called 'cl'
-cl <- makeSOCKcluster(num_cores)
+# cl <- makeSOCKcluster(num_cores)
+cl <- startMPIcluster()
 
 # register the cluster
-registerDoSNOW(cl)
+registerDoMPI(cl)
 
 ## do some parallel computations with foreach
 n_sims <- nrow(cp_simulation_table)
@@ -73,7 +69,7 @@ num_of_jobs <- ceiling(n_sims / sims_per_job)
 # opts <- list(progress = progress)
 
 
-start_time <- Sys.time()
+# start_time <- Sys.time()
 
 cp_sensitivity_summaries <- foreach(
   i = 1:num_of_jobs,
@@ -96,17 +92,17 @@ cp_sensitivity_summaries <- foreach(
 
 ## Shut down the timer and cluster
 # close(pb)
-stopCluster(cl)
+closeCluster(cl)
+mpi.quit()
 
+# end_time <- Sys.time()
 
-end_time <- Sys.time()
-
-run_time <- end_time - start_time
-print(run_time)
+# run_time <- end_time - start_time
+# print(run_time)
 
 
 # save the simulation
 saveRDS(object = cp_sensitivity_summaries, file = "./model_output/sensitivity_analyses/cross_protection/cp_d1_dmaxtime_sensitivity_analysis_summaries.rds")
 
 
-beepr::beep(3)
+# beepr::beep(3)
