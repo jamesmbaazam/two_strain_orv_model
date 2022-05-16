@@ -1,8 +1,8 @@
 # Packages ----
 library(doParallel)
 library(deSolve)
-library(tidyverse)
-library(beepr)
+library(dplyr)
+# library(beepr)
 
 # Helper scripts ----
 source("./scripts/two_strain_model/two_strain_model_functions.R")
