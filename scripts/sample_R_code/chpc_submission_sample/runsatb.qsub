@@ -1,0 +1,22 @@
+#!/bin/bash
+#PBS -l select=5:ncpus=24:mpiprocs=24
+#PBS -P CBBI1106
+#PBS -q normal
+#PBS -l walltime=14:00:00
+#PBS -o /mnt/lustre/users/fmarx/satbmodel/std.out
+#PBS -e /mnt/lustre/users/fmarx/satbmodel/std.err
+#PBS -N SADiag_tbm
+#PBS -M fmarx@sun.ac.za
+#PBS -m b  # or "be" or "e"
+
+# Add R module (includes appropriate openMPI and gcc modules)
+module add chpc/R/3.5.1-gcc7.2.0
+
+# explicitly calculate number of processes.
+nproc=`cat $PBS_NODEFILE | wc -l`
+
+# make sure we're in the correct working directory.
+cd /mnt/lustre/users/fmarx/satbmodel/
+
+mpirun -np $nproc -machinefile $PBS_NODEFILE  R --slave -f runmodel_CHPC.R --args 50001 100000 10000
+
