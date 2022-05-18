@@ -1,3 +1,9 @@
+.args <- if(interactive()){
+    c("./data/inputs/config_global_params.RData")
+}else{
+    commandArgs(trailingOnly = TRUE)
+}
+
 # Run the model for this number of days
 max_time <- 365*5
 
@@ -103,3 +109,8 @@ event_df <- data.frame(
   value = c(-Im_index_cases / target_pop, Im_index_cases / target_pop), # introduce 10 variant cases
   method = c("add", "replace")
 ) # operation on state variables
+
+
+# Save the function definitions to file
+
+save(list = ls(), file = tail(.args, 1))
