@@ -1,0 +1,59 @@
+# Sensitivity analyses ----
+# Source the global inputs
+# Arguments
+.args <- if(interactive()){
+    c('./data/inputs/config_global_params.RData',
+      './data/inputs/cross_protection_sensitivity_dynamics_params.RData'
+    )
+}else{
+    commandArgs(trailingOnly = TRUE)
+}
+
+#Load the needed files
+load(.args[[1]])
+
+
+
+# Dynamics parameters ----
+R0_w <- 2.0 # R0 (wild type)
+R0_m_original <- R0_w * 1.3 # R0 (variant) 30% more infectious
+IP_w <- 14 # infectious period (wild type)
+IP_m <- 14 # infectious period (variant)
+
+
+# Cross protection, cp (everything else remains as original) ====
+#' The assumption is that cross protection, cp, is symmetric so that 
+#' sigma_w = sigma_m = 0.85
+
+dynamics_params_cp_sensitivity <- data.frame(
+    R0w = R0_w,
+    R0m = R0_m_original,
+    beta_w = R0_w / IP_w,
+    beta_m = R0_m_original / IP_m,
+    gamma_w = 1 / IP_w,
+    gamma_m = 1 / IP_m,
+    sigma_w = seq(0, 1, by = 0.05), # cross-protection provided by wild-type
+    sigma_m = seq(0, 1, by = 0.05), # cross-protection provided by variant
+    vax_efficacy_w = 1, # perfect vaccine efficacy against wild-type
+    vax_efficacy_m = 1 # perfect vaccine efficacy against variant
+)
+
+
+
+dynamics_params_cp_asymmetric_sensitivity <- data.frame(
+    R0w = R0_w,
+    R0m = R0_m_original,
+    beta_w = R0_w / IP_w,
+    beta_m = R0_m_original / IP_m,
+    gamma_w = 1 / IP_w,
+    gamma_m = 1 / IP_m,
+    sigma_w = c(0.5, 0.5), # cross-protection provided by wild-type
+    sigma_m = c(0.7, 1), # cross-protection provided by variant
+    vax_efficacy_w = 1, # perfect vaccine efficacy against wild-type
+    vax_efficacy_m = 1 # perfect vaccine efficacy against variant
+)
+
+
+#Save the parameters to file
+save(list = ls(), file = tail(.args, 1))
+
