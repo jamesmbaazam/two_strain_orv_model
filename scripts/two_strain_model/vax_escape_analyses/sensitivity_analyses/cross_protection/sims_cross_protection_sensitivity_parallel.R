@@ -5,6 +5,15 @@ library(doParallel)
 library(deSolve)
 library(tidyverse)
 
+
+#Error handling
+options(error = function(){
+    traceback(2, max.lines = 3);
+    if(!interactive()) quit("no", status = 1, runLast = FALSE)
+    }
+    )
+
+
 # Helper scripts ----
 source("./scripts/two_strain_model/simulation_functions.R")
 source("./scripts/two_strain_model/two_strain_model_functions.R")
