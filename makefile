@@ -18,3 +18,5 @@ $(INPUTS_DIR)/config_global_params.RData: $(MAIN_ANALYSIS_DIR)/sim_config/config
 $(INPUTS_DIR)/config_intervention_params.RData: $(MAIN_ANALYSIS_DIR)/sim_config/config_intervention_params.R $(INPUTS_DIR)/config_global_params.RData $(INPUTS_DIR)/two_strain_model_functions.RData $(INPUTS_DIR)/simulation_functions.RData
 	Rscript $^ $@
 
+#Main analysis
+./data/outputs/all_scenarios_summaries.rds: $(MAIN_ANALYSIS_DIR)/simulations/run_controlled_epidemic_parallel.R $(INPUTS_DIR)/config_global_params.RData $(INPUTS_DIR)/two_strain_model_functions.RData $(INPUTS_DIR)/simulation_functions.RData $(INPUTS_DIR)/config_intervention_params.RData 
