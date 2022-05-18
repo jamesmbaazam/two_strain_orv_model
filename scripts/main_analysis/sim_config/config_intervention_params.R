@@ -10,8 +10,10 @@
 
 
 #Packages ----
-library(dplyr, quietly = T)
-library(purrr, quietly = T)
+suppressPackageStartupMessages({
+    library(tidyverse)
+})
+
 
 # Helper scripts ----
 load(.args[[1]])
@@ -76,7 +78,7 @@ campaign_controls_scenarios_df <- campaign_controls_scenarios_df %>%
 
 
 # Full simulation table with variant emergence times appended ====
-orv_npi_control_config_table <- campaign_controls_scenarios_df %>%
+simulation_table <- campaign_controls_scenarios_df %>%
     slice(rep(1:n(), times = length(variant_emergence_times))) %>% 
     mutate(variant_emergence_day = rep(variant_emergence_times, 
                                        each = nrow(campaign_controls_scenarios_df)
