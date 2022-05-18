@@ -10,8 +10,8 @@
 
 
 #Packages ----
-library(dplyr)
-library(purrr)
+library(dplyr, quietly = T)
+library(purrr, quietly = T)
 
 # Helper scripts ----
 load(.args[[1]])
