@@ -21,14 +21,6 @@ load(.args[[2]])
 load(.args[[3]])
 load(.args[[4]])
 
-#Increase memory before running in parallel
-# if(.Platform$OS.type == "windows") withAutoprint({
-#     memory.size()
-#     memory.size(TRUE)
-#     memory.limit()
-# })
-# memory.limit(size = 56000)
-
 #function to run simulations
 run_sim_all <- function(sim_table, get_summaries){
     res <- sim_table %>% 
