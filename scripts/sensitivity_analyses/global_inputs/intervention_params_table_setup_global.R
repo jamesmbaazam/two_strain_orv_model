@@ -3,8 +3,8 @@ library(dplyr)
 library(purrr)
 
 # Helper scripts ----
-source('./scripts/two_strain_model/vax_escape_analyses/sensitivity_analyses/global_inputs/global_params.R')
-source('./scripts/two_strain_model/simulation_functions.R')
+source('./scripts/sensitivity_analyses/global_inputs/global_params.R')
+source('./scripts/model_sim_functions/simulation_functions.R')
 
 #NPI params ====
 npi_start <- 1
