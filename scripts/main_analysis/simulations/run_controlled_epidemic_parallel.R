@@ -1,19 +1,25 @@
+.args <- if(interactive()){
+    c('./data/inputs/config_global_params.RData', 
+      './data/inputs/two_strain_model_functions.RData', 
+      './data/inputs/simulation_functions.RData', 
+      "./data/inputs/config_intervention_params.RData",
+    './data/outputs/all_scenarios_summaries.rds'
+    )
+}else{
+    commandArgs(trailingOnly = TRUE)
+}
 
 #Packages ----
-library(doParallel)
-library(doSNOW)
-library(deSolve)
-library(scales)
-library(patchwork)
-library(tidyverse)
-library(beepr)
+library(doParallel, quietly = TRUE)
+library(doSNOW, quietly = TRUE)
+library(deSolve, quietly = TRUE)
+library(tidyverse, quietly = TRUE)
 
-# Helper scripts ----
-source('./scripts/two_strain_model/two_strain_model.R')
-source('./scripts/two_strain_model/sim_config_global_params.R')
-source('./scripts/two_strain_model/sim_config_emergence_risk_adjusted.R')
-source('./scripts/two_strain_model/simulation_functions.R')
-
+# Load helper functions and param definitions ----
+load(.args[[1]])
+load(.args[[2]])
+load(.args[[3]])
+load(.args[[4]])
 
 #Increase memory before running in parallel
 # if(.Platform$OS.type == "windows") withAutoprint({
@@ -24,7 +30,7 @@ source('./scripts/two_strain_model/simulation_functions.R')
 # memory.limit(size = 56000)
 
 #function to run simulations
-run_sim_all <- function(sim_table){
+run_sim_all <- function(sim_table, get_summaries){
     res <- sim_table %>% 
         rowwise() %>% 
         do({with(.,
@@ -34,7 +40,7 @@ run_sim_all <- function(sim_table){
                                 max_time = max_time, 
                                 dt = eval_times,
                                 events_table = event_df,
-                                get_summaries = TRUE,
+                                get_summaries = get_summaries,
                                 browse = FALSE
                                 )
            )
@@ -78,9 +84,9 @@ num_of_jobs <- ceiling(n_sims/sims_per_job)
 
 start_time <- Sys.time()
 
-orv_npi_all_scenarios_dynamics <- foreach(i = 1:num_of_jobs, 
+sim_results <- foreach(i = 1:num_of_jobs, 
                   .combine = rbind,
-                  .packages = c('tidyverse', 'foreach', 'deSolve'), 
+                  .packages = c('dplyr', 'foreach', 'deSolve'), 
                   .errorhandling = 'remove') %dopar% 
     {
         
@@ -92,7 +98,7 @@ orv_npi_all_scenarios_dynamics <- foreach(i = 1:num_of_jobs,
         slice(start_index:end_index)
         
         
-    subset_run <- run_sim_all(sim_subset) 
+    subset_run <- run_sim_all(sim_subset, get_summaries = TRUE) 
         
     return(subset_run)
 }
@@ -108,7 +114,5 @@ run_time <- end_time - start_time
 print(run_time)
 
 #save the simulation
-saveRDS(object = orv_npi_all_scenarios_dynamics, file = './model_output/orv_npi_all_scenarios_dynamics_parallel.rds')
+saveRDS(object = sim_results, file = tail(.args, 1))
 
-
-beepr::beep(3)
