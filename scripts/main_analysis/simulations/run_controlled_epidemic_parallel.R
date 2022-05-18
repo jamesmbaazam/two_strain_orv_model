@@ -9,6 +9,13 @@
     commandArgs(trailingOnly = TRUE)
 }
 
+
+#Error handling
+options(error = function(){
+    traceback(2, max.lines = 3);
+    if(!interactive()) quit("no", status = 1, runLast = FALSE)
+    })
+
 #Packages ----
 library(doParallel, quietly = TRUE)
 library(doSNOW, quietly = TRUE)
