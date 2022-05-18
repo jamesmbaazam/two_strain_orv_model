@@ -49,3 +49,7 @@ vignettes/*.pdf
 *.eps
 
 *.ai
+
+.vscode/
+
+*.RData
